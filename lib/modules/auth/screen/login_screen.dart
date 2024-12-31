@@ -10,6 +10,7 @@ import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/button/custom_button.dart';
 import 'package:anilist/widget/button/custom_switch_button.dart';
 import 'package:anilist/widget/custom_devider.dart';
+import 'package:anilist/widget/image/svg_ui.dart';
 import 'package:anilist/widget/text/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,9 +50,9 @@ class LoginScreen extends StatelessWidget {
                 children: [
                   const Spacer(),
                   const Spacer(),
-                  const Image(
-                    image: AssetImage('assets/images/logo.png'),
-                    fit: BoxFit.cover,
+                  SvgUI(
+                    'ic_logo.svg',
+                    size: 200,
                   ),
                   const Spacer(),
                   BlocProvider(
