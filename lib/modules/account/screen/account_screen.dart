@@ -151,7 +151,7 @@ class _AccountScreenState extends State<AccountScreen> {
         description: Env.version,
         onTap: () {
           customLaunchUrl(
-              'https://play.google.com/store/apps/details?id=com.android.anilist');
+              'https://play.google.com/store/apps/details?id=com.anilist.android');
         },
         trailing: Icon(Icons.star, color: Colors.yellow),
       ),

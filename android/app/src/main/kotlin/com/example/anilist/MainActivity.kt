@@ -1,4 +1,4 @@
-package com.android.anilist
+package com.anilist.android
 
 import io.flutter.embedding.android.FlutterActivity
 
