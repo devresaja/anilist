@@ -41,6 +41,7 @@ dependencies:
   fast_cached_network_image: ^1.2.9
   firebase_auth: ^5.1.4
   firebase_core: ^3.3.0
+  firebase_crashlytics: ^4.2.0
   firebase_messaging: ^15.1.6
   flutter:
     sdk: flutter
@@ -57,6 +58,7 @@ dependencies:
   responsive_grid_list: ^1.4.0
   shared_preferences: ^2.3.1
   shimmer: ^3.0.0
+  shorebird_code_push: ^1.1.6
   speech_to_text: ^7.0.0
   unity_ads_plugin: ^0.3.20
   url_launcher: ^6.3.1

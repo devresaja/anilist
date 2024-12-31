@@ -9,6 +9,7 @@ enum RepoType { public, private }
 abstract class Env {
   static const RepoType repoType = RepoType.private;
   static const String url = 'https://api.jikan.moe/v4';
+  static const String version = 'v1.0.0';
 
   // Private environment
   @EnviedField(varName: 'firebaseApiKey')

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/global/model/anime.dart';
