@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:anilist/modules/ads/data/unity_ads_api.dart';
 import 'package:anilist/services/local_storage_service.dart';
 import 'package:bloc/bloc.dart';
@@ -21,35 +22,37 @@ class AdsBloc extends Bloc<AdsEvent, AdsState> {
         return;
       }
 
-      // Check remaining attempt. If 0, show confirmation or ad
+      if (!event.isCheckAttemp) {
+        emit(ShowRewardedAdConfirmationState());
+        return;
+      }
+
+      // Check remaining attempt
+      // If attempt is 0, decrease attempt and continue
       // If ad is shown successfully, reset attempts to 5
-      // If attempt > 0, decrease attempt and continue
       final attempt = await LocalStorageService.getRemainingTrailerAttempt();
+      log(attempt.toString());
 
-      if (attempt >= 0) {
-        if (!event.isCheckAttemp) {
-          emit(ShowRewardedAdConfirmationState());
-        } else {
-          final completer = Completer<void>();
+      if (attempt == 0) {
+        final completer = Completer<void>();
 
-          await UnityAdsApi.showVideoAd(
-            onComplete: () async {
-              await LocalStorageService.setRemainingTrailerAttempt(5);
-              emit(ShowRewardedAdLoadedState());
-              completer.complete();
-            },
-            onSkipped: () {
-              emit(ShowRewardedAdSkippedState());
-              completer.complete();
-            },
-            onFailed: (e) {
-              emit(ShowRewardedAdFailedState(e));
-              completer.complete();
-            },
-          );
+        await UnityAdsApi.showVideoAd(
+          onComplete: () async {
+            await LocalStorageService.setRemainingTrailerAttempt(5);
+            emit(ShowRewardedAdLoadedState());
+            completer.complete();
+          },
+          onSkipped: () {
+            emit(ShowRewardedAdSkippedState());
+            completer.complete();
+          },
+          onFailed: (e) {
+            emit(ShowRewardedAdFailedState(e));
+            completer.complete();
+          },
+        );
 
-          await completer.future;
-        }
+        await completer.future;
       } else {
         await LocalStorageService.setRemainingTrailerAttempt(attempt - 1);
         emit(ShowRewardedAdLoadedState());
