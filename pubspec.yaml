@@ -81,6 +81,7 @@ flutter:
   assets:
     - assets/images/
     - assets/svgs/
+    - shorebird.yaml
 
   fonts:
     - family: NunitoSans
