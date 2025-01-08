@@ -19,6 +19,8 @@ migrate_working_dir/
 # Project related
 # Contains sensitive part that are not publishable
 lib/core/env/env.g.dart
+.crashlytics/
+symbols/
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line

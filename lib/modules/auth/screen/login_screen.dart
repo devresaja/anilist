@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:anilist/constant/dimension.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/routes/route.dart';
