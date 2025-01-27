@@ -22,46 +22,44 @@ import 'package:shorebird_code_push/shorebird_code_push.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  /// Initializes services for private environment.
-  if (Env.repoType == RepoType.private) {
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
+  // START Initializes services for private environment.
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-    await NotificationService.initNotification();
+  await NotificationService.initNotification();
 
-    /// Sets up error handling with Firebase Crashlytics
-    final patchNumber = await ShorebirdCodePush().currentPatchNumber();
-    FirebaseCrashlytics.instance.setCustomKey(
-      'shorebird_patch_number',
-      '$patchNumber',
-    );
-    FirebaseCrashlytics.instance.setCustomKey(
-      'app_version',
-      Env.version,
-    );
+  // Sets up error handling with Firebase Crashlytics
+  final patchNumber = await ShorebirdCodePush().currentPatchNumber();
+  FirebaseCrashlytics.instance.setCustomKey(
+    'shorebird_patch_number',
+    '$patchNumber',
+  );
+  FirebaseCrashlytics.instance.setCustomKey(
+    'app_version',
+    Env.version,
+  );
 
-    FlutterError.onError = (errorDetails) {
-      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-    };
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
-    };
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
 
-    // NOTE: This line must be commented out due to commercial purposes
-    await UnityAdsApi.init();
-  }
+  // NOTE: This line must be commented out due to commercial purposes
+  await UnityAdsApi.init();
+  // END Initializes services for private environment.
 
-  /// Locks screen orientation to portrait mode only.
+  // Locks screen orientation to portrait mode only.
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  /// Configures image caching with 2-day retention period
+  // Configures image caching with 2-day retention period
   await FastCachedImageConfig.init(clearCacheAfter: const Duration(days: 2));
 
-  /// Loads user preferences
+  // Loads user preferences
   UserData? userData = await LocalStorageService.getUserData();
   bool isDarkMode = await LocalStorageService.getIsDarkMode();
   bool isNotificationEnable =

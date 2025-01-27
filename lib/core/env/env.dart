@@ -3,11 +3,14 @@ import 'package:envied/envied.dart';
 
 part 'env.g.dart';
 
-enum RepoType { public, private }
+enum EnvType { dev, prod }
 
-@Envied(path: '.env', allowOptionalFields: false, obfuscate: false)
+const EnvType env = EnvType.dev;
+
+const String envPath = env == EnvType.dev ? '.env.dev' : '.env';
+
+@Envied(path: envPath, allowOptionalFields: false, obfuscate: true)
 abstract class Env {
-  static const RepoType repoType = RepoType.private;
   static const String url = 'https://api.jikan.moe/v4';
   static const String version = 'v1.0.0';
 
