@@ -1,0 +1,122 @@
+name: Staging
+
+on:
+  push:
+    branches:
+      - staging
+
+env:
+  FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Decode secrets base64
+        run: |
+          echo "${{ secrets.ENV_DEV }}" | base64 --decode > .env.dev
+          echo "${{ secrets.KEY_PROPERTIES }}" | base64 --decode > android/key.properties
+          echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/anilist-keystore.jks  
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+          flutter-version-file: pubspec.yaml
+      - run: |
+          flutter clean
+          flutter pub get
+
+      - name: Generate env
+        run: |
+          dart run build_runner clean
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Setup Firebase CLI
+        run: curl -sL https://firebase.tools | bash         
+
+      - name: Upload symbols to Firebase Crashlytics
+        run: firebase crashlytics:symbols:upload --app=${{ secrets.FIREBASE_APP_ID_DEV }} symbols
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          
+      - name: Upload AAB as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+
+  github-release:
+    needs: build-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Get version from pubspec.yaml
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          TAG="v${VERSION}"
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Create release notes from last commit
+        run: |
+          NOTES=$(git log -1 --pretty=%B)
+          echo "NOTES=$NOTES" >> $GITHUB_ENV
+
+      - name: Create release tag
+        run: |
+          git tag ${{ env.TAG }}
+          git push origin ${{ env.TAG }}
+
+      - name: Create GitHub release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.TAG }}
+          release_name: ${{ env.TAG }}
+          body: ${{ env.NOTES }}
+          draft: false
+          prerelease: true
+
+      - name: Download APK artifact
+        id: download_apk
+        uses: actions/download-artifact@v3
+        with:
+          name: app-release-apk
+
+      - name: Download AAB artifact
+        id: download_aab
+        uses: actions/download-artifact@v3
+        with:
+          name: app-release-aab
+
+      - name: Upload APK to GitHub release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.download_apk.outputs.download-path }}/app-release.apk
+          asset_name: app-release.apk
+          asset_content_type: application/vnd.android.package-archive
+
+      - name: Upload AAB to GitHub release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.download_aab.outputs.download-path }}/app-release.aab
+          asset_name: app-release.aab
+          asset_content_type: application/octet-stream

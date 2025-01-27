@@ -1,0 +1,85 @@
+name: Patch
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  build-patch:
+    runs-on: ubuntu-latest
+    if: ${{ contains(github.event.head_commit.message, 'patch') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Decode secrets base64
+        run: |
+          echo "${{ secrets.ENV }}" | base64 --decode > .env
+          echo "${{ secrets.KEY_PROPERTIES }}" | base64 --decode > android/key.properties
+          echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/anilist-keystore.jks  
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+          flutter-version-file: pubspec.yaml
+      - run: |
+          flutter clean
+          flutter pub get
+
+      - name: Generate env
+        run: |
+          dart run build_runner clean
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v1
+        with:
+          cache: true
+
+      - name: Shoredbird patch
+        run: shorebird patch android
+
+  github-release:
+    needs: build-patch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Get version from pubspec.yaml
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          TAG="v${VERSION}-patch"
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Create release notes from last commit
+        run: |
+          NOTES=$(git log -1 --pretty=%B)
+          echo "NOTES=$NOTES" >> $GITHUB_ENV
+
+      - name: Create release tag
+        run: |
+          git tag ${{ env.TAG }}
+          git push origin ${{ env.TAG }}
+
+      - name: Create GitHub release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.TAG }}
+          release_name: ${{ env.TAG }}
+          body: ${{ env.NOTES }}
+          draft: false
+          prerelease: false
