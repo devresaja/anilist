@@ -1,11 +1,10 @@
-// lib/env/env.dart
 import 'package:envied/envied.dart';
 
 part 'env.g.dart';
 
 enum EnvType { dev, prod }
 
-const EnvType env = EnvType.prod;
+const EnvType env = EnvType.dev;
 
 const String envPath = env == EnvType.dev ? '.env.dev' : '.env';
 
