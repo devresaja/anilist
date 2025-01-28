@@ -43,8 +43,10 @@ jobs:
         with:
           cache: true
 
-      - name: Shoredbird patch
-        run: shorebird patch android
+      - uses: shorebirdtech/shorebird-patch@v0
+        id: shorebird-patch
+        with:
+          platform: android
 
   github-release:
     needs: build-patch
