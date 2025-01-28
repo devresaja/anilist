@@ -64,10 +64,12 @@ jobs:
           TAG="v${VERSION}-patch"
           echo "TAG=$TAG" >> $GITHUB_ENV
 
-      - name: Create release notes from last commit
+      - name: Create release notes
         run: |
-          NOTES=$(git log -1 --pretty=%B)
-          echo "NOTES=$NOTES" >> $GITHUB_ENV
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B ${GITHUB_SHA})
+          echo "NOTES<<EOF" >> $GITHUB_ENV
+          echo "$COMMIT_MESSAGE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Create release tag
         run: |

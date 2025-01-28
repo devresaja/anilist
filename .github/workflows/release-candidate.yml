@@ -1,16 +1,16 @@
-name: Staging
+name: Release Candidate
 
 on:
   push:
-    branches:
-      - staging
+    tags:
+      - 'v*-rc.*'
 
 env:
   FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  build-release:
+  build-release-candidate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -28,6 +28,7 @@ jobs:
           channel: stable
           cache: true
           flutter-version-file: pubspec.yaml
+
       - run: |
           flutter clean
           flutter pub get
@@ -36,6 +37,11 @@ jobs:
         run: |
           dart run build_runner clean
           dart run build_runner build --delete-conflicting-outputs
+
+      - name: Release
+        run: |
+          flutter build aab --release --split-debug-info=symbols --obfuscate 
+          flutter build apk --release --split-debug-info=symbols --obfuscate
 
       - name: Setup Firebase CLI
         run: curl -sL https://firebase.tools | bash         
@@ -55,40 +61,26 @@ jobs:
           name: app-release-aab
           path: build/app/outputs/bundle/release/app-release.aab
 
-  github-release:
-    needs: build-release
+  github-prerelease:
+    needs: build-release-candidate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Git
+      - name: Create release notes
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-
-      - name: Get version from pubspec.yaml
-        run: |
-          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
-          TAG="v${VERSION}"
-          echo "TAG=$TAG" >> $GITHUB_ENV
-
-      - name: Create release notes from last commit
-        run: |
-          NOTES=$(git log -1 --pretty=%B)
-          echo "NOTES=$NOTES" >> $GITHUB_ENV
-
-      - name: Create release tag
-        run: |
-          git tag ${{ env.TAG }}
-          git push origin ${{ env.TAG }}
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B ${GITHUB_SHA})
+          echo "NOTES<<EOF" >> $GITHUB_ENV
+          echo "$COMMIT_MESSAGE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Create GitHub release
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ env.TAG }}
-          release_name: ${{ env.TAG }}
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
           body: ${{ env.NOTES }}
           draft: false
           prerelease: true
@@ -105,7 +97,7 @@ jobs:
         with:
           name: app-release-aab
 
-      - name: Upload APK to GitHub release
+      - name: Upload APK to tag
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
@@ -113,7 +105,7 @@ jobs:
           asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
 
-      - name: Upload AAB to GitHub release
+      - name: Upload AAB to tag
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
