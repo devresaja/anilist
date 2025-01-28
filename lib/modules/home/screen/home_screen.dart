@@ -1,7 +1,7 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/routes/route.dart';
-import 'package:anilist/global/widget/speech_to_Text_button.dart';
+import 'package:anilist/global/widget/speech_to_text_button.dart';
 import 'package:anilist/modules/home/components/anime_list.dart';
 import 'package:anilist/modules/home/components/home_header.dart';
 import 'package:anilist/modules/home/components/home_random.dart';

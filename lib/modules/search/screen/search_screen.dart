@@ -1,7 +1,7 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/global/model/anime.dart';
-import 'package:anilist/global/widget/speech_to_Text_button.dart';
+import 'package:anilist/global/widget/speech_to_text_button.dart';
 import 'package:anilist/modules/ads/widget/unity_banner_ad_widget.dart';
 import 'package:anilist/modules/home/components/anime_card.dart';
 import 'package:anilist/modules/search/bloc/search_bloc.dart';
