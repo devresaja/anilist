@@ -44,6 +44,11 @@ jobs:
         with:
           cache: true
       - run: |
+          if [ ! -d "/home/runner/.config/shorebird/bin" ]; then
+            echo "Shorebird cache not found, adding path manually..."
+            export PATH="/home/runner/.config/shorebird/bin:$PATH"
+          fi
+          
           shorebird --version
           ENGINE_VERSION=$(shorebird doctor | grep 'Engine' | awk '{print $4}')
           echo "ENGINE_VERSION=$ENGINE_VERSION" >> $GITHUB_ENV
