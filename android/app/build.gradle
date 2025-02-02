@@ -29,6 +29,14 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+def envFile = file("${rootProject.projectDir.parent}/.env")
+def env = new Properties()
+
+if (envFile.exists()) {
+    env.load(new FileInputStream(envFile))
+}
+
+
 android {
     namespace = "com.anilist.android"
     compileSdk = 34
@@ -48,6 +56,10 @@ android {
         targetSdk = 34
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
+        
+        // resValue "string", "admob_app_id", "ca-app-pub-xxxxxxxxx~yyyyyyy"
+        // resValue "string", "admob_app_id", "ca-app-pub-9565586507543690~7361292992"a
+        resValue "string", "admob_app_id", env.getProperty('admobAppId').replace("'", "")
     }
 
     signingConfigs {

@@ -4,7 +4,7 @@ import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/global/model/user_data.dart';
 import 'package:anilist/core/routes/navigator_key.dart';
 import 'package:anilist/core/theme/theme.config.dart';
-import 'package:anilist/modules/ads/data/unity_ads_api.dart';
+import 'package:anilist/modules/ads/data/admob_api.dart';
 import 'package:anilist/modules/auth/screen/login_screen.dart';
 import 'package:anilist/modules/dashboard/screen/dashboard_screen.dart';
 import 'package:anilist/services/local_storage_service.dart';
@@ -47,7 +47,7 @@ Future<void> main() async {
   };
 
   // NOTE: This line must be commented out due to commercial purposes
-  await UnityAdsApi.init();
+  await AdMobService.init();
   // END Initializes services for private environment.
 
   // Locks screen orientation to portrait mode only.
