@@ -2,7 +2,7 @@ import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/global/model/anime.dart';
 import 'package:anilist/global/widget/speech_to_text_button.dart';
-import 'package:anilist/modules/ads/widget/unity_banner_ad_widget.dart';
+import 'package:anilist/modules/ads/widget/admob_banner_widget.dart';
 import 'package:anilist/modules/home/components/anime_card.dart';
 import 'package:anilist/modules/search/bloc/search_bloc.dart';
 import 'package:anilist/utils/view_utils.dart';
@@ -128,7 +128,8 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
             ),
-            UnityBannerAdWidget(placementId: 'Banner_Android')
+            AdMobBannerWidget()
+            // UnityBannerAdWidget(placementId: 'Banner_Android')
           ],
         ),
       ),

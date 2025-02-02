@@ -26,4 +26,6 @@ abstract class Env {
   static String firebaseStorageBucket = _Env.firebaseStorageBucket;
   @EnviedField(varName: 'unityGameId')
   static String unityGameId = _Env.unityGameId;
+  @EnviedField(varName: 'admobAppId')
+  static String admobAppId = _Env.admobAppId;
 }
