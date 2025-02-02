@@ -4,7 +4,7 @@ part 'env.g.dart';
 
 enum EnvType { dev, main }
 
-const EnvType env = EnvType.main;
+const EnvType env = EnvType.dev;
 
 const String envPath = env == EnvType.dev ? '.env.dev' : '.env';
 
