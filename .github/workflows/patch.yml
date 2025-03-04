@@ -76,7 +76,8 @@ jobs:
 
       - name: Create version name
         run: |
-          TAG="v${{ needs.build-patch.outputs.version }}-patch${{ needs.build-patch.outputs.patch_number }}"
+          VERSION_CLEAN=$(echo "${{ needs.build-patch.outputs.version }}" | cut -d'+' -f1)
+          TAG="v${VERSION_CLEAN}-patch${{ needs.build-patch.outputs.patch_number }}"
           echo "TAG=$TAG" >> $GITHUB_ENV
 
       - name: Create release notes

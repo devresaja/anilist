@@ -101,7 +101,7 @@ jobs:
 
       - name: Create version name
         run: |
-          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
           TAG="v${VERSION}"
           echo "TAG=$TAG" >> $GITHUB_ENV
 
