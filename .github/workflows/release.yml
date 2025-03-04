@@ -1,0 +1,156 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
+  FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, 'patch') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Decode secrets base64
+        run: |
+          echo "${{ secrets.ENV }}" | base64 --decode > .env
+          echo "${{ secrets.KEY_PROPERTIES }}" | base64 --decode > android/key.properties
+          echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/anilist-keystore.jks  
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+          flutter-version-file: pubspec.yaml
+      - run: |
+          flutter clean
+          flutter pub get
+
+      - name: Generate env
+        run: |
+          dart run build_runner clean
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v1
+        with:
+          cache: true
+      - run: |
+          if [ ! -d "/home/runner/.config/shorebird/bin" ]; then
+            echo "Shorebird cache not found, adding path manually..."
+            export PATH="/home/runner/.config/shorebird/bin:$PATH"
+          fi
+          
+          shorebird --version
+          ENGINE_VERSION=$(shorebird doctor | grep 'Engine' | awk '{print $4}')
+          echo "ENGINE_VERSION=$ENGINE_VERSION" >> $GITHUB_ENV
+
+      - uses: shorebirdtech/shorebird-release@v0
+        id: shorebird-release
+        with:
+          args: --artifact=apk --flutter-version=3.24.3 -- --split-debug-info=symbols --obfuscate
+          platform: android
+
+      - name: Download Shorebird symbols
+        run: |
+          for arch in arm64 arm x64; do
+            curl -L https://download.shorebird.dev/flutter_infra_release/flutter/${{ env.ENGINE_VERSION }}/android-${arch}-release/symbols.zip -o symbols/android-${arch}-release.zip
+            unzip symbols/android-${arch}-release.zip -d symbols/
+            rm symbols/LICENSE.android_symbols.md
+            mv symbols/libflutter.so symbols/libflutter-${arch}.so
+            rm symbols/android-${arch}-release.zip
+          done
+
+      - name: Setup Firebase CLI
+        run: curl -sL https://firebase.tools | bash         
+
+      - name: Upload symbols to Firebase Crashlytics
+        run: firebase crashlytics:symbols:upload --app=${{ secrets.FIREBASE_APP_ID }} symbols
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          
+      - name: Upload AAB as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+
+  github-release:
+    needs: build-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Create version name
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          TAG="v${VERSION}"
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Create release notes
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B ${GITHUB_SHA})
+          echo "NOTES<<EOF" >> $GITHUB_ENV
+          echo "$COMMIT_MESSAGE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create release tag
+        run: |
+          git tag ${{ env.TAG }}
+          git push origin ${{ env.TAG }}
+
+      - name: Create GitHub release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.TAG }}
+          release_name: ${{ env.TAG }}
+          body: ${{ env.NOTES }}
+          draft: false
+          prerelease: false
+
+      - name: Download APK artifact
+        id: download_apk
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release-apk
+
+      - name: Download AAB artifact
+        id: download_aab
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release-aab
+
+      - name: Upload APK to GitHub release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.download_apk.outputs.download-path }}/app-release.apk
+          asset_name: app-release.apk
+          asset_content_type: application/vnd.android.package-archive
+
+      - name: Upload AAB to GitHub release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.download_aab.outputs.download-path }}/app-release.aab
+          asset_name: app-release.aab
+          asset_content_type: application/octet-stream

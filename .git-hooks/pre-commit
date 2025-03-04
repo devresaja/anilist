@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Regex patterns to detect sensitive value
+PATTERNS=(
+    "ca-app-pub-[0-9]{16}~[0-9]{10}"  # AdMob App ID
+    "AIza[0-9A-Za-z_-]{35}"           # Google API Key
+)
+
+# Check all files staged for commit
+for file in $(git diff --cached --name-only); do
+    for pattern in "${PATTERNS[@]}"; do
+        if grep -E -q "$pattern" "$file"; then
+            echo "❌ ERROR: Sensitive code detected in file '$file'."
+            echo "🔒 Do not commit sensitive value!"
+            exit 1
+        fi
+    done
+done
+
+echo "✅ No API Key leaks detected. Safe to commit!"
+exit 0

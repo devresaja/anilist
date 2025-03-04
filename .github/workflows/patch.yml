@@ -1,0 +1,102 @@
+name: Patch
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  build-patch:
+    runs-on: ubuntu-latest
+    if: ${{ contains(github.event.head_commit.message, 'patch') }}
+    outputs:
+      patch_number: ${{ steps.shorebird-patch.outputs.patch-number }}
+      version: ${{ steps.get-version.outputs.VERSION }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: get-version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Decode secrets base64
+        run: |
+          echo "${{ secrets.ENV }}" | base64 --decode > .env
+          echo "${{ secrets.KEY_PROPERTIES }}" | base64 --decode > android/key.properties
+          echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/anilist-keystore.jks  
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+          flutter-version-file: pubspec.yaml
+      - run: |
+          flutter clean
+          flutter pub get
+
+      - name: Generate env
+        run: |
+          dart run build_runner clean
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v1
+        with:
+          cache: true
+
+      - uses: shorebirdtech/shorebird-patch@v0
+        id: shorebird-patch
+        with:
+          platform: android
+          args: --release-version ${{ env.VERSION }}
+      
+      - name: Output Patch Number
+        run: echo ${{ steps.shorebird-patch.outputs.patch-number }}
+
+  github-release:
+    needs: build-patch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Create version name
+        run: |
+          TAG="v${{ needs.build-patch.outputs.version }}-patch${{ needs.build-patch.outputs.patch_number }}"
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Create release notes
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B ${GITHUB_SHA})
+          echo "NOTES<<EOF" >> $GITHUB_ENV
+          echo "$COMMIT_MESSAGE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create release tag
+        run: |
+          git tag ${{ env.TAG }}
+          git push origin ${{ env.TAG }}
+
+      - name: Create GitHub release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.TAG }}
+          release_name: ${{ env.TAG }}
+          body: ${{ env.NOTES }}
+          draft: false
+          prerelease: false
