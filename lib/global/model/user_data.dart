@@ -3,7 +3,7 @@ import 'dart:convert';
 class UserData {
   final String name;
   final String email;
-  final String avatar;
+  final String? avatar;
 
   UserData({required this.name, required this.email, required this.avatar});
 
@@ -19,7 +19,7 @@ class UserData {
     return UserData(
       name: map['name'] as String,
       email: map['email'] as String,
-      avatar: map['avatar'] as String,
+      avatar: map['avatar'] as String?,
     );
   }
 

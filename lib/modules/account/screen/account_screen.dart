@@ -4,15 +4,13 @@ import 'package:anilist/core/env/env.dart';
 import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/account/components/setting_card.dart';
+import 'package:anilist/modules/auth/bloc/auth_bloc.dart';
 import 'package:anilist/modules/auth/screen/login_screen.dart';
-import 'package:anilist/services/local_storage_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/button/custom_switch_button.dart';
 import 'package:anilist/widget/text/text_widget.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -26,6 +24,7 @@ class AccountScreen extends StatefulWidget {
 
 class _AccountScreenState extends State<AccountScreen> {
   bool isLogin = false;
+  final _authBloc = AuthBloc();
 
   @override
   void initState() {
@@ -174,26 +173,32 @@ class _AccountScreenState extends State<AccountScreen> {
           trailing: Icon(Icons.delete, color: AppColor.error),
         ),
         divide8,
-        SettingCard(
-          title: 'Logout',
-          titleColor: AppColor.error,
-          onTap: () async {
-            showConfirmationDialog(
-                context: context,
-                title: 'Are you sure want to logout?',
-                onTapOk: () async {
-                  Navigator.pop(context);
-                  await GoogleSignIn().signOut();
-                  await FirebaseAuth.instance.signOut();
-                  await LocalStorageService.removeValue();
-
-                  if (context.mounted) {
-                    context.read<AppBloc>().add(RemoveUserDataEvent());
-                    pushAndRemoveUntil(context, screen: LoginScreen());
-                  }
-                });
-          },
-          trailing: Icon(Icons.logout, color: AppColor.error),
+        BlocProvider(
+          create: (context) => _authBloc,
+          child: BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is LogoutLoadedState) {
+                context.read<AppBloc>().add(RemoveUserDataEvent());
+                pushAndRemoveUntil(context, screen: LoginScreen());
+              } else if (state is LogoutFailedState) {
+                showCustomSnackBar(state.message, isSuccess: false);
+              }
+            },
+            child: SettingCard(
+              title: 'Logout',
+              titleColor: AppColor.error,
+              onTap: () async {
+                showConfirmationDialog(
+                    context: context,
+                    title: 'Are you sure want to logout?',
+                    onTapOk: () {
+                      _authBloc.add(LogoutEvent());
+                      Navigator.pop(context);
+                    });
+              },
+              trailing: Icon(Icons.logout, color: AppColor.error),
+            ),
+          ),
         ),
       ] else ...[
         SettingCard(

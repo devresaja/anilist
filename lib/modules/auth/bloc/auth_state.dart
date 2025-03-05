@@ -18,3 +18,13 @@ final class LoginByGoogleFailedState extends AuthState {
 
   LoginByGoogleFailedState(this.message);
 }
+
+final class LogoutLoadingState extends AuthState {}
+
+final class LogoutLoadedState extends AuthState {}
+
+final class LogoutFailedState extends AuthState {
+  final String message;
+
+  LogoutFailedState(this.message);
+}

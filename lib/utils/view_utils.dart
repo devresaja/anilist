@@ -60,57 +60,75 @@ void showCustomSnackBar(String text, {bool isSuccess = true}) {
 Future<dynamic> showConfirmationDialog({
   required BuildContext context,
   required String title,
+  String? description,
   String? okText,
   String? cancelText,
   Function()? onTapOk,
   Function()? onTapCancel,
+  bool barrierDismissible = true,
+  bool hideCancel = false,
 }) async {
   return await showDialog(
       context: context,
+      barrierDismissible: barrierDismissible,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: AppColor.secondary,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextWidget(
-                title,
-                textAlign: TextAlign.center,
-                weight: FontWeight.w500,
-                fontSize: 16,
-              ),
-              divide12,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Flexible(
-                    child: CustomButton(
-                        color: Colors.red,
-                        borderColor: Colors.red,
-                        textColor: Colors.white,
-                        text: cancelText ?? 'Close',
+        return WillPopScope(
+          onWillPop: () async {
+            return barrierDismissible;
+          },
+          child: AlertDialog(
+            backgroundColor: AppColor.secondary,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextWidget(
+                  title,
+                  textAlign: TextAlign.center,
+                  weight: FontWeight.w500,
+                  fontSize: 16,
+                ),
+                if (description != null) divide4,
+                if (description != null)
+                  TextWidget(
+                    description,
+                    textAlign: TextAlign.center,
+                    fontSize: 14,
+                    color: AppColor.whiteAccent,
+                  ),
+                divide12,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    if (!hideCancel)
+                      Flexible(
+                        child: CustomButton(
+                            color: Colors.red,
+                            borderColor: Colors.red,
+                            textColor: Colors.white,
+                            text: cancelText ?? 'Close',
+                            fontSize: 12,
+                            onTap: onTapCancel ??
+                                () {
+                                  Navigator.pop(context);
+                                }),
+                      ),
+                    if (!hideCancel) divideW10,
+                    Flexible(
+                      child: CustomButton(
+                        textColor: Colors.black,
+                        color: AppColor.primary,
+                        text: okText ?? 'Yes',
                         fontSize: 12,
-                        onTap: onTapCancel ??
+                        onTap: onTapOk ??
                             () {
                               Navigator.pop(context);
-                            }),
-                  ),
-                  divideW10,
-                  Flexible(
-                    child: CustomButton(
-                      textColor: Colors.black,
-                      color: AppColor.primary,
-                      text: okText ?? 'Yes',
-                      fontSize: 12,
-                      onTap: onTapOk ??
-                          () {
-                            Navigator.pop(context);
-                          },
-                    ),
-                  )
-                ],
-              )
-            ],
+                            },
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         );
       });

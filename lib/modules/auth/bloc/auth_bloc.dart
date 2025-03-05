@@ -1,50 +1,45 @@
 import 'package:anilist/global/model/user_data.dart';
-import 'package:anilist/services/local_storage_service.dart';
+import 'package:anilist/modules/auth/data/auth_api.dart';
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  final _api = AuthApi();
+
   AuthBloc() : super(AuthInitial()) {
+    on<LogoutEvent>(_logout);
     on<LoginByGoogleEvent>(_loginByGoogle);
+  }
+
+  _logout(AuthEvent event, Emitter<AuthState> emit) async {
+    emit(LogoutLoadingState());
+
+    try {
+      final response = await _api.logout();
+
+      response.fold((left) => emit(LogoutFailedState(response.left.toString())),
+          (right) => emit(LogoutLoadedState()));
+    } catch (e) {
+      emit(LogoutFailedState(e.toString()));
+    }
   }
 
   _loginByGoogle(AuthEvent event, Emitter<AuthState> emit) async {
     emit(LoginByGoogleLoadingState());
 
     try {
-      await GoogleSignIn().signOut();
-      await FirebaseAuth.instance.signOut();
-      final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
+      final response = await _api.loginByGoogle();
 
-      if (gUser != null) {
-        final GoogleSignInAuthentication gAuth = await gUser.authentication;
-
-        final credential = GoogleAuthProvider.credential(
-          accessToken: gAuth.accessToken,
-          idToken: gAuth.idToken,
-        );
-
-        final data =
-            await FirebaseAuth.instance.signInWithCredential(credential);
-
-        FirebaseAuth.instance.currentUser;
-
-        final userData = UserData(
-            name: data.user!.displayName!,
-            email: data.user!.email!,
-            avatar: data.user!.photoURL!);
-
-        LocalStorageService.setUserData(userData);
-
-        emit(LoginByGoogleLoadedState(userData: userData));
-      } else {
-        emit(AuthInitial());
-      }
+      response.fold((left) {
+        if (left == null) {
+          emit(AuthInitial());
+        } else {
+          emit(LoginByGoogleFailedState(response.left.toString()));
+        }
+      }, (right) => emit(LoginByGoogleLoadedState(userData: response.right)));
     } catch (e) {
       emit(LoginByGoogleFailedState(e.toString()));
     }

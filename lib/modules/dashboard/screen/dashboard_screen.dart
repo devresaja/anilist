@@ -1,6 +1,7 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/modules/account/screen/account_screen.dart';
 import 'package:anilist/modules/home/screen/home_screen.dart';
+import 'package:anilist/services/session_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/wrapper/glassmorphism.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    SessionService.init(context);
+  }
+
+  @override
+  void dispose() {
+    SessionService.dispose();
+    super.dispose();
   }
 
   @override
