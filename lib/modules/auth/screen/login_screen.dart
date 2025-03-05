@@ -5,6 +5,7 @@ import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/auth/bloc/auth_bloc.dart';
 import 'package:anilist/modules/dashboard/screen/dashboard_screen.dart';
+import 'package:anilist/services/remote_config_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/button/custom_button.dart';
 import 'package:anilist/widget/button/custom_switch_button.dart';
@@ -15,9 +16,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   static const String path = 'loginScreen';
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  @override
+  void initState() {
+    super.initState();
+    RemoteConfigService.instance.init();
+  }
 
   @override
   Widget build(BuildContext context) {

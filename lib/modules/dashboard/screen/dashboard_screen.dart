@@ -1,6 +1,7 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/modules/account/screen/account_screen.dart';
 import 'package:anilist/modules/home/screen/home_screen.dart';
+import 'package:anilist/services/remote_config_service.dart';
 import 'package:anilist/services/session_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/wrapper/glassmorphism.dart';
@@ -31,6 +32,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     SessionService.init(context);
+    RemoteConfigService.instance.init();
   }
 
   @override
