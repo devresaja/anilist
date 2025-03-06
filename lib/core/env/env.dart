@@ -8,7 +8,7 @@ const String envPath = flavor == 'dev' ? '.env.dev' : '.env';
 @Envied(path: envPath, allowOptionalFields: false, obfuscate: true)
 abstract class Env {
   static const String url = 'https://api.jikan.moe/v4';
-  static const String version = 'v1.0.1';
+  static const String version = 'v1.0.2';
 
   // Private environment
   @EnviedField(varName: 'firebaseApiKey')
