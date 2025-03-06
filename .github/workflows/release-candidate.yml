@@ -40,8 +40,8 @@ jobs:
 
       - name: Release
         run: |
-          flutter build aab --release --flavor dev --dart-define=FLAVOR=dev --split-debug-info=symbols --obfuscate 
-          flutter build apk --release --flavor dev --dart-define=FLAVOR=dev --split-debug-info=symbols --obfuscate
+          flutter build aab --release --split-debug-info=symbols --obfuscate 
+          flutter build apk --release --split-debug-info=symbols --obfuscate
 
       - name: Setup Firebase CLI
         run: curl -sL https://firebase.tools | bash         
@@ -52,14 +52,14 @@ jobs:
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-dev-release-apk
-          path: build/app/outputs/flutter-apk/app-dev-release.apk
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
           
       - name: Upload AAB as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-dev-release-aab
-          path: build/app/outputs/bundle/devRelease/app-dev-release.aab
+          name: app-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
 
   github-prerelease:
     needs: build-release-candidate
@@ -89,26 +89,26 @@ jobs:
         id: download_apk
         uses: actions/download-artifact@v4
         with:
-          name: app-dev-release-apk
+          name: app-release-apk
 
       - name: Download AAB artifact
         id: download_aab
         uses: actions/download-artifact@v4
         with:
-          name: app-dev-release-aab
+          name: app-release-aab
 
       - name: Upload APK to tag
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.download_apk.outputs.download-path }}/app-dev-release.apk
-          asset_name: app-dev-release.apk
+          asset_path: ${{ steps.download_apk.outputs.download-path }}/app-release.apk
+          asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
 
       - name: Upload AAB to tag
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.download_aab.outputs.download-path }}/app-dev-release.aab
-          asset_name: app-dev-release.aab
+          asset_path: ${{ steps.download_aab.outputs.download-path }}/app-release.aab
+          asset_name: app-release.aab
           asset_content_type: application/octet-stream
