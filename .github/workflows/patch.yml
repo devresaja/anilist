@@ -57,7 +57,7 @@ jobs:
         id: shorebird-patch
         with:
           platform: android
-          args: --release-version ${{ env.VERSION }} -- --flavor prod --dart-define=FLAVOR=prod
+          args: --release-version ${{ env.VERSION }}
       
       - name: Output Patch Number
         run: echo ${{ steps.shorebird-patch.outputs.patch-number }}
