@@ -61,7 +61,23 @@ android {
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
 
+        resValue "string", "app_name", "Anilist"
+
         resValue "string", "admob_app_id", env.getProperty('admobAppId').replace("'", "")
+    }
+
+    flavorDimensions "flavor-type"
+    productFlavors {
+        dev {
+            dimension "flavor-type"
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-dev"
+            resValue "string", "app_name", "Anilist-dev"
+        }
+        prod {
+            dimension "flavor-type"
+            resValue "string", "app_name", "Anilist"
+        }
     }
 
     signingConfigs {

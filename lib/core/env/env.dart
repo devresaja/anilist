@@ -2,11 +2,8 @@ import 'package:envied/envied.dart';
 
 part 'env.g.dart';
 
-enum EnvType { dev, main }
-
-const EnvType env = EnvType.dev;
-
-const String envPath = env == EnvType.dev ? '.env.dev' : '.env';
+const String flavor = String.fromEnvironment('FLAVOR', defaultValue: 'dev');
+const String envPath = flavor == 'dev' ? '.env.dev' : '.env';
 
 @Envied(path: envPath, allowOptionalFields: false, obfuscate: true)
 abstract class Env {
