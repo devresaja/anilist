@@ -7,9 +7,9 @@ import 'package:anilist/core/theme/theme.config.dart';
 import 'package:anilist/modules/ads/data/admob_api.dart';
 import 'package:anilist/modules/auth/screen/login_screen.dart';
 import 'package:anilist/modules/dashboard/screen/dashboard_screen.dart';
+import 'package:anilist/services/local_database_service.dart';
 import 'package:anilist/services/local_storage_service.dart';
 import 'package:anilist/services/notification_service.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -56,8 +56,8 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  // Configures image caching with 2-day retention period
-  await FastCachedImageConfig.init(clearCacheAfter: const Duration(days: 2));
+  // Init local db
+  await LocalDatabaseService().init();
 
   // Loads user preferences
   UserData? userData = await LocalStorageService.getUserData();
