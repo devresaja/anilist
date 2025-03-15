@@ -76,7 +76,6 @@ android {
         }
         prod {
             dimension "flavor-type"
-            resValue "string", "app_name", "Anilist"
         }
     }
 

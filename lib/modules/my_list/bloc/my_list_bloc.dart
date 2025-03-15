@@ -1,6 +1,7 @@
 import 'package:anilist/global/model/anime.dart';
 import 'package:anilist/modules/my_list/data/my_list_api.dart';
 import 'package:anilist/modules/my_list/data/my_list_local_api.dart';
+import 'package:anilist/services/local_storage_service.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -15,6 +16,29 @@ class MyListBloc extends Bloc<MyListEvent, MyListState> {
     on<GetMyListEvent>(_getMyList);
     on<AddMyListEvent>(_addMyList);
     on<DeleteMyListEvent>(_deleteMyList);
+    on<UploadMyListEvent>(_uploadMyList);
+  }
+
+  _uploadMyList(UploadMyListEvent event, Emitter<MyListState> emit) async {
+    emit(UploadMyListLoadingState());
+    try {
+      final response = await _localApi.get(getAll: true);
+
+      response.fold((left) => emit(UploadMyListFailedState(left)),
+          (right) async {
+        final user = await LocalStorageService.getUserData();
+
+        final uploadResponse = await _api.uploadMyList(
+            userId: user!.userId, animeList: right.data ?? []);
+
+        uploadResponse.fold(
+          (left) => emit(UploadMyListFailedState(left)),
+          (right) => emit(UploadMyListLoadedState()),
+        );
+      });
+    } catch (e) {
+      emit(UploadMyListFailedState(e.toString()));
+    }
   }
 
   _deleteMyList(DeleteMyListEvent event, Emitter<MyListState> emit) async {

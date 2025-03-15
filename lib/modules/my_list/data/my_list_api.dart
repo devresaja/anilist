@@ -7,7 +7,7 @@ class MyListApi {
   final _firestore = FirebaseFirestore.instance;
 
   /// 🔹 Upload semua list anime user ke Firestore (overwrite dengan hapus koleksi)
-  Future<Either<String, void>> uploadAnimeList({
+  Future<Either<String, void>> uploadMyList({
     required String userId,
     required List<Anime> animeList,
   }) async {
@@ -35,7 +35,7 @@ class MyListApi {
   }
 
   /// 🔹 Download semua list anime user dari Firestore
-  Future<Either<String, List<Anime>>> downloadAnimeList({
+  Future<Either<String, List<Anime>>> downloadMyList({
     required String userId,
   }) async {
     try {

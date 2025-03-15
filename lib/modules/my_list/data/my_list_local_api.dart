@@ -11,16 +11,16 @@ class MyListLocalApi {
   Future<Either<String, Pagination<Anime>>> get({
     int page = 1,
     int limit = 10,
+    bool getAll = false,
   }) async {
     try {
       final db = await _dbInstance.database;
-      final offset = (page - 1) * limit;
 
       final List<Map<String, dynamic>> maps = await db.query(
         LocalDatabaseService.tableAnime,
         orderBy: 'createdAt DESC',
-        limit: limit,
-        offset: offset,
+        limit: getAll ? null : limit,
+        offset: getAll ? null : (page - 1) * limit,
       );
 
       final animeList = maps.map((map) => Anime.fromJson({...map})).toList();
