@@ -1,7 +1,6 @@
 import 'package:anilist/global/model/anime.dart';
 import 'package:anilist/modules/my_list/data/my_list_api.dart';
 import 'package:anilist/modules/my_list/data/my_list_local_api.dart';
-import 'package:anilist/services/local_storage_service.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -17,6 +16,31 @@ class MyListBloc extends Bloc<MyListEvent, MyListState> {
     on<AddMyListEvent>(_addMyList);
     on<DeleteMyListEvent>(_deleteMyList);
     on<UploadMyListEvent>(_uploadMyList);
+    on<DownloadMyListEvent>(_downloadMyList);
+    on<CheckMyListEvent>(_checkMyList);
+  }
+
+  _checkMyList(CheckMyListEvent event, Emitter<MyListState> emit) async {
+    emit(CheckMyListLoadingState());
+    try {
+      final response = await _localApi.checkMyList(event.anime.malId);
+      emit(CheckMyListLoadedState(response));
+    } catch (e) {
+      emit(CheckMyListFailedState(e.toString()));
+    }
+  }
+
+  _downloadMyList(DownloadMyListEvent event, Emitter<MyListState> emit) async {
+    emit(DownloadMyListLoadingState());
+    try {
+      final animes = await _api.downloadMyList();
+
+      await _localApi.replace(animes);
+
+      emit(DownloadMyListLoadedState());
+    } catch (e) {
+      emit(DownloadMyListFailedState(e.toString()));
+    }
   }
 
   _uploadMyList(UploadMyListEvent event, Emitter<MyListState> emit) async {
@@ -24,18 +48,9 @@ class MyListBloc extends Bloc<MyListEvent, MyListState> {
     try {
       final response = await _localApi.get(getAll: true);
 
-      response.fold((left) => emit(UploadMyListFailedState(left)),
-          (right) async {
-        final user = await LocalStorageService.getUserData();
+      await _api.uploadMyList(animeList: response.data ?? []);
 
-        final uploadResponse = await _api.uploadMyList(
-            userId: user!.userId, animeList: right.data ?? []);
-
-        uploadResponse.fold(
-          (left) => emit(UploadMyListFailedState(left)),
-          (right) => emit(UploadMyListLoadedState()),
-        );
-      });
+      emit(UploadMyListLoadedState());
     } catch (e) {
       emit(UploadMyListFailedState(e.toString()));
     }
@@ -44,11 +59,8 @@ class MyListBloc extends Bloc<MyListEvent, MyListState> {
   _deleteMyList(DeleteMyListEvent event, Emitter<MyListState> emit) async {
     emit(DeleteMyListLoadingState());
     try {
-      final response = await _localApi.delete(event.malId);
-      response.fold(
-        (left) => emit(DeleteMyListFailedState(left)),
-        (right) => emit(DeleteMyListLoadedState()),
-      );
+      await _localApi.delete(event.malId);
+      emit(DeleteMyListLoadedState(event.malId));
     } catch (e) {
       emit(DeleteMyListFailedState(e.toString()));
     }
@@ -57,11 +69,8 @@ class MyListBloc extends Bloc<MyListEvent, MyListState> {
   _addMyList(AddMyListEvent event, Emitter<MyListState> emit) async {
     emit(AddMyListLoadingState());
     try {
-      final response = await _localApi.add(event.anime);
-      response.fold(
-        (left) => emit(AddMyListFailedState(left)),
-        (right) => emit(AddMyListLoadedState()),
-      );
+      await _localApi.add(event.anime);
+      emit(AddMyListLoadedState(event.anime));
     } catch (e) {
       emit(AddMyListFailedState(e.toString()));
     }
@@ -72,19 +81,18 @@ class MyListBloc extends Bloc<MyListEvent, MyListState> {
     try {
       final response =
           await _localApi.get(page: event.page, limit: event.limit);
-      response.fold(
-        (left) => emit(GetMyListFailedState(left)),
-        (right) {
-          if (right.data?.isNotEmpty ?? false) {
-            emit(GetMyListLoadedState(right.data!));
-            if (!right.hasNextPage) {
-              emit(GetMyListMaximumState());
-            }
-          } else {
-            emit(GetMyListEmptyState());
-          }
-        },
-      );
+
+      if (response.data?.isNotEmpty ?? false) {
+        emit(GetMyListLoadedState(
+          totalItems: response.totalItems,
+          data: response.data!,
+        ));
+        if (!response.hasNextPage) {
+          emit(GetMyListMaximumState());
+        }
+      } else {
+        emit(GetMyListEmptyState());
+      }
     } catch (e) {
       emit(GetMyListFailedState(e.toString()));
     }

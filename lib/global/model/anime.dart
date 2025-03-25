@@ -73,16 +73,38 @@ class Anime {
       synopsis: json["synopsis"],
       season: json["season"],
       year: json["year"],
-      images: json["images"] != null ? Images.fromJson(json["images"]) : null,
-      trailer:
-          json["trailer"] != null ? Trailer.fromJson(json["trailer"]) : null,
-      genres: json["genres"] != null
-          ? (json["genres"] as List)
-              .map((genre) => Genre.fromJson(genre))
-              .toList()
+      images: json["images"] != null
+          ? (json["images"] is String
+              ? Images.fromJson(jsonDecode(json["images"]))
+              : Images.fromJson(json["images"]))
           : null,
-      createdAt: DateTime.now(),
+      trailer: json["trailer"] != null
+          ? (json["trailer"] is String
+              ? Trailer.fromJson(jsonDecode(json["trailer"]))
+              : Trailer.fromJson(json["trailer"]))
+          : null,
+      genres: json["genres"] != null
+          ? json["genres"] is String
+              ? (jsonDecode(json["genres"]) as List)
+                  .map((genre) => Genre.fromJson(genre))
+                  .toList()
+              : (json["genres"] as List?)
+                      ?.map((genre) => Genre.fromJson(genre))
+                      .toList() ??
+                  []
+          : null,
+      createdAt: _parseCreatedAt(json["created_at"]),
     );
+  }
+
+  static DateTime _parseCreatedAt(dynamic createdAt) {
+    if (createdAt == null) return DateTime.now();
+
+    if (createdAt is String) {
+      return DateTime.tryParse(createdAt) ?? DateTime.now();
+    }
+
+    return DateTime.now();
   }
 
   Map<String, dynamic> toJson() {

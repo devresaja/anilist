@@ -12,9 +12,13 @@ final class MyListInitial extends MyListState {}
 final class GetMyListLoadingState extends MyListState {}
 
 final class GetMyListLoadedState extends MyListState {
+  final int totalItems;
   final List<Anime> data;
 
-  const GetMyListLoadedState(this.data);
+  const GetMyListLoadedState({
+    required this.totalItems,
+    required this.data,
+  });
 }
 
 final class GetMyListEmptyState extends MyListState {}
@@ -27,9 +31,27 @@ final class GetMyListFailedState extends MyListState {
   const GetMyListFailedState(this.message);
 }
 
+final class CheckMyListLoadingState extends MyListState {}
+
+final class CheckMyListLoadedState extends MyListState {
+  final bool isMyList;
+
+  const CheckMyListLoadedState(this.isMyList);
+}
+
+final class CheckMyListFailedState extends MyListState {
+  final String message;
+
+  const CheckMyListFailedState(this.message);
+}
+
 final class AddMyListLoadingState extends MyListState {}
 
-final class AddMyListLoadedState extends MyListState {}
+final class AddMyListLoadedState extends MyListState {
+  final Anime anime;
+
+  const AddMyListLoadedState(this.anime);
+}
 
 final class AddMyListFailedState extends MyListState {
   final String message;
@@ -39,7 +61,11 @@ final class AddMyListFailedState extends MyListState {
 
 final class DeleteMyListLoadingState extends MyListState {}
 
-final class DeleteMyListLoadedState extends MyListState {}
+final class DeleteMyListLoadedState extends MyListState {
+  final int malId;
+
+  const DeleteMyListLoadedState(this.malId);
+}
 
 final class DeleteMyListFailedState extends MyListState {
   final String message;

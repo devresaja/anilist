@@ -61,6 +61,7 @@ Future<dynamic> showConfirmationDialog({
   required BuildContext context,
   required String title,
   String? description,
+  String? infoText,
   String? okText,
   String? cancelText,
   Function()? onTapOk,
@@ -94,6 +95,13 @@ Future<dynamic> showConfirmationDialog({
                     textAlign: TextAlign.center,
                     fontSize: 14,
                     color: AppColor.whiteAccent,
+                  ),
+                if (infoText != null) divide4,
+                if (infoText != null)
+                  TextWidget(
+                    infoText,
+                    fontSize: 12,
+                    color: AppColor.errorText,
                   ),
                 divide12,
                 Row(

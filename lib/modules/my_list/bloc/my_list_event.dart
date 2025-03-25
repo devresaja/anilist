@@ -17,6 +17,12 @@ final class GetMyListEvent extends MyListEvent {
   });
 }
 
+final class CheckMyListEvent extends MyListEvent {
+  final Anime anime;
+
+  const CheckMyListEvent(this.anime);
+}
+
 final class AddMyListEvent extends MyListEvent {
   final Anime anime;
 

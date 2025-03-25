@@ -30,10 +30,10 @@ class LocalDatabaseService {
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE $tableAnime (
-            malId INTEGER PRIMARY KEY,
+            mal_id INTEGER PRIMARY KEY,
             title TEXT,
-            titleEnglish TEXT,
-            titleJapanese TEXT,
+            title_english TEXT,
+            title_japanese TEXT,
             type TEXT,
             episodes INTEGER,
             score REAL,
@@ -44,7 +44,7 @@ class LocalDatabaseService {
             images TEXT,
             trailer TEXT,
             genres TEXT,
-            createdAt TEXT
+            created_at TEXT
           )
         ''');
       },

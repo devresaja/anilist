@@ -124,7 +124,7 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
         icon: Icon(
           Icons.mic,
           size: 28,
-          color: Colors.grey,
+          color: AppColor.whiteAccent,
         ));
   }
 }

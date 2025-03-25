@@ -7,6 +7,7 @@ import 'package:anilist/core/theme/theme.config.dart';
 import 'package:anilist/modules/ads/data/admob_api.dart';
 import 'package:anilist/modules/auth/screen/login_screen.dart';
 import 'package:anilist/modules/dashboard/screen/dashboard_screen.dart';
+import 'package:anilist/modules/my_list/bloc/my_list_bloc.dart';
 import 'package:anilist/services/local_database_service.dart';
 import 'package:anilist/services/local_storage_service.dart';
 import 'package:anilist/services/notification_service.dart';
@@ -106,8 +107,15 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => _appBloc,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => _appBloc,
+        ),
+        BlocProvider(
+          create: (context) => MyListBloc(),
+        ),
+      ],
       child: ScreenUtilInit(
         designSize: const Size(360, 690),
         minTextAdapt: true,

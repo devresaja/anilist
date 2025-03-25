@@ -1,87 +1,88 @@
 import 'dart:developer';
 import 'package:anilist/global/model/anime.dart';
+import 'package:anilist/services/local_storage_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:either_dart/either.dart';
 
 class MyListApi {
   final _firestore = FirebaseFirestore.instance;
 
-  /// 🔹 Upload semua list anime user ke Firestore (overwrite dengan hapus koleksi)
-  Future<Either<String, void>> uploadMyList({
-    required String userId,
+  Future<void> _uploadUserData() async {
+    final userData = await LocalStorageService.getUserData();
+
+    log('Uploading user data for user: ${userData!.userId}');
+
+    await _firestore.collection('users').doc(userData.userId).set(
+      {
+        'user_id': userData.userId,
+        'name': userData.name,
+        'email': userData.email,
+        'avatar': userData.avatar,
+        "expires_at": Timestamp.fromDate(DateTime.now().add(Duration(days: 14)))
+      },
+    );
+  }
+
+  /// 🔹 Upload semua list anime user ke Firestore dengan Paging
+  Future<void> uploadMyList({
     required List<Anime> animeList,
   }) async {
-    try {
-      log('Uploading anime list for user: $userId');
+    await _uploadUserData();
 
-      // Hapus koleksi lama
-      final deleteResult = await _deleteAnimeCollection(userId);
-      if (deleteResult.isLeft) return deleteResult;
+    final userData = await LocalStorageService.getUserData();
 
-      // Tambah data baru pakai batch
-      final batch = _firestore.batch();
-      final animeCollection = _getUserAnimeCollection(userId);
+    final userId = userData!.userId;
+    const int maxPerPage = 120;
 
-      for (var anime in animeList) {
-        batch.set(animeCollection.doc(anime.malId.toString()), anime);
-      }
+    log('Uploading anime list for user: $userId');
 
-      await batch.commit();
-      return const Right(null);
-    } catch (e) {
-      log('Error uploading anime list: $e');
-      return Left(e.toString());
+    final batch = _firestore.batch();
+    final userCollection =
+        _firestore.collection('users').doc(userId).collection('anime_list');
+
+    // Bagi data ke dalam beberapa dokumen
+    int page = 1;
+    for (int i = 0; i < animeList.length; i += maxPerPage) {
+      final sublist = animeList.sublist(
+          i,
+          (i + maxPerPage > animeList.length)
+              ? animeList.length
+              : i + maxPerPage);
+      final pageDoc = userCollection.doc("page_$page");
+
+      batch.set(pageDoc, {
+        "page": page,
+        "data": sublist.map((anime) => anime.toJson()).toList(),
+        "expires_at": Timestamp.fromDate(DateTime.now().add(Duration(days: 14)))
+      });
+
+      page++;
     }
+
+    await batch.commit();
   }
 
-  /// 🔹 Download semua list anime user dari Firestore
-  Future<Either<String, List<Anime>>> downloadMyList({
-    required String userId,
-  }) async {
-    try {
-      log('Downloading anime list for user: $userId');
-      final querySnapshot = await _getUserAnimeCollection(userId)
-          .orderBy('createdAt', descending: true)
-          .get();
+  /// 🔹 Download semua list anime user dari Firestore dengan Paging
+  Future<List<Anime>> downloadMyList() async {
+    final userData = await LocalStorageService.getUserData();
+    final userId = userData!.userId;
 
-      final animeList = querySnapshot.docs.map((doc) => doc.data()).toList();
-      return Right(animeList);
-    } catch (e) {
-      log('Error downloading anime list: $e');
-      return Left(e.toString());
-    }
-  }
+    log('Downloading anime list for user: $userId');
 
-  /// 🔹 Hapus seluruh koleksi anime user dari Firestore
-  Future<Either<String, void>> _deleteAnimeCollection(String userId) async {
-    try {
-      log('Deleting anime collection for user: $userId');
-      final animeCollection = _getUserAnimeCollection(userId);
-
-      final snapshot = await animeCollection.get();
-      final batch = _firestore.batch();
-
-      for (var doc in snapshot.docs) {
-        batch.delete(doc.reference);
-      }
-
-      await batch.commit();
-      return const Right(null);
-    } catch (e) {
-      log('Error deleting anime collection: $e');
-      return Left(e.toString());
-    }
-  }
-
-  /// 🔹 Referensi koleksi anime user dengan `withConverter()`
-  CollectionReference<Anime> _getUserAnimeCollection(String userId) {
-    return _firestore
+    final querySnapshot = await _firestore
         .collection('users')
         .doc(userId)
-        .collection('animeList')
-        .withConverter<Anime>(
-          fromFirestore: (snapshot, _) => Anime.fromJson(snapshot.data()!),
-          toFirestore: (anime, _) => anime.toJson(),
-        );
+        .collection('anime_list')
+        .orderBy('page')
+        .get();
+
+    log('Total Documents Read: ${querySnapshot.docs.length}');
+
+    // Ambil semua data tanpa loop manual
+    final animeList = querySnapshot.docs
+        .expand((doc) => (doc.data()['data'] as List<dynamic>)
+            .map((json) => Anime.fromJson(json)))
+        .toList();
+
+    return animeList;
   }
 }
