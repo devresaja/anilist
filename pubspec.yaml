@@ -43,7 +43,6 @@ dependencies:
   envied: ^0.5.4+1
   equatable: ^2.0.5
   extended_nested_scroll_view: ^6.2.1
-  fast_cached_network_image: ^1.2.9
   firebase_auth: ^5.1.4
   firebase_core: ^3.3.0
   firebase_crashlytics: ^4.2.0
@@ -67,6 +66,8 @@ dependencies:
   speech_to_text: ^7.0.0
   unity_ads_plugin: ^0.3.20
   url_launcher: ^6.3.1
+  sqflite: ^2.4.1
+  path: ^1.9.0
 
 dev_dependencies:
   build_runner: ^2.4.11

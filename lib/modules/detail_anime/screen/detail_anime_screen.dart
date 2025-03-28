@@ -1,8 +1,7 @@
-import 'dart:developer';
-
 import 'package:anilist/modules/ads/bloc/ads_bloc.dart';
 import 'package:anilist/modules/detail_anime/bloc/detail_anime_bloc.dart';
 import 'package:anilist/global/model/anime.dart';
+import 'package:anilist/modules/my_list/components/my_list_button.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/page/view_handler_widget.dart';
 import 'package:flutter/material.dart';
@@ -147,39 +146,51 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
                     fontSize: 22,
                     weight: FontWeight.bold,
                   ),
-
                   divide10,
+
                   //genre
-                  SizedBox(
-                    height: 30,
-                    child: ListView.builder(
+                  if (_data!.genres?.isNotEmpty ?? false)
+                    SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      itemCount: _data!.genres?.length,
-                      itemBuilder: (context, index) {
-                        final genre = _data!.genres![index];
-                        return Padding(
-                          padding: EdgeInsets.only(
-                              right: MediaQuery.sizeOf(context).width * 0.02),
-                          child: Container(
-                            padding: const EdgeInsets.only(
-                                right: 4, left: 4, top: 1, bottom: 1),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: AppColor.primary),
-                              borderRadius: BorderRadius.circular(10),
-                              color: AppColor.secondary,
-                            ),
-                            child: Center(
-                                child: TextWidget(
-                              genre.name ?? '-',
-                              fontSize: 13,
-                              color: Colors.white,
-                            )),
-                          ),
-                        );
-                      },
+                      child: Row(
+                        children: _data!.genres!
+                            .map((genre) => Padding(
+                                  padding: EdgeInsets.only(
+                                      right: MediaQuery.sizeOf(context).width *
+                                          0.02),
+                                  child: Container(
+                                    padding: const EdgeInsets.only(
+                                        right: 4, left: 4, top: 1, bottom: 1),
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: AppColor.primary),
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: AppColor.secondary,
+                                    ),
+                                    child: Center(
+                                        child: TextWidget(
+                                      genre.name ?? '-',
+                                      fontSize: 13,
+                                      color: Colors.white,
+                                    )),
+                                  ),
+                                ))
+                            .toList(),
+                      ),
+                    ),
+                  if (_data!.genres?.isNotEmpty ?? false) divide16,
+
+                  // menu
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        MyListButton(anime: _data!),
+                      ],
                     ),
                   ),
-                  divide28,
+
+                  divide10,
                   //synopsis
                   TextWidget(
                     _data!.synopsis ?? '-',
@@ -217,8 +228,6 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
         }
       },
       builder: (context, state) {
-        log(state.toString());
-
         return GestureDetector(
           onTap: state is ShowRewardedAdLoadingState
               ? null

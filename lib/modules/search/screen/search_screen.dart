@@ -152,7 +152,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 .map((anime) => AnimeCard(
                       width: 160,
                       height: 200,
-                      animeId: anime.malId!,
+                      animeId: anime.malId,
                       imageUrl: anime.images?.jpg?.imageUrl,
                       score: anime.score,
                       title: anime.title,

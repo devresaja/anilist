@@ -1,6 +1,7 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/modules/account/screen/account_screen.dart';
 import 'package:anilist/modules/home/screen/home_screen.dart';
+import 'package:anilist/modules/my_list/screen/my_list_screen.dart';
 import 'package:anilist/services/remote_config_service.dart';
 import 'package:anilist/services/session_service.dart';
 import 'package:anilist/utils/view_utils.dart';
@@ -20,7 +21,11 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
 
-  final _pages = <Widget>[const HomeScreen(), AccountScreen()];
+  final _pages = <Widget>[
+    const HomeScreen(),
+    MyListScreen(),
+    AccountScreen(),
+  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -68,6 +73,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     items: const [
                       BottomNavigationBarItem(
                           icon: Icon(Icons.home_filled), label: 'Home'),
+                      BottomNavigationBarItem(
+                          icon: Icon(Icons.my_library_books_rounded),
+                          label: 'My List'),
                       BottomNavigationBarItem(
                           icon: Icon(Icons.person), label: 'Account'),
                     ],
