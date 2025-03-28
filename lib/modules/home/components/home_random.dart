@@ -151,7 +151,7 @@ class _HomeRandomState extends State<HomeRandom> {
                                         pushTo(context,
                                             screen: DetailAnimeScreen(
                                                 argument: DetailAnimeArgument(
-                                                    animeId: _data!.malId!)));
+                                                    animeId: _data!.malId)));
                                       },
                                       text: 'See detail',
                                       textColor: Colors.black,
@@ -174,7 +174,7 @@ class _HomeRandomState extends State<HomeRandom> {
           Positioned(
             right: 28,
             child: AnimeCard(
-              animeId: _data!.malId!,
+              animeId: _data!.malId,
               imageOnly: true,
               width: 70,
               height: 110,

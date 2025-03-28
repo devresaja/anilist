@@ -9,6 +9,7 @@ class LocalDatabaseService {
   LocalDatabaseService._internal();
 
   static Database? _database;
+  static const String _dbName = 'anilist.db';
   static const String tableAnime = 'anime';
 
   Future<void> init() async {
@@ -23,7 +24,7 @@ class LocalDatabaseService {
   }
 
   Future<Database> _initDB() async {
-    final path = join(await getDatabasesPath(), 'anime_list.db');
+    final path = join(await getDatabasesPath(), _dbName);
     return await openDatabase(
       path,
       version: 1,

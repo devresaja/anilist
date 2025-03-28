@@ -73,7 +73,7 @@ class _AnimeListWidgetState extends State<AnimeListWidget> {
         children: List.generate(_animes.length, (index) {
           final anime = _animes[index];
           return AnimeCard(
-            animeId: anime.malId!,
+            animeId: anime.malId,
             imageUrl: anime.images?.jpg?.imageUrl,
             score: anime.score,
             title: anime.title,

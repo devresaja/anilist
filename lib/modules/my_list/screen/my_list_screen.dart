@@ -1,6 +1,9 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
+import 'package:anilist/core/routes/route.dart';
+import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/global/model/anime.dart';
+import 'package:anilist/modules/auth/screen/login_screen.dart';
 import 'package:anilist/modules/home/components/anime_card.dart';
 import 'package:anilist/modules/my_list/bloc/my_list_bloc.dart';
 import 'package:anilist/utils/view_utils.dart';
@@ -56,7 +59,7 @@ class _MyListScreenState extends State<MyListScreen> {
     });
   }
 
-  int? _totalItems;
+  late int _totalItems;
   final _animes = <Anime>[];
 
   void _updateViewMode(ViewMode value) {
@@ -100,11 +103,16 @@ class _MyListScreenState extends State<MyListScreen> {
                 // Add
                 else if (state is AddMyListLoadedState) {
                   _animes.insert(0, state.anime);
+                  _totalItems++;
                 }
                 // Delete
                 else if (state is DeleteMyListLoadedState) {
                   _animes
                       .removeWhere((element) => element.malId == state.malId);
+                  _totalItems--;
+                  if (_animes.isEmpty) {
+                    _updateViewMode(ViewMode.empty);
+                  }
                 }
               },
               builder: (context, state) {
@@ -151,7 +159,7 @@ class _MyListScreenState extends State<MyListScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16),
-              child: TextWidget('Total Anime ${_totalItems ?? '...'}'),
+              child: TextWidget('Total Anime $_totalItems'),
             ),
             ...items,
             if (_viewMode == ViewMode.loadMore) ...[
@@ -203,6 +211,8 @@ class _MyListScreenState extends State<MyListScreen> {
                               state is DownloadMyListLoadingState)
                           ? null
                           : () {
+                              if (!_isLogin()) return;
+
                               showConfirmationDialog(
                                 context: context,
                                 title: 'Download from cloud save',
@@ -223,6 +233,8 @@ class _MyListScreenState extends State<MyListScreen> {
                               state is DownloadMyListLoadingState)
                           ? null
                           : () {
+                              if (!_isLogin()) return;
+
                               showConfirmationDialog(
                                 context: context,
                                 title: 'Upload to cloud save',
@@ -247,5 +259,19 @@ class _MyListScreenState extends State<MyListScreen> {
         );
       },
     );
+  }
+
+  bool _isLogin() {
+    if (context.read<AppBloc>().state.user == null) {
+      showConfirmationDialog(
+        context: context,
+        title: 'Access Denied',
+        description: 'Please log in to continue.',
+        okText: 'Log In',
+        onTapOk: () => pushAndRemoveUntil(context, screen: LoginScreen()),
+      );
+      return false;
+    }
+    return true;
   }
 }

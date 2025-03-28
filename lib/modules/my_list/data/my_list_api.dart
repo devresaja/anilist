@@ -22,7 +22,6 @@ class MyListApi {
     );
   }
 
-  /// 🔹 Upload semua list anime user ke Firestore dengan Paging
   Future<void> uploadMyList({
     required List<Anime> animeList,
   }) async {
@@ -31,7 +30,7 @@ class MyListApi {
     final userData = await LocalStorageService.getUserData();
 
     final userId = userData!.userId;
-    const int maxPerPage = 120;
+    const int maxPerPage = 150;
 
     log('Uploading anime list for user: $userId');
 
@@ -39,7 +38,20 @@ class MyListApi {
     final userCollection =
         _firestore.collection('users').doc(userId).collection('anime_list');
 
-    // Bagi data ke dalam beberapa dokumen
+    // Delete all and return if list empty
+    if (animeList.isEmpty) {
+      final snapshot = await userCollection.get();
+      final batch = _firestore.batch();
+
+      for (var doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+
+      await batch.commit();
+      return;
+    }
+
+    // Split data per page
     int page = 1;
     for (int i = 0; i < animeList.length; i += maxPerPage) {
       final sublist = animeList.sublist(
@@ -61,7 +73,6 @@ class MyListApi {
     await batch.commit();
   }
 
-  /// 🔹 Download semua list anime user dari Firestore dengan Paging
   Future<List<Anime>> downloadMyList() async {
     final userData = await LocalStorageService.getUserData();
     final userId = userData!.userId;
@@ -75,9 +86,6 @@ class MyListApi {
         .orderBy('page')
         .get();
 
-    log('Total Documents Read: ${querySnapshot.docs.length}');
-
-    // Ambil semua data tanpa loop manual
     final animeList = querySnapshot.docs
         .expand((doc) => (doc.data()['data'] as List<dynamic>)
             .map((json) => Anime.fromJson(json)))
