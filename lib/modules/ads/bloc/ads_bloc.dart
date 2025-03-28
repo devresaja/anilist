@@ -25,7 +25,9 @@ class AdsBloc extends Bloc<AdsEvent, AdsState> {
       // Check remaining attempt
       // If attempt is not 0, decrease attempt and continue
       // If ad is shown successfully, reset attempts based on reward responses
-      final attempt = await LocalStorageService.getRemainingTrailerAttempt();
+
+      final attempt = await LocalStorageService.getRemainingAdsAttempt(
+          adsType: event.adsType);
 
       if (attempt <= 0) {
         // show confirmation dialog if isCheckAttempt is true
@@ -37,9 +39,13 @@ class AdsBloc extends Bloc<AdsEvent, AdsState> {
         final completer = Completer<void>();
 
         await AdMobService.showRewardedAd(
+          adsType: event.adsType,
           onComplete: (reward) async {
-            await LocalStorageService.setRemainingTrailerAttempt(
-                reward.amount.toInt());
+            await LocalStorageService.setRemainingAdsAttempt(
+              adsType: event.adsType,
+              value: reward.amount.toInt(),
+            );
+
             emit(ShowRewardedAdLoadedState());
             completer.complete();
           },
@@ -48,14 +54,17 @@ class AdsBloc extends Bloc<AdsEvent, AdsState> {
             completer.complete();
           },
           onFailed: (e) {
-            emit(ShowRewardedAdFailedState(e));
+            emit(ShowRewardedAdLoadedState());
+            // emit(ShowRewardedAdFailedState(e));
             completer.complete();
           },
         );
 
         await completer.future;
       } else {
-        await LocalStorageService.setRemainingTrailerAttempt(attempt - 1);
+        await LocalStorageService.setRemainingAdsAttempt(
+            adsType: event.adsType, value: attempt - 1);
+
         emit(ShowRewardedAdLoadedState());
       }
     } catch (e) {

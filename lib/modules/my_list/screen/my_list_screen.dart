@@ -3,6 +3,8 @@ import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/global/model/anime.dart';
+import 'package:anilist/modules/ads/bloc/ads_bloc.dart';
+import 'package:anilist/modules/ads/data/admob_api.dart';
 import 'package:anilist/modules/auth/screen/login_screen.dart';
 import 'package:anilist/modules/home/components/anime_card.dart';
 import 'package:anilist/modules/my_list/bloc/my_list_bloc.dart';
@@ -42,6 +44,10 @@ class _MyListScreenState extends State<MyListScreen> {
     _currentPage++;
     _getBloc();
   }
+
+  final _adsBloc = AdsBloc();
+  bool _isLoadingCloud = false;
+  VoidCallback? _pendingCloudAction;
 
   @override
   void initState() {
@@ -178,86 +184,128 @@ class _MyListScreenState extends State<MyListScreen> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return BlocConsumer<MyListBloc, MyListState>(
-      listener: (context, state) {
-        // Download
-        if (state is DownloadMyListLoadedState) {
-          _refreshBloc();
-          showCustomSnackBar('Succesfully downloaded');
-        } else if (state is DownloadMyListFailedState) {
-          showCustomSnackBar(state.message, isSuccess: false);
-        }
-        // Upload
-        else if (state is UploadMyListLoadedState) {
-          showCustomSnackBar('Succesfully uploaded');
-        } else if (state is UploadMyListFailedState) {
-          showCustomSnackBar(state.message, isSuccess: false);
-        }
-      },
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextWidget(
-                'My List',
-                fontSize: 16,
-              ),
-              Row(
+    return BlocProvider(
+      create: (context) => _adsBloc,
+      child: BlocListener<AdsBloc, AdsState>(
+        listener: (context, state) {
+          if (state is ShowRewardedAdConfirmationState) {
+            showConfirmationDialog(
+                context: context,
+                title: 'Watch ads to continue',
+                okText: 'Watch',
+                onTapOk: () {
+                  Navigator.pop(context);
+                  _adsBloc.add(ShowRewardedAdEvent(
+                      adsType: AdsType.mylist, isCheckAttempt: false));
+                });
+          } else if (state is ShowRewardedAdLoadedState) {
+            _pendingCloudAction?.call();
+            _pendingCloudAction = null;
+          } else if (state is ShowRewardedAdSkippedState) {
+            showCustomSnackBar('Please watch the ad to continue',
+                isSuccess: false);
+          } else if (state is ShowRewardedAdFailedState) {
+            showCustomSnackBar(state.message, isSuccess: false);
+          }
+        },
+        child: BlocConsumer<MyListBloc, MyListState>(
+          listener: (context, state) {
+            // Download
+            if (state is DownloadMyListLoadingState) {
+              _isLoadingCloud = true;
+            } else if (state is DownloadMyListLoadedState) {
+              _refreshBloc();
+              showCustomSnackBar('Succesfully downloaded');
+              _isLoadingCloud = false;
+            } else if (state is DownloadMyListFailedState) {
+              showCustomSnackBar(state.message, isSuccess: false);
+              _isLoadingCloud = false;
+            }
+            // Upload
+            else if (state is UploadMyListLoadingState) {
+              _isLoadingCloud = true;
+            } else if (state is UploadMyListLoadedState) {
+              showCustomSnackBar('Succesfully uploaded');
+              _isLoadingCloud = false;
+            } else if (state is UploadMyListFailedState) {
+              showCustomSnackBar(state.message, isSuccess: false);
+              _isLoadingCloud = false;
+            }
+          },
+          builder: (context, state) {
+            return Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(
-                      onPressed: (state is UploadMyListLoadingState ||
-                              state is DownloadMyListLoadingState)
-                          ? null
-                          : () {
-                              if (!_isLogin()) return;
+                  TextWidget(
+                    'My List',
+                    fontSize: 16,
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                          onPressed: _isLoadingCloud
+                              ? null
+                              : () {
+                                  if (!_isLogin()) return;
 
-                              showConfirmationDialog(
-                                context: context,
-                                title: 'Download from cloud save',
-                                infoText:
-                                    '*This action will overwrite your current list.',
-                                onTapOk: () {
-                                  Navigator.pop(context);
-                                  _myListBloc.add(DownloadMyListEvent());
+                                  showConfirmationDialog(
+                                    context: context,
+                                    title: 'Download from cloud save',
+                                    infoText:
+                                        '*This action will overwrite your current list.',
+                                    onTapOk: () {
+                                      Navigator.pop(context);
+                                      _pendingCloudAction = () {
+                                        _myListBloc.add(DownloadMyListEvent());
+                                      };
+                                      _adsBloc.add(ShowRewardedAdEvent(
+                                          adsType: AdsType.mylist,
+                                          isCheckAttempt: true));
+                                    },
+                                  );
                                 },
-                              );
-                            },
-                      icon: Icon(
-                        Icons.cloud_download,
-                        color: AppColor.whiteAccent,
-                      )),
-                  IconButton(
-                      onPressed: (state is UploadMyListLoadingState ||
-                              state is DownloadMyListLoadingState)
-                          ? null
-                          : () {
-                              if (!_isLogin()) return;
+                          icon: Icon(
+                            Icons.cloud_download,
+                            color: AppColor.whiteAccent,
+                          )),
+                      IconButton(
+                          onPressed: _isLoadingCloud
+                              ? null
+                              : () {
+                                  if (!_isLogin()) return;
 
-                              showConfirmationDialog(
-                                context: context,
-                                title: 'Upload to cloud save',
-                                description:
-                                    'Uploaded data expires in 14 days. Please upload regularly to avoid losing your data.',
-                                infoText:
-                                    '*This action will overwrite your existing cloud save.',
-                                onTapOk: () {
-                                  Navigator.pop(context);
-                                  _myListBloc.add(UploadMyListEvent());
+                                  showConfirmationDialog(
+                                    context: context,
+                                    title: 'Upload to cloud save',
+                                    description:
+                                        'Uploaded data expires in 14 days. Please upload regularly to avoid losing your data.',
+                                    infoText:
+                                        '*This action will overwrite your existing cloud save.',
+                                    onTapOk: () {
+                                      Navigator.pop(context);
+                                      _pendingCloudAction = () {
+                                        _myListBloc.add(UploadMyListEvent());
+                                      };
+                                      _adsBloc.add(ShowRewardedAdEvent(
+                                          adsType: AdsType.mylist,
+                                          isCheckAttempt: true));
+                                    },
+                                  );
                                 },
-                              );
-                            },
-                      icon: Icon(
-                        Icons.cloud_upload,
-                        color: AppColor.whiteAccent,
-                      )),
+                          icon: Icon(
+                            Icons.cloud_upload,
+                            color: AppColor.whiteAccent,
+                          )),
+                    ],
+                  )
                 ],
-              )
-            ],
-          ),
-        );
-      },
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 
