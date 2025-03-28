@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/auth/screen/login_screen.dart';
+import 'package:anilist/modules/my_list/data/my_list_local_api.dart';
 import 'package:anilist/services/local_storage_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -48,6 +49,7 @@ class SessionService {
       description: 'Your session has expired. Please login again.',
       okText: 'Login',
       onTapOk: () async {
+        await MyListLocalApi().clear();
         await LocalStorageService.removeValue();
         if (context.mounted) {
           pushAndRemoveUntil(context,

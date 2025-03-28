@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:anilist/global/model/user_data.dart';
+import 'package:anilist/modules/my_list/data/my_list_local_api.dart';
 import 'package:anilist/services/local_storage_service.dart';
 import 'package:either_dart/either.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,6 +12,7 @@ class AuthApi {
     try {
       await GoogleSignIn().signOut();
       await FirebaseAuth.instance.signOut();
+      await MyListLocalApi().clear();
       await LocalStorageService.removeValue();
       return Right(true);
     } catch (e) {

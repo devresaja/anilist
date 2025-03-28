@@ -93,4 +93,9 @@ class MyListLocalApi {
       await batch.commit(noResult: true);
     });
   }
+
+  Future<void> clear() async {
+    final db = await _dbInstance.database;
+    await db.delete(LocalDatabaseService.tableAnime);
+  }
 }
