@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/routes/navigator_key.dart';
 import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/modules/auth/screen/login_screen.dart';
 import 'package:anilist/widget/button/custom_button.dart';
+import 'package:anilist/widget/page/view_handler_widget.dart';
 import 'package:anilist/widget/text/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -157,5 +160,33 @@ Future<dynamic> showConfirmationDialog({
 Future<void> customLaunchUrl(String url) async {
   if (!await launchUrl(Uri.parse(url))) {
     showCustomSnackBar('Could not launch $url', isSuccess: false);
+  }
+}
+
+extension ScrollControllerExtension on ScrollController {
+  void addInfiniteScrollListener({
+    required ViewMode Function() viewMode,
+    required VoidCallback onLoadMore,
+    double offset = 600,
+  }) {
+    addListener(() {
+      log(position.pixels.toString());
+      if (position.pixels >= position.maxScrollExtent - offset) {
+        if (_canLoadMore(viewMode())) {
+          onLoadMore();
+        }
+      }
+    });
+  }
+}
+
+bool _canLoadMore(ViewMode viewMode) {
+  switch (viewMode) {
+    case ViewMode.loadMore:
+    case ViewMode.loading:
+    case ViewMode.loadMax:
+      return false;
+    default:
+      return true;
   }
 }
