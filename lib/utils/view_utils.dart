@@ -1,6 +1,8 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/routes/navigator_key.dart';
+import 'package:anilist/core/routes/route.dart';
+import 'package:anilist/modules/auth/screen/login_screen.dart';
 import 'package:anilist/widget/button/custom_button.dart';
 import 'package:anilist/widget/text/text_widget.dart';
 import 'package:flutter/material.dart';
@@ -55,6 +57,16 @@ void showCustomSnackBar(String text, {bool isSuccess = true}) {
       borderRadius: BorderRadius.circular(10),
     ),
   ));
+}
+
+void showAccessDeniedDialog(BuildContext context) {
+  showConfirmationDialog(
+    context: context,
+    title: 'Access Denied',
+    description: 'Please log in to continue.',
+    okText: 'Log In',
+    onTapOk: () => pushAndRemoveUntil(context, screen: LoginScreen()),
+  );
 }
 
 Future<dynamic> showConfirmationDialog({

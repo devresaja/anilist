@@ -1,11 +1,9 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
-import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/global/model/anime.dart';
 import 'package:anilist/modules/ads/bloc/ads_bloc.dart';
 import 'package:anilist/modules/ads/data/admob_api.dart';
-import 'package:anilist/modules/auth/screen/login_screen.dart';
 import 'package:anilist/modules/home/components/anime_card.dart';
 import 'package:anilist/modules/my_list/bloc/my_list_bloc.dart';
 import 'package:anilist/utils/view_utils.dart';
@@ -311,13 +309,7 @@ class _MyListScreenState extends State<MyListScreen> {
 
   bool _isLogin() {
     if (context.read<AppBloc>().state.user == null) {
-      showConfirmationDialog(
-        context: context,
-        title: 'Access Denied',
-        description: 'Please log in to continue.',
-        okText: 'Log In',
-        onTapOk: () => pushAndRemoveUntil(context, screen: LoginScreen()),
-      );
+      showAccessDeniedDialog(context);
       return false;
     }
     return true;
