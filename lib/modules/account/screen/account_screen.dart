@@ -1,6 +1,6 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
-import 'package:anilist/core/env/env.dart';
+import 'package:anilist/core/config/app_info.dart';
 import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/account/components/setting_card.dart';
@@ -147,7 +147,7 @@ class _AccountScreenState extends State<AccountScreen> {
       SettingCard(
         title: 'Leave a Review',
         titleColor: Colors.yellow,
-        description: Env.version,
+        description: AppInfo.version,
         onTap: () {
           customLaunchUrl(
               'https://play.google.com/store/apps/details?id=com.anilist.android');

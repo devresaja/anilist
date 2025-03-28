@@ -12,8 +12,6 @@ abstract class Env {
 
   static String get url => 'https://api.jikan.moe/v4';
 
-  static String get version => 'v1.0.2';
-
   static String get firebaseApiKey {
     switch (_envType) {
       case EnvType.prod:
