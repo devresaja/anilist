@@ -97,10 +97,14 @@ android {
     }
 
     buildTypes {
-         release {
+        release {
             signingConfig signingConfigs.release
             minifyEnabled true
             shrinkResources true
+        }
+
+        profile {
+            signingConfig signingConfigs.release
         }
 
         debug {
