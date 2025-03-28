@@ -8,6 +8,8 @@ PATTERNS=(
 
 # Check all files staged for commit
 for file in $(git diff --cached --name-only); do
+
+    # Check sensitive value
     for pattern in "${PATTERNS[@]}"; do
         if grep -E -q "$pattern" "$file"; then
             echo "❌ ERROR: Sensitive code detected in file '$file'."
@@ -15,7 +17,24 @@ for file in $(git diff --cached --name-only); do
             exit 1
         fi
     done
+    
+    # Check [override] in build.yaml
+    if [[ "$file" == "build.yaml" ]]; then
+        if ! grep -E -q 'override:\s*true' "$file"; then
+            echo "❌ ERROR: 'override' must be set to true in '$file' before committing."
+            exit 1
+        fi
+    fi
+
+    # Check [obfuscate] in env.dart
+    if [[ "$file" == *"env.dart" ]]; then
+        if ! grep -E -q 'obfuscate\s*=\s*true' "$file"; then
+            echo "❌ ERROR: 'obfuscate' must be set to true in '$file' before committing."
+            exit 1
+        fi
+    fi
+
 done
 
-echo "✅ No API Key leaks detected. Safe to commit!"
+echo "✅ Safe to commit!"
 exit 0

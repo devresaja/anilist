@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Dev",
+            "name": "Dev Debug",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
@@ -13,11 +13,35 @@
             ]
         },
         {
-            "name": "Launch Prod",
+            "name": "Dev Profile",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
             "args": [
+                "--profile",
+                "--flavor",
+                "dev",
+                "--dart-define=FLAVOR=dev"
+            ]
+        },
+        {
+            "name": "Prod Debug",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor",
+                "prod",
+                "--dart-define=FLAVOR=prod"
+            ]
+        },
+        {
+            "name": "Prod Profile",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--profile",
                 "--flavor",
                 "prod",
                 "--dart-define=FLAVOR=prod"
