@@ -1,4 +1,5 @@
 import 'package:anilist/modules/ads/bloc/ads_bloc.dart';
+import 'package:anilist/modules/ads/data/admob_api.dart';
 import 'package:anilist/modules/detail_anime/bloc/detail_anime_bloc.dart';
 import 'package:anilist/global/model/anime.dart';
 import 'package:anilist/modules/my_list/components/my_list_button.dart';
@@ -216,7 +217,8 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
               okText: 'Watch',
               onTapOk: () {
                 Navigator.pop(context);
-                _adsBloc.add(ShowRewardedAdEvent(isCheckAttempt: false));
+                _adsBloc.add(ShowRewardedAdEvent(
+                    adsType: AdsType.trailer, isCheckAttempt: false));
               });
         } else if (state is ShowRewardedAdLoadedState) {
           _podPlayerController?.play();
@@ -232,7 +234,8 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
           onTap: state is ShowRewardedAdLoadingState
               ? null
               : () {
-                  _adsBloc.add(ShowRewardedAdEvent(isCheckAttempt: true));
+                  _adsBloc.add(ShowRewardedAdEvent(
+                      adsType: AdsType.trailer, isCheckAttempt: true));
                 },
           child: Visibility(
               visible: state is! ShowRewardedAdLoadedState,

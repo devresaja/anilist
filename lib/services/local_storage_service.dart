@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:anilist/global/model/user_data.dart';
+import 'package:anilist/modules/ads/data/admob_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
@@ -8,15 +9,47 @@ class LocalStorageService {
   static const String isDarkMode = 'isDarkMode';
   static const String notificationSetting = 'notificationSetting';
   static const String remainingTrailerAttempt = 'remainingTrailerAttempt';
+  static const String remainingMylistAttempt = 'remainingMylistAttempt';
 
-  static Future<int> getRemainingTrailerAttempt() async {
+  static Future<int> getRemainingAdsAttempt({
+    required AdsType adsType,
+  }) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getInt(remainingTrailerAttempt) ?? 5;
+
+    late String key;
+    switch (adsType) {
+      case AdsType.trailer:
+        key = remainingTrailerAttempt;
+      case AdsType.mylist:
+        key = remainingMylistAttempt;
+    }
+
+    late int initialValue;
+    switch (adsType) {
+      case AdsType.trailer:
+        initialValue = 5;
+      case AdsType.mylist:
+        initialValue = 2;
+    }
+
+    return prefs.getInt(key) ?? initialValue;
   }
 
-  static Future<bool> setRemainingTrailerAttempt(int value) async {
+  static Future<bool> setRemainingAdsAttempt({
+    required AdsType adsType,
+    required int value,
+  }) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.setInt(remainingTrailerAttempt, value);
+
+    late String key;
+    switch (adsType) {
+      case AdsType.trailer:
+        key = remainingTrailerAttempt;
+      case AdsType.mylist:
+        key = remainingMylistAttempt;
+    }
+
+    return prefs.setInt(key, value);
   }
 
   static Future<bool> getNotificationSetting() async {
