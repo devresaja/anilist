@@ -53,17 +53,16 @@ class _SearchScreenState extends State<SearchScreen> {
   void initState() {
     super.initState();
     _searchController.text = widget.search;
+
     _getBloc();
 
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 600) {
-        if (_viewMode != ViewMode.loadMore && _viewMode != ViewMode.loading) {
-          _loadMore();
-          _updateViewMode(ViewMode.loadMore);
-        }
-      }
-    });
+    _scrollController.addInfiniteScrollListener(
+      viewMode: () => _viewMode,
+      onLoadMore: () {
+        _loadMore();
+        _updateViewMode(ViewMode.loadMore);
+      },
+    );
   }
 
   ViewMode _viewMode = ViewMode.loading;

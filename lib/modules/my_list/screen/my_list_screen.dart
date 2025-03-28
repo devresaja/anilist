@@ -52,15 +52,13 @@ class _MyListScreenState extends State<MyListScreen> {
     super.initState();
     _myListBloc = context.read<MyListBloc>();
     _getBloc();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 600) {
-        if (_viewMode != ViewMode.loadMore && _viewMode != ViewMode.loading) {
-          _loadMore();
-          _updateViewMode(ViewMode.loadMore);
-        }
-      }
-    });
+    _scrollController.addInfiniteScrollListener(
+      viewMode: () => _viewMode,
+      onLoadMore: () {
+        _loadMore();
+        _updateViewMode(ViewMode.loadMore);
+      },
+    );
   }
 
   late int _totalItems;
