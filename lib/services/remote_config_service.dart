@@ -1,4 +1,4 @@
-import 'package:anilist/core/env/env.dart';
+import 'package:anilist/core/config/app_info.dart';
 import 'package:anilist/core/routes/navigator_key.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -36,7 +36,8 @@ class RemoteConfigService {
   }
 
   void _checkForUpdate() {
-    String currentVersion = Env.version.replaceAll('v', '');
+    String currentVersion =
+        AppInfo.version.replaceAll('v', '').split('-').first;
     String latestVersion = _remoteConfig.getString('version');
     bool isForceUpdate = _remoteConfig.getBool('force_update');
 

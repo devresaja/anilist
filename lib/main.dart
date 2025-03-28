@@ -1,4 +1,4 @@
-import 'package:anilist/core/env/env.dart';
+import 'package:anilist/core/config/app_info.dart';
 import 'package:anilist/firebase_options.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/global/model/user_data.dart';
@@ -26,6 +26,8 @@ Future<void> main() async {
   // START Initializes services for private environment.
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  await AppInfo.init();
+
   await NotificationService.initNotification();
 
   // Sets up error handling with Firebase Crashlytics
@@ -36,7 +38,7 @@ Future<void> main() async {
   );
   FirebaseCrashlytics.instance.setCustomKey(
     'app_version',
-    Env.version,
+    AppInfo.appName,
   );
 
   FlutterError.onError = (errorDetails) {
@@ -121,7 +123,7 @@ class _MyAppState extends State<MyApp> {
         minTextAdapt: true,
         splitScreenMode: false,
         child: MaterialApp(
-          title: 'Anilist',
+          title: AppInfo.appName,
           theme: themeConfig(),
           navigatorKey: navigatorKey,
           debugShowCheckedModeBanner: kDebugMode,
