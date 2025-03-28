@@ -38,8 +38,9 @@ class AuthApi {
       final data = await FirebaseAuth.instance.signInWithCredential(credential);
 
       final userData = UserData(
-          name: data.user!.displayName!,
-          email: data.user!.email!,
+          userId: data.user!.uid,
+          name: data.user!.displayName ?? '-',
+          email: data.user!.email ?? '-',
           avatar: data.user!.photoURL);
 
       await LocalStorageService.setUserData(userData);
