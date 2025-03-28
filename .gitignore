@@ -18,6 +18,8 @@ migrate_working_dir/
 
 # Project related
 # Contains sensitive part that are not publishable
+lib/core/env/env_dev.g.dart
+lib/core/env/env_prod.g.dart
 lib/core/env/env.g.dart
 .crashlytics/
 symbols/

@@ -31,9 +31,14 @@ if (keystorePropertiesFile.exists()) {
 
 def envFile = file("${rootProject.projectDir.parent}/.env")
 def env = new Properties()
-
 if (envFile.exists()) {
     env.load(new FileInputStream(envFile))
+}
+
+def envDevFile = file("${rootProject.projectDir.parent}/.env.dev")
+def envDev = new Properties()
+if (envDevFile.exists()) {
+    envDev.load(new FileInputStream(envDevFile))
 }
 
 
@@ -62,8 +67,6 @@ android {
         versionName = flutterVersionName
 
         resValue "string", "app_name", "Anilist"
-
-        resValue "string", "admob_app_id", env.getProperty('admobAppId').replace("'", "")
     }
 
     flavorDimensions "flavor-type"
@@ -76,8 +79,12 @@ android {
         }
         prod {
             dimension "flavor-type"
-            resValue "string", "app_name", "Anilist"
         }
+    }
+
+    android.productFlavors.all { flavor ->
+        def envSource = flavor.name == "dev" ? envDev : env
+        resValue "string", "admob_app_id", envSource.getProperty('admobAppId', "").replace("'", "")
     }
 
     signingConfigs {
