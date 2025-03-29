@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/routes/navigator_key.dart';
@@ -170,7 +168,6 @@ extension ScrollControllerExtension on ScrollController {
     double offset = 600,
   }) {
     addListener(() {
-      log(position.pixels.toString());
       if (position.pixels >= position.maxScrollExtent - offset) {
         if (_canLoadMore(viewMode())) {
           onLoadMore();
@@ -189,4 +186,13 @@ bool _canLoadMore(ViewMode viewMode) {
     default:
       return true;
   }
+}
+
+double calculateAspectRationHeight(
+  context, {
+  required double width,
+  required double aspectRatio,
+}) {
+  double result = (width / aspectRatio) - MediaQuery.of(context).padding.top;
+  return result;
 }

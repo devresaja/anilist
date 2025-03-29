@@ -1,6 +1,7 @@
 import 'package:anilist/global/model/anime.dart';
 import 'package:anilist/modules/my_list/data/my_list_api.dart';
 import 'package:anilist/modules/my_list/data/my_list_local_api.dart';
+import 'package:anilist/modules/my_list/model/shared_mylist.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -18,6 +19,23 @@ class MyListBloc extends Bloc<MyListEvent, MyListState> {
     on<UploadMyListEvent>(_uploadMyList);
     on<DownloadMyListEvent>(_downloadMyList);
     on<CheckMyListEvent>(_checkMyList);
+    on<GetSharedMyListEvent>(_getSharedMyList);
+  }
+
+  _getSharedMyList(
+      GetSharedMyListEvent event, Emitter<MyListState> emit) async {
+    emit(GetSharedMyListLoadingState());
+    try {
+      final response = await _api.getSharedMylist(userId: event.userId);
+
+      if (response.data.isNotEmpty) {
+        emit(GetSharedMyListLoadedState(response));
+      } else {
+        emit(GetSharedMyListEmptyState());
+      }
+    } catch (e) {
+      emit(GetSharedMyListFailedState(e.toString()));
+    }
   }
 
   _checkMyList(CheckMyListEvent event, Emitter<MyListState> emit) async {
@@ -33,9 +51,9 @@ class MyListBloc extends Bloc<MyListEvent, MyListState> {
   _downloadMyList(DownloadMyListEvent event, Emitter<MyListState> emit) async {
     emit(DownloadMyListLoadingState());
     try {
-      final animes = await _api.downloadMyList();
+      final response = await _api.downloadMyList();
 
-      await _localApi.replace(animes);
+      await _localApi.replace(response);
 
       emit(DownloadMyListLoadedState());
     } catch (e) {

@@ -92,3 +92,19 @@ final class DownloadMyListFailedState extends MyListState {
 
   const DownloadMyListFailedState(this.message);
 }
+
+final class GetSharedMyListLoadingState extends MyListState {}
+
+final class GetSharedMyListLoadedState extends MyListState {
+  final SharedMylist data;
+
+  const GetSharedMyListLoadedState(this.data);
+}
+
+final class GetSharedMyListEmptyState extends MyListState {}
+
+final class GetSharedMyListFailedState extends MyListState {
+  final String message;
+
+  const GetSharedMyListFailedState(this.message);
+}

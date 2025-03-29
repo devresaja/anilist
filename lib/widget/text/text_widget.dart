@@ -45,7 +45,7 @@ class TextWidget extends StatelessWidget {
           color: color ?? AppColor.primary,
           overflow:
               ellipsed == true ? TextOverflow.ellipsis : TextOverflow.visible,
-          fontSize: fontSize?.sp ?? 14.sp,
+          fontSize: fontSize ?? 14,
           fontWeight: weight),
     );
   }

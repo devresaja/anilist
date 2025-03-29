@@ -38,3 +38,9 @@ final class DeleteMyListEvent extends MyListEvent {
 final class UploadMyListEvent extends MyListEvent {}
 
 final class DownloadMyListEvent extends MyListEvent {}
+
+final class GetSharedMyListEvent extends MyListEvent {
+  final String userId;
+
+  const GetSharedMyListEvent(this.userId);
+}

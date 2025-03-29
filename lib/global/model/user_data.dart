@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class UserData {
   final String userId;
   final String name;
@@ -13,7 +11,7 @@ class UserData {
     required this.avatar,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'user_id': userId,
       'name': name,
@@ -22,7 +20,7 @@ class UserData {
     };
   }
 
-  factory UserData.fromMap(Map<String, dynamic> map) {
+  factory UserData.fromJson(Map<String, dynamic> map) {
     return UserData(
       userId: map['user_id'] as String,
       name: map['name'] as String,
@@ -30,11 +28,6 @@ class UserData {
       avatar: map['avatar'] as String?,
     );
   }
-
-  String toJson() => json.encode(toMap());
-
-  factory UserData.fromJson(String source) =>
-      UserData.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   bool operator ==(covariant UserData other) {
