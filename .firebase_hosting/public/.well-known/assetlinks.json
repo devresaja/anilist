@@ -1,0 +1,27 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.anilist.android.dev",
+            "sha256_cert_fingerprints": [
+                "F1:D0:D7:20:37:28:E1:57:85:94:09:5C:E4:02:CA:13:FA:91:E7:14:7A:DF:E8:7D:0E:92:5B:3B:22:8A:DA:6B"
+            ]
+        }
+    },
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.anilist.android",
+            "sha256_cert_fingerprints": [
+                "3B:44:91:2B:D0:1A:97:D3:25:3C:85:AF:78:60:51:59:FE:C0:4E:DF:33:0E:62:2C:8D:C7:C7:3D:BD:FF:49:6F",
+                "29:3D:8E:FE:3D:12:25:30:30:4A:7C:B9:DD:E6:57:9E:0D:E5:03:12:D4:BB:81:DF:B1:BB:D6:7D:02:7E:4D:5D"
+            ]
+        }
+    }
+]
