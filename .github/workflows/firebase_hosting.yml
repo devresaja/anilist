@@ -1,0 +1,32 @@
+name: Deploy Firebase Hosting
+
+on:
+  push:
+    paths:
+      - '.firebase_hosting/**'
+      - '.github/workflows/firebase_hosting.yml'
+  workflow_dispatch:
+
+env:
+  FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy to Firebase Hosting
+        run: |
+          cd .firebase_hosting
+          firebase deploy --only hosting --token "$FIREBASE_TOKEN"
