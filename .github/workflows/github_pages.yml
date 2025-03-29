@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'github_pages/**'
+      - '.github/workflows/github_pages.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -22,10 +24,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Upload files
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: github_pages/public
-          name: github-pages-artifact
+          path: github_pages/public/
 
       - name: Deploy to GitHub Pages
         id: deployment
