@@ -5,6 +5,7 @@ import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/auth/bloc/auth_bloc.dart';
 import 'package:anilist/modules/dashboard/screen/dashboard_screen.dart';
+import 'package:anilist/services/deeplink_service.dart';
 import 'package:anilist/services/remote_config_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/button/custom_button.dart';
@@ -29,6 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     RemoteConfigService.instance.init();
+    DeepLinkService.init(context);
   }
 
   @override

@@ -2,6 +2,7 @@ import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/modules/account/screen/account_screen.dart';
 import 'package:anilist/modules/home/screen/home_screen.dart';
 import 'package:anilist/modules/my_list/screen/my_list_screen.dart';
+import 'package:anilist/services/deeplink_service.dart';
 import 'package:anilist/services/remote_config_service.dart';
 import 'package:anilist/services/session_service.dart';
 import 'package:anilist/utils/view_utils.dart';
@@ -38,6 +39,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.initState();
     SessionService.init(context);
     RemoteConfigService.instance.init();
+    DeepLinkService.init(context);
   }
 
   @override

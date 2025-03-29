@@ -162,7 +162,6 @@ class _SearchScreenState extends State<SearchScreen> {
             builder: (context, items) {
               return ListView(
                 controller: _scrollController,
-                addAutomaticKeepAlives: true,
                 children: [
                   ...items,
                   if (_viewMode == ViewMode.loadMore) loading()

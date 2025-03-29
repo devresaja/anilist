@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class InvisibleExpandedHeader extends StatefulWidget {
   final Widget child;
-  final Function(bool) onAppBarPinned;
+  final Function(bool)? onAppBarPinned;
   const InvisibleExpandedHeader({
     super.key,
     required this.child,
-    required this.onAppBarPinned,
+    this.onAppBarPinned,
   });
   @override
   State<InvisibleExpandedHeader> createState() {
@@ -52,7 +52,7 @@ class _InvisibleExpandedHeaderState extends State<InvisibleExpandedHeader> {
       setState(() {
         _visible = visible;
       });
-      widget.onAppBarPinned(_visible ?? false);
+      widget.onAppBarPinned?.call(_visible ?? false);
     }
   }
 

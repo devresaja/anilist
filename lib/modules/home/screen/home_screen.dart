@@ -67,13 +67,6 @@ class HomeScreen extends StatelessWidget {
             FlexibleSpaceBar(
                 title: InvisibleExpandedHeader(
                   child: Container(),
-                  onAppBarPinned: (p0) {
-                    Future.delayed(Duration.zero, () {
-                      // setState(() {
-                      //   isAppbarPinned = p0;
-                      // });
-                    });
-                  },
                 ),
                 background: Stack(
                   children: [

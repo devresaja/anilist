@@ -80,7 +80,7 @@ class LocalStorageService {
     if (message != 'kosong') {
       final Map<String, dynamic> userData = jsonDecode(message);
 
-      return UserData.fromMap(userData);
+      return UserData.fromJson(userData);
     } else {
       return null;
     }
@@ -88,7 +88,7 @@ class LocalStorageService {
 
   static Future<bool> setUserData(UserData value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String message = jsonEncode(value.toMap());
+    final String message = jsonEncode(value.toJson());
 
     return prefs.setString(userData, message);
   }
