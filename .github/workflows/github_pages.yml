@@ -1,0 +1,32 @@
+name: Deploy Github Pages
+
+on:
+  push:
+    paths:
+      - 'github_pages/**'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Upload static files
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: github_pages/public
+          name: github-pages-artifact
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v3
