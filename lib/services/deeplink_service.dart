@@ -1,4 +1,5 @@
 import 'package:anilist/core/routes/route.dart';
+import 'package:anilist/modules/detail_anime/screen/detail_anime_screen.dart';
 import 'package:anilist/modules/my_list/screen/shared_my_list_screen.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:app_links/app_links.dart';
@@ -7,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 
 enum DeepLinkType {
   mylist,
+  anime,
 }
 
 extension DeepLinkTypeExtension on DeepLinkType {
@@ -14,6 +16,8 @@ extension DeepLinkTypeExtension on DeepLinkType {
     switch (this) {
       case DeepLinkType.mylist:
         return 'mylist';
+      case DeepLinkType.anime:
+        return 'anime';
     }
   }
 
@@ -21,7 +25,7 @@ extension DeepLinkTypeExtension on DeepLinkType {
     if (value == null) return null;
     return DeepLinkType.values.firstWhere(
       (e) => e.value == value,
-      orElse: () => DeepLinkType.mylist,
+      orElse: () => DeepLinkType.anime,
     );
   }
 }
@@ -80,6 +84,11 @@ class DeepLinkService {
         pushTo(context,
             screen: SharedMyListScreen(argument: SharedMyListArgument(id)),
             routeName: SharedMyListScreen.path);
+      case DeepLinkType.anime:
+        pushTo(context,
+            screen: DetailAnimeScreen(
+                argument: DetailAnimeArgument(animeId: int.parse(id))),
+            routeName: DetailAnimeScreen.path);
     }
   }
 }

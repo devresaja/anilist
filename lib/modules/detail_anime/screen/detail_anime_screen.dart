@@ -3,6 +3,7 @@ import 'package:anilist/modules/ads/data/admob_api.dart';
 import 'package:anilist/modules/detail_anime/bloc/detail_anime_bloc.dart';
 import 'package:anilist/global/model/anime.dart';
 import 'package:anilist/modules/my_list/components/my_list_button.dart';
+import 'package:anilist/services/deeplink_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/page/view_handler_widget.dart';
 import 'package:flutter/material.dart';
@@ -187,6 +188,44 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
                     child: Row(
                       children: [
                         MyListButton(anime: _data!),
+                        divideW10,
+
+                        // share
+                        Material(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(300),
+                          child: InkWell(
+                            onTap: () {
+                              DeepLinkService.generateDeeplink(
+                                  type: DeepLinkType.anime,
+                                  id: widget.argument.animeId.toString());
+                            },
+                            borderRadius: BorderRadius.circular(300),
+                            child: Ink(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: AppColor.secondaryAccent,
+                                borderRadius: BorderRadius.circular(300),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.share_outlined,
+                                    color: AppColor.whiteAccent,
+                                    size: 18,
+                                  ),
+                                  divideW4,
+                                  TextWidget(
+                                    'Share',
+                                    color: AppColor.whiteAccent,
+                                  ),
+                                  divideW4,
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
