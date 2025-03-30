@@ -1,4 +1,5 @@
 import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/constant/app_constant.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/config/app_info.dart';
 import 'package:anilist/core/routes/route.dart';
@@ -139,8 +140,7 @@ class _AccountScreenState extends State<AccountScreen> {
       SettingCard(
         title: 'Privacy Policy',
         onTap: () {
-          customLaunchUrl(
-              'https://anilist-433306.firebaseapp.com/privacy_policy.html');
+          customLaunchUrl(AppConstant.privacyPolicy);
         },
       ),
       divide8,
@@ -149,8 +149,7 @@ class _AccountScreenState extends State<AccountScreen> {
         titleColor: Colors.yellow,
         description: AppInfo.version,
         onTap: () {
-          customLaunchUrl(
-              'https://play.google.com/store/apps/details?id=com.anilist.android');
+          customLaunchUrl(AppConstant.playstoreUrl);
         },
         trailing: Icon(Icons.star, color: Colors.yellow),
       ),
@@ -167,8 +166,7 @@ class _AccountScreenState extends State<AccountScreen> {
           description: 'Delete your account permanently',
           titleColor: AppColor.error,
           onTap: () {
-            customLaunchUrl(
-                'https://anilist-433306.firebaseapp.com/delete_account_guide.html');
+            customLaunchUrl(AppConstant.privacyPolicy);
           },
           trailing: Icon(Icons.delete, color: AppColor.error),
         ),
