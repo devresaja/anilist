@@ -3,6 +3,7 @@ import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/auth/screen/login_screen.dart';
 import 'package:anilist/modules/my_list/data/my_list_local_api.dart';
+import 'package:anilist/services/internet_connection_service.dart';
 import 'package:anilist/services/local_storage_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,20 +11,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SessionService {
-  static final _firebaseAuth = FirebaseAuth.instance;
-  static Timer? _sessionTimer;
+  static final SessionService instance = SessionService._internal();
+  factory SessionService() => instance;
+  SessionService._internal();
 
-  static void init(BuildContext context) {
-    _checkSession(context);
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  Timer? _sessionTimer;
+  StreamSubscription<bool>? _internetListener;
 
+  void init(BuildContext context) {
+    _internetListener = InternetConnectionService.instance.connectionStatus
+        .listen((isConnected) {
+      if (isConnected) {
+        if (context.mounted) {
+          _startSession(context);
+        }
+      } else {
+        _sessionTimer?.cancel();
+      }
+    });
+  }
+
+  void _startSession(BuildContext context) {
     _sessionTimer?.cancel();
+
     _sessionTimer = Timer.periodic(const Duration(minutes: 5), (timer) async {
       await _checkSession(context);
     });
   }
 
-  static Future<void> _checkSession(BuildContext context) async {
-    // If user is not logged in, return
+  Future<void> _checkSession(BuildContext context) async {
     if (context.read<AppBloc>().state.user == null) return;
 
     try {
@@ -40,7 +57,7 @@ class SessionService {
     }
   }
 
-  static Future<dynamic> _showDialog(BuildContext context) async {
+  Future<void> _showDialog(BuildContext context) async {
     await showConfirmationDialog(
       context: context,
       barrierDismissible: false,
@@ -59,7 +76,8 @@ class SessionService {
     );
   }
 
-  static void dispose() {
+  void dispose() {
     _sessionTimer?.cancel();
+    _internetListener?.cancel();
   }
 }
