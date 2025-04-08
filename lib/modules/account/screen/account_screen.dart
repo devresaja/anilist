@@ -166,7 +166,7 @@ class _AccountScreenState extends State<AccountScreen> {
           description: 'Delete your account permanently',
           titleColor: AppColor.error,
           onTap: () {
-            customLaunchUrl(AppConstant.privacyPolicy);
+            customLaunchUrl(AppConstant.deleteAccountGuide);
           },
           trailing: Icon(Icons.delete, color: AppColor.error),
         ),
