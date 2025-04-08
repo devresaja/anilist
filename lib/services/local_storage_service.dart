@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:anilist/global/model/user_data.dart';
 import 'package:anilist/modules/ads/data/admob_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -74,23 +73,22 @@ class LocalStorageService {
 
   static Future<UserData?> getUserData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.reload();
-    final String message = prefs.getString(userData) ?? 'kosong';
+    final String? data = prefs.getString(userData);
 
-    if (message != 'kosong') {
-      final Map<String, dynamic> userData = jsonDecode(message);
+    if (data != null) {
+      final Map<String, dynamic> value = jsonDecode(data);
 
-      return UserData.fromJson(userData);
-    } else {
-      return null;
+      return UserData.fromJson(value);
     }
+
+    return null;
   }
 
   static Future<bool> setUserData(UserData value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String message = jsonEncode(value.toJson());
+    final String data = jsonEncode(value.toJson());
 
-    return prefs.setString(userData, message);
+    return prefs.setString(userData, data);
   }
 
   static Future<void> removeValue() async {
