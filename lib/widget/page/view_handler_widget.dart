@@ -43,48 +43,52 @@ class _ViewHandlerWidgetState extends State<ViewHandlerWidget> {
       case ViewMode.loaded || ViewMode.loadMore || ViewMode.loadMax:
         return widget.child;
       case ViewMode.empty:
-        return widget.customEmpty ??
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgUI(
-                  'ic_empty.svg',
-                  size: 100,
-                ),
-                divide24,
-                TextWidget(
-                  'No result found..',
-                  fontSize: 16,
-                ),
-                divide28,
-              ],
-            );
-      case ViewMode.failed:
-        return widget.customFailed ??
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SvgUI(
-                  'ic_error.svg',
-                  size: 100,
-                ),
-                const TextWidget(
-                  'Something\'s wrong',
-                  color: AppColor.errorText,
-                ),
-                if (widget.onTapError != null) ...[
-                  divide20,
-                  SizedBox(
-                    width: 200,
-                    child: CustomButton(
-                      text: 'Refresh',
-                      onTap: widget.onTapError!,
-                    ),
+        return Center(
+          child: widget.customEmpty ??
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgUI(
+                    'ic_empty.svg',
+                    size: 100,
                   ),
-                ]
-              ],
-            );
+                  divide24,
+                  TextWidget(
+                    'No result found..',
+                    fontSize: 16,
+                  ),
+                  divide28,
+                ],
+              ),
+        );
+      case ViewMode.failed:
+        return Center(
+          child: widget.customFailed ??
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SvgUI(
+                    'ic_error.svg',
+                    size: 100,
+                  ),
+                  const TextWidget(
+                    'Something\'s wrong',
+                    color: AppColor.errorText,
+                  ),
+                  if (widget.onTapError != null) ...[
+                    divide20,
+                    SizedBox(
+                      width: 200,
+                      child: CustomButton(
+                        text: 'Refresh',
+                        onTap: widget.onTapError!,
+                      ),
+                    ),
+                  ]
+                ],
+              ),
+        );
     }
   }
 }
