@@ -1,5 +1,6 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
+import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/global/model/anime.dart';
 import 'package:anilist/global/widget/speech_to_text_button.dart';
 import 'package:anilist/modules/ads/widget/admob_banner_widget.dart';
@@ -183,7 +184,7 @@ class _SearchScreenState extends State<SearchScreen> {
             height: 46,
             margin: EdgeInsets.only(top: 10, bottom: 10),
             withPaddingHorizontal: false,
-            hintText: 'Search title',
+            hintText: LocaleKeys.search_title,
             controller: _searchController,
             onSubmitted: (value) {
               _refreshBloc();

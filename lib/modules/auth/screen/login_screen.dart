@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:anilist/constant/dimension.dart';
 import 'package:anilist/constant/divider.dart';
+import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/auth/bloc/auth_bloc.dart';
@@ -13,6 +14,7 @@ import 'package:anilist/widget/button/custom_switch_button.dart';
 import 'package:anilist/widget/custom_devider.dart';
 import 'package:anilist/widget/image/svg_ui.dart';
 import 'package:anilist/widget/text/text_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -77,7 +79,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               .read<AppBloc>()
                               .add(SetUserDataEvent(userData: state.userData));
 
-                          showCustomSnackBar('Welcome ${state.userData.email}');
+                          showCustomSnackBar(
+                              '${LocaleKeys.welcome.tr()} ${state.userData.email}');
 
                           pushAndRemoveUntil(context,
                               screen: const DashboardScreen());
@@ -87,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       builder: (context, state) {
                         return CustomButton(
-                          text: 'Sign in with Google',
+                          text: LocaleKeys.sign_in_with_google,
                           isLoading: state is LoginByGoogleLoadingState,
                           imagePath: 'assets/images/google.png',
                           onTap: () {
@@ -99,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   divide24,
                   CustomDivider(
-                    text: 'or',
+                    text: LocaleKeys.or,
                     textSpacing: MediaQuery.sizeOf(context).width * 0.10,
                   ),
                   divide6,
@@ -109,8 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           screen: const DashboardScreen(),
                           routeName: DashboardScreen.path);
                     },
-                    child: const TextWidget(
-                      'Continue as Guest',
+                    child: TextWidget(
+                      LocaleKeys.continue_as_guest,
                     ),
                   ),
                   SizedBox(
@@ -124,18 +127,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   top: MediaQuery.paddingOf(context).top + 12, right: 16),
               child: Align(
                 alignment: Alignment.topRight,
-                child: BlocConsumer<AppBloc, AppState>(
-                  buildWhen: (previous, current) => previous != current,
-                  listener: (context, state) {},
-                  builder: (context, state) {
-                    return CustomSwitchButton(
-                      value: true,
-                      // isLoading:
-                      //     state.appStateLoadingType == AppStateLoadingType.notification,
-                      switchType: SwitchType.language,
-                      enable: false,
-                      onChanged: (value) {},
-                    );
+                child: CustomSwitchButton(
+                  value: context.locale.languageCode == 'en',
+                  switchType: SwitchType.language,
+                  onChanged: (value) {
+                    context.setLocale(Locale(value == true ? 'en' : 'id'));
                   },
                 ),
               ),

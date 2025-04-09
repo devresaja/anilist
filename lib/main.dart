@@ -11,6 +11,7 @@ import 'package:anilist/modules/my_list/bloc/my_list_bloc.dart';
 import 'package:anilist/services/local_database_service.dart';
 import 'package:anilist/services/local_storage_service.dart';
 import 'package:anilist/services/notification_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -62,17 +63,32 @@ Future<void> main() async {
   // Init local db
   await LocalDatabaseService().init();
 
+  // Init locale
+  await EasyLocalization.ensureInitialized();
+
   // Loads user preferences
   UserData? userData = await LocalStorageService.getUserData();
   bool isDarkMode = await LocalStorageService.getIsDarkMode();
   bool isNotificationEnable =
       await LocalStorageService.getNotificationSetting();
 
-  runApp(MyApp(
-    userData: userData,
-    isDarkMode: isDarkMode,
-    isNotificationEnable: isNotificationEnable,
-  ));
+  runApp(
+    EasyLocalization(
+      supportedLocales: const [
+        Locale('en'),
+        Locale('id'),
+      ],
+      path: 'assets/i18n',
+      fallbackLocale: const Locale('en'),
+      saveLocale: true,
+      useOnlyLangCode: true,
+      child: MyApp(
+        userData: userData,
+        isDarkMode: isDarkMode,
+        isNotificationEnable: isNotificationEnable,
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -124,6 +140,9 @@ class _MyAppState extends State<MyApp> {
         splitScreenMode: false,
         child: MaterialApp(
           title: AppInfo.appName,
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
           theme: themeConfig(),
           navigatorKey: navigatorKey,
           debugShowCheckedModeBanner: kDebugMode,

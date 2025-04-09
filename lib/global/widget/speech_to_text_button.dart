@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
+import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/widget/text/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -43,7 +44,7 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: TextWidget(
-              'Listening',
+              LocaleKeys.listening,
               fontSize: 16,
             ),
             contentPadding:
@@ -56,7 +57,7 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
                 ValueListenableBuilder<String?>(
                   valueListenable: _textResult,
                   builder: (context, value, child) {
-                    return TextWidget(value ?? 'Say something...');
+                    return TextWidget(value ?? LocaleKeys.say_something);
                   },
                 ),
               ],
@@ -65,7 +66,7 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
               TextButton(
                 onPressed: _stopListening,
                 child: TextWidget(
-                  'Stop',
+                  LocaleKeys.stop,
                   color: AppColor.error,
                 ),
               ),

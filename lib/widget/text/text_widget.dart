@@ -1,7 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:anilist/constant/app_color.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TextWidget extends StatelessWidget {
   final String? text;
@@ -15,6 +14,8 @@ class TextWidget extends StatelessWidget {
   final TextDecoration? decoration;
   final double? decorationThickness;
   final Color? decorationColor;
+  final bool translate;
+
   const TextWidget(
     this.text, {
     super.key,
@@ -28,25 +29,39 @@ class TextWidget extends StatelessWidget {
     this.decoration,
     this.decorationThickness,
     this.decorationColor,
+    this.translate = true,
   });
+
+  String get _text {
+    if (text == null || text!.isEmpty) return '';
+    if (maxLength != null && text!.length > maxLength!) {
+      return '${text!.substring(0, maxLength)}...';
+    }
+    return text!;
+  }
+
+  TextStyle get _textStyle => TextStyle(
+        decoration: decoration,
+        decorationColor: decorationColor,
+        decorationThickness: decorationThickness,
+        color: color ?? AppColor.primary,
+        overflow:
+            ellipsed == true ? TextOverflow.ellipsis : TextOverflow.visible,
+        fontSize: fontSize ?? 14,
+        fontWeight: weight,
+      );
 
   @override
   Widget build(BuildContext context) {
+    return translate ? _buildText().tr() : _buildText();
+  }
+
+  Text _buildText() {
     return Text(
-      maxLength != null && text!.length > num.tryParse('$maxLength')!
-          ? '${text!.substring(0, maxLength)}...'
-          : '$text',
+      _text,
       maxLines: maxLines,
       textAlign: textAlign,
-      style: TextStyle(
-          decoration: decoration,
-          decorationColor: decorationColor,
-          decorationThickness: decorationThickness,
-          color: color ?? AppColor.primary,
-          overflow:
-              ellipsed == true ? TextOverflow.ellipsis : TextOverflow.visible,
-          fontSize: fontSize ?? 14,
-          fontWeight: weight),
+      style: _textStyle,
     );
   }
 }

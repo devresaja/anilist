@@ -1,3 +1,4 @@
+import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/modules/ads/bloc/ads_bloc.dart';
 import 'package:anilist/modules/ads/data/admob_api.dart';
 import 'package:anilist/modules/detail_anime/bloc/detail_anime_bloc.dart';
@@ -123,9 +124,9 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
                 _podPlayerController != null
                     ? PodVideoPlayer(controller: _podPlayerController!)
                     : const Center(
-                        child: Text(
-                          'Trailer not available',
-                          style: TextStyle(color: Colors.white),
+                        child: TextWidget(
+                          LocaleKeys.trailer_not_available,
+                          color: AppColor.white,
                         ),
                       ),
                 _buildAds(),
@@ -217,7 +218,7 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
                                   ),
                                   divideW4,
                                   TextWidget(
-                                    'Share',
+                                    LocaleKeys.share,
                                     color: AppColor.whiteAccent,
                                   ),
                                   divideW4,
@@ -252,8 +253,8 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
         if (state is ShowRewardedAdConfirmationState) {
           showConfirmationDialog(
               context: context,
-              title: 'Watch ads to view trailer',
-              okText: 'Watch',
+              title: LocaleKeys.watch_ads_to_continue,
+              okText: LocaleKeys.watch,
               onTapOk: () {
                 Navigator.pop(context);
                 _adsBloc.add(ShowRewardedAdEvent(
@@ -262,7 +263,7 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
         } else if (state is ShowRewardedAdLoadedState) {
           _podPlayerController?.play();
         } else if (state is ShowRewardedAdSkippedState) {
-          showCustomSnackBar('Please watch the ad to continue',
+          showCustomSnackBar(LocaleKeys.please_watch_the_ad_to_continue,
               isSuccess: false);
         } else if (state is ShowRewardedAdFailedState) {
           showCustomSnackBar(state.message, isSuccess: false);

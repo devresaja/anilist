@@ -1,5 +1,6 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
+import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/global/model/anime.dart';
 import 'package:anilist/modules/ads/bloc/ads_bloc.dart';
@@ -187,8 +188,8 @@ class _MyListScreenState extends State<MyListScreen> {
           if (state is ShowRewardedAdConfirmationState) {
             showConfirmationDialog(
                 context: context,
-                title: 'Watch ads to continue',
-                okText: 'Watch',
+                title: LocaleKeys.watch_ads_to_continue,
+                okText: LocaleKeys.watch,
                 onTapOk: () {
                   Navigator.pop(context);
                   _showRewardedAd(isCheckAttempt: false);
@@ -197,7 +198,7 @@ class _MyListScreenState extends State<MyListScreen> {
             _pendingCloudAction?.call();
             _pendingCloudAction = null;
           } else if (state is ShowRewardedAdSkippedState) {
-            showCustomSnackBar('Please watch the ad to continue',
+            showCustomSnackBar(LocaleKeys.please_watch_the_ad_to_continue,
                 isSuccess: false);
           } else if (state is ShowRewardedAdFailedState) {
             showCustomSnackBar(state.message, isSuccess: false);
@@ -210,7 +211,7 @@ class _MyListScreenState extends State<MyListScreen> {
               _isLoadingCloud = true;
             } else if (state is DownloadMyListLoadedState) {
               _refreshBloc();
-              showCustomSnackBar('Succesfully downloaded');
+              showCustomSnackBar(LocaleKeys.successfully_downloaded);
               _isLoadingCloud = false;
             } else if (state is DownloadMyListFailedState) {
               showCustomSnackBar(state.message, isSuccess: false);
@@ -220,7 +221,7 @@ class _MyListScreenState extends State<MyListScreen> {
             else if (state is UploadMyListLoadingState) {
               _isLoadingCloud = true;
             } else if (state is UploadMyListLoadedState) {
-              showCustomSnackBar('Succesfully uploaded');
+              showCustomSnackBar(LocaleKeys.successfully_uploaded);
               _isLoadingCloud = false;
             } else if (state is UploadMyListFailedState) {
               showCustomSnackBar(state.message, isSuccess: false);
@@ -234,7 +235,7 @@ class _MyListScreenState extends State<MyListScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextWidget(
-                    'My List',
+                    LocaleKeys.mylist,
                     fontSize: 16,
                   ),
                   Row(
@@ -287,8 +288,8 @@ class _MyListScreenState extends State<MyListScreen> {
   void _downloadFromCloud(BuildContext context) {
     showConfirmationDialog(
       context: context,
-      title: 'Download from cloud save',
-      infoText: '*This action will overwrite your current list.',
+      title: LocaleKeys.download_from_cloud_save,
+      infoText: LocaleKeys.download_warning,
       onTapOk: () {
         Navigator.pop(context);
 
@@ -304,10 +305,9 @@ class _MyListScreenState extends State<MyListScreen> {
   void _uploadToCloud(BuildContext context) {
     showConfirmationDialog(
       context: context,
-      title: 'Upload to cloud save',
-      description:
-          'Uploaded data expires in 14 days. Please upload regularly to avoid losing your data.',
-      infoText: '*This action will overwrite your existing cloud save.',
+      title: LocaleKeys.upload_to_cloud_save,
+      description: LocaleKeys.upload_expiry_notice,
+      infoText: LocaleKeys.upload_overwrite_warning,
       onTapOk: () {
         Navigator.pop(context);
 

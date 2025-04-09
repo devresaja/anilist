@@ -1,11 +1,13 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
+import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/core/routes/navigator_key.dart';
 import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/modules/auth/screen/login_screen.dart';
 import 'package:anilist/widget/button/custom_button.dart';
 import 'package:anilist/widget/page/view_handler_widget.dart';
 import 'package:anilist/widget/text/text_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -63,9 +65,9 @@ void showCustomSnackBar(String text, {bool isSuccess = true}) {
 void showAccessDeniedDialog(BuildContext context) {
   showConfirmationDialog(
     context: context,
-    title: 'Access Denied',
-    description: 'Please log in to continue.',
-    okText: 'Log In',
+    title: LocaleKeys.access_denied,
+    description: LocaleKeys.login_required_message,
+    okText: LocaleKeys.login,
     onTapOk: () => pushAndRemoveUntil(context, screen: LoginScreen()),
   );
 }
@@ -126,7 +128,7 @@ Future<dynamic> showConfirmationDialog({
                             color: Colors.red,
                             borderColor: Colors.red,
                             textColor: Colors.white,
-                            text: cancelText ?? 'Close',
+                            text: cancelText ?? LocaleKeys.close,
                             fontSize: 12,
                             onTap: onTapCancel ??
                                 () {
@@ -138,7 +140,7 @@ Future<dynamic> showConfirmationDialog({
                       child: CustomButton(
                         textColor: Colors.black,
                         color: AppColor.primary,
-                        text: okText ?? 'Yes',
+                        text: okText ?? LocaleKeys.yes,
                         fontSize: 12,
                         onTap: onTapOk ??
                             () {
@@ -157,7 +159,9 @@ Future<dynamic> showConfirmationDialog({
 
 Future<void> customLaunchUrl(String url) async {
   if (!await launchUrl(Uri.parse(url))) {
-    showCustomSnackBar('Could not launch $url', isSuccess: false);
+    showCustomSnackBar(
+        LocaleKeys.could_not_launch_url.tr(namedArgs: {'url': url}),
+        isSuccess: false);
   }
 }
 
