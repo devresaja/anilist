@@ -31,10 +31,10 @@ class CustomDivider extends StatelessWidget {
           ),
           SizedBox(width: textSpacing),
           if (text != null)
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(left: 0.05, right: 0.05),
               child: TextWidget(
-                'or',
+                text,
                 color: AppColor.accent,
               ),
             ),

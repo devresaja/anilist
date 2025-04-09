@@ -1,6 +1,8 @@
 import 'package:anilist/core/config/app_info.dart';
+import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/core/routes/navigator_key.dart';
 import 'package:anilist/utils/view_utils.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 class RemoteConfigService {
@@ -57,10 +59,11 @@ class RemoteConfigService {
       showConfirmationDialog(
         context: navigatorKey.currentState!.context,
         barrierDismissible: !isForceUpdate,
-        title: 'Update Available',
-        description:
-            'Version $newVersion is now available. Please update for better experience.',
-        okText: 'Update',
+        title: LocaleKeys.update_available,
+        description: LocaleKeys.update_available_message.tr(namedArgs: {
+          'version': newVersion,
+        }),
+        okText: LocaleKeys.update,
         onTapOk: () {
           customLaunchUrl(
               'https://play.google.com/store/apps/details?id=com.anilist.android');

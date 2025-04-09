@@ -87,6 +87,7 @@ class AnimeCard extends StatelessWidget {
                                     score != null ? score.toString() : '-',
                                     color: Colors.white,
                                     fontSize: 9,
+                                    translate: false,
                                   ),
                                 ),
                               ],
@@ -147,6 +148,7 @@ class AnimeCard extends StatelessWidget {
                   fontSize: 13,
                   maxLines: 2,
                   ellipsed: true,
+                  translate: false,
                 ),
                 TextWidget(
                   '${type ?? '-'} - ${episode ?? '-'} Episodes',
@@ -155,6 +157,7 @@ class AnimeCard extends StatelessWidget {
                   maxLines: 2,
                   weight: FontWeight.w400,
                   ellipsed: true,
+                  translate: false,
                 ),
               ],
             ),

@@ -81,6 +81,7 @@ class _CustomSwitchButtonState extends State<CustomSwitchButton> {
           value ? 'EN' : 'ID',
           fontSize: 12,
           color: AppColor.secondary,
+          translate: false,
         ),
       );
     }

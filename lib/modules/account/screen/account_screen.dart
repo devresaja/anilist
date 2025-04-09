@@ -1,7 +1,12 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/app_constant.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/config/app_info.dart';
+import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/account/components/setting_card.dart';
@@ -10,12 +15,13 @@ import 'package:anilist/modules/auth/screen/login_screen.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/button/custom_switch_button.dart';
 import 'package:anilist/widget/text/text_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class AccountScreen extends StatefulWidget {
-  const AccountScreen({super.key});
+  final Function() onChangeLocale;
+  const AccountScreen({
+    super.key,
+    required this.onChangeLocale,
+  });
 
   static const String path = 'account';
 
@@ -61,32 +67,32 @@ class _AccountScreenState extends State<AccountScreen> {
 
   List<Widget> _applicationSection(BuildContext context) {
     return [
-      _sectionHeader('Application Settings'),
+      _sectionHeader(LocaleKeys.application_settings),
       divide12,
       SettingCard(
-        title: 'Language',
-        description: 'Choose your language',
+        title: LocaleKeys.language,
+        description: LocaleKeys.choose_your_language,
         trailing: CustomSwitchButton(
-          value: true,
-          // isLoading:
-          //     state.appStateLoadingType == AppStateLoadingType.notification,
+          value: context.locale.languageCode == 'en',
           switchType: SwitchType.language,
-          enable: false,
-          onChanged: (value) {},
+          onChanged: (value) {
+            context.setLocale(Locale(value == true ? 'en' : 'id'));
+            widget.onChangeLocale();
+          },
         ),
       ),
       divide8,
       SettingCard(
-        title: 'Notification',
-        description: 'Enable notification',
+        title: LocaleKeys.notification,
+        description: LocaleKeys.enable_notification,
         trailing: BlocConsumer<AppBloc, AppState>(
           buildWhen: (previous, current) => previous != current,
           listener: (context, state) {
             if (state.appStateErrorType == AppStateErrorType.notification) {
               showConfirmationDialog(
                 context: context,
-                title: 'Allow permission to receive notification',
-                okText: 'Settings',
+                title: LocaleKeys.allow_notification_permission,
+                okText: LocaleKeys.settings,
                 onTapOk: () async {
                   await openAppSettings();
                   if (context.mounted) {
@@ -112,7 +118,7 @@ class _AccountScreenState extends State<AccountScreen> {
       ),
       divide8,
       SettingCard(
-        title: 'Dark Mode',
+        title: LocaleKeys.dark_mode,
         trailing: BlocBuilder<AppBloc, AppState>(
           buildWhen: (previous, current) =>
               previous.isDarkMode != current.isDarkMode,
@@ -135,17 +141,17 @@ class _AccountScreenState extends State<AccountScreen> {
 
   List<Widget> _otherInfoSection(BuildContext context) {
     return [
-      _sectionHeader('Other Information'),
+      _sectionHeader(LocaleKeys.other_information),
       divide12,
       SettingCard(
-        title: 'Privacy Policy',
+        title: LocaleKeys.privacy_policy,
         onTap: () {
           customLaunchUrl(AppConstant.privacyPolicy);
         },
       ),
       divide8,
       SettingCard(
-        title: 'Leave a Review',
+        title: LocaleKeys.leave_a_review,
         titleColor: Colors.yellow,
         description: AppInfo.version,
         onTap: () {
@@ -158,12 +164,12 @@ class _AccountScreenState extends State<AccountScreen> {
 
   List<Widget> _accountSection(BuildContext context) {
     return [
-      _sectionHeader('Account Settings'),
+      _sectionHeader(LocaleKeys.account_settings),
       divide12,
       if (isLogin) ...[
         SettingCard(
-          title: 'Delete Account',
-          description: 'Delete your account permanently',
+          title: LocaleKeys.delete_account,
+          description: LocaleKeys.delete_account_description,
           titleColor: AppColor.error,
           onTap: () {
             customLaunchUrl(AppConstant.deleteAccountGuide);
@@ -183,12 +189,12 @@ class _AccountScreenState extends State<AccountScreen> {
               }
             },
             child: SettingCard(
-              title: 'Logout',
+              title: LocaleKeys.logout,
               titleColor: AppColor.error,
               onTap: () async {
                 showConfirmationDialog(
                     context: context,
-                    title: 'Are you sure want to logout?',
+                    title: LocaleKeys.logout_confirmation,
                     onTapOk: () {
                       _authBloc.add(LogoutEvent());
                       Navigator.pop(context);
@@ -200,7 +206,7 @@ class _AccountScreenState extends State<AccountScreen> {
         ),
       ] else ...[
         SettingCard(
-          title: 'Login',
+          title: LocaleKeys.login,
           titleColor: AppColor.primary,
           onTap: () {
             pushAndRemoveUntil(context, screen: LoginScreen());

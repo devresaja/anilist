@@ -1,5 +1,6 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
+import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/global/model/anime.dart';
 import 'package:anilist/modules/my_list/bloc/my_list_bloc.dart';
@@ -85,7 +86,7 @@ class _MyListButtonState extends State<MyListButton> {
                   ),
                   divideW4,
                   TextWidget(
-                    'My List',
+                    LocaleKeys.mylist,
                     color: _isMyList ? AppColor.primary : AppColor.whiteAccent,
                   ),
                   divideW4,

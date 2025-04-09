@@ -1,5 +1,6 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
+import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/button/custom_button.dart';
 import 'package:anilist/widget/image/svg_ui.dart';
@@ -54,7 +55,7 @@ class _ViewHandlerWidgetState extends State<ViewHandlerWidget> {
                   ),
                   divide24,
                   TextWidget(
-                    'No result found..',
+                    LocaleKeys.no_result_found,
                     fontSize: 16,
                   ),
                   divide28,
@@ -73,7 +74,7 @@ class _ViewHandlerWidgetState extends State<ViewHandlerWidget> {
                     size: 100,
                   ),
                   const TextWidget(
-                    'Something\'s wrong',
+                    LocaleKeys.something_wrong,
                     color: AppColor.errorText,
                   ),
                   if (widget.onTapError != null) ...[

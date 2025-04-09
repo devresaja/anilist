@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/auth/screen/login_screen.dart';
@@ -62,9 +63,9 @@ class SessionService {
       context: context,
       barrierDismissible: false,
       hideCancel: true,
-      title: 'Session Expired',
-      description: 'Your session has expired. Please login again.',
-      okText: 'Login',
+      title: LocaleKeys.session_expired,
+      description: LocaleKeys.session_expired_message,
+      okText: LocaleKeys.login,
       onTapOk: () async {
         await MyListLocalApi().clear();
         await LocalStorageService.removeValue();

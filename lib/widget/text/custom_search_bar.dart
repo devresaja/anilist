@@ -1,5 +1,6 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/widget/image/svg_ui.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class CustomSearchBar extends StatelessWidget {
@@ -75,7 +76,7 @@ class CustomSearchBar extends StatelessWidget {
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
                   enabledBorder: InputBorder.none,
-                  hintText: hintText,
+                  hintText: hintText?.tr(),
                   hintStyle: TextStyle(
                     color: Colors.grey.shade100,
                     fontSize: 14,

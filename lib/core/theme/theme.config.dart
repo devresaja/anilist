@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 
 ThemeData themeConfig({bool? useMaterial3}) {
   return ThemeData(
-    useMaterial3: useMaterial3 ?? true,
+    useMaterial3: useMaterial3 ?? false,
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: appBarTheme(),
     textTheme: textTheme(),

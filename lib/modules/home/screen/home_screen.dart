@@ -1,5 +1,6 @@
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/constant/divider.dart';
+import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/global/widget/speech_to_text_button.dart';
 import 'package:anilist/modules/home/components/anime_list.dart';
@@ -35,14 +36,14 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           children: [
             divide16,
-            const HomeHeader(title: 'Ongoing Anime'),
+            const HomeHeader(title: LocaleKeys.ongoing_anime),
             divide4,
             const AnimeListWidget(
               animeListType: AnimeListType.ongoing,
             ),
             HomeRandom(),
             divide10,
-            const HomeHeader(title: 'Top Anime'),
+            const HomeHeader(title: LocaleKeys.top_anime),
             divide4,
             const AnimeListWidget(
               animeListType: AnimeListType.top,
@@ -90,7 +91,7 @@ class HomeScreen extends StatelessWidget {
                       controller: TextEditingController(),
                       margin: EdgeInsets.only(top: 10, bottom: 10),
                       withPaddingHorizontal: false,
-                      hintText: 'Search title',
+                      hintText: LocaleKeys.search_title,
                       onSubmitted: (search) {
                         pushTo(context, screen: SearchScreen(search: search));
                       },

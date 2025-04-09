@@ -1,11 +1,9 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:ui';
-
+import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/modules/detail_anime/screen/detail_anime_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:anilist/constant/app_color.dart';
 import 'package:anilist/global/model/anime.dart';
 import 'package:anilist/modules/home/bloc/home_bloc.dart';
@@ -144,6 +142,7 @@ class _HomeRandomState extends State<HomeRandom> {
                                       maxLines: 2,
                                       ellipsed: true,
                                       color: Colors.white,
+                                      translate: false,
                                     ),
                                     const Spacer(),
                                     SmallRoundedCard(
@@ -153,7 +152,7 @@ class _HomeRandomState extends State<HomeRandom> {
                                                 argument: DetailAnimeArgument(
                                                     animeId: _data!.malId)));
                                       },
-                                      text: 'See detail',
+                                      text: LocaleKeys.see_detail,
                                       textColor: Colors.black,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -222,10 +221,9 @@ class BorderPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     double radius = 10;
     Paint paint = Paint()
-      ..color =
-          isLoading ? Colors.grey.shade400 : AppColor.primary // Warna border
+      ..color = isLoading ? Colors.grey.shade400 : AppColor.primary
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2; // Tebal border
+      ..strokeWidth = 2;
 
     Path path = Path()
       ..moveTo(radius, 0)
