@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/widget/text/text_widget.dart';

@@ -1,3 +1,4 @@
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/core/config/app_info.dart';
 import 'package:anilist/firebase_options.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
@@ -39,7 +40,7 @@ Future<void> main() async {
   );
   FirebaseCrashlytics.instance.setCustomKey(
     'app_version',
-    AppInfo.appName,
+    AppInfo.version,
   );
 
   FlutterError.onError = (errorDetails) {
@@ -71,6 +72,8 @@ Future<void> main() async {
   bool isDarkMode = await LocalStorageService.getIsDarkMode();
   bool isNotificationEnable =
       await LocalStorageService.getNotificationSetting();
+
+  AppColor.init(isDarkMode);
 
   runApp(
     EasyLocalization(

@@ -1,4 +1,4 @@
-import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -11,7 +11,7 @@ ThemeData themeConfig({bool? useMaterial3}) {
     fontFamily: 'NunitoSans',
     inputDecorationTheme: inputDecorationTheme(),
     visualDensity: VisualDensity.adaptivePlatformDensity,
-    textSelectionTheme: const TextSelectionThemeData(
+    textSelectionTheme: TextSelectionThemeData(
       cursorColor: AppColor.primary,
     ),
   );
@@ -34,7 +34,7 @@ AppBarTheme appBarTheme() {
 }
 
 TextTheme textTheme() {
-  return const TextTheme(
+  return TextTheme(
     bodyLarge: TextStyle(
       color: AppColor.secondary,
       fontSize: 16,
@@ -44,7 +44,7 @@ TextTheme textTheme() {
 }
 
 InputDecorationTheme inputDecorationTheme() {
-  return const InputDecorationTheme(
+  return InputDecorationTheme(
       focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
             color: AppColor.primary,

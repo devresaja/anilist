@@ -1,4 +1,4 @@
-import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/widget/text/text_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +27,7 @@ class SettingCard extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: AppColor.secondaryAccent,
+          color: AppColor.white,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

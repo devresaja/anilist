@@ -1,4 +1,4 @@
-import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/utils/view_utils.dart';
@@ -73,7 +73,7 @@ class _ViewHandlerWidgetState extends State<ViewHandlerWidget> {
                     'ic_error.svg',
                     size: 100,
                   ),
-                  const TextWidget(
+                  TextWidget(
                     LocaleKeys.something_wrong,
                     color: AppColor.errorText,
                   ),

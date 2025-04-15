@@ -1,7 +1,8 @@
-import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/core/routes/route.dart';
+import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/global/widget/speech_to_text_button.dart';
 import 'package:anilist/modules/home/components/anime_list.dart';
 import 'package:anilist/modules/home/components/home_header.dart';
@@ -13,6 +14,7 @@ import 'package:anilist/widget/wrapper/invisible_expanded_header.dart';
 import 'package:anilist/widget/text/custom_search_bar.dart';
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -56,8 +58,10 @@ class HomeScreen extends StatelessWidget {
 
   SliverAppBar _buildAppBar(BuildContext context) {
     return SliverAppBar(
-        systemOverlayStyle: systemUiOverlayStyleLight.copyWith(
-            statusBarColor: Colors.transparent),
+        systemOverlayStyle: (context.read<AppBloc>().state.isDarkMode
+                ? systemUiOverlayStyleLight
+                : systemUiOverlayStyleDark)
+            .copyWith(statusBarColor: Colors.transparent),
         backgroundColor: AppColor.secondary,
         pinned: true,
         snap: false,
@@ -72,7 +76,7 @@ class HomeScreen extends StatelessWidget {
                 background: Stack(
                   children: [
                     Opacity(
-                      opacity: 0.3,
+                      opacity: 0.4,
                       child: CachedImage(
                           width: double.infinity,
                           imageUrl:

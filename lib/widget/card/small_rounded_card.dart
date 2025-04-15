@@ -1,4 +1,4 @@
-import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/widget/text/text_widget.dart';
 import 'package:flutter/material.dart';

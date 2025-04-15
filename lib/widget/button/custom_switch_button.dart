@@ -1,7 +1,9 @@
-import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/core/theme/app_color.dart';
+import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/widget/text/text_widget.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum SwitchType { normal, language }
 
@@ -52,7 +54,7 @@ class _CustomSwitchButtonState extends State<CustomSwitchButton> {
       textBuilder: (value) => _buildText(value),
       textMargin: EdgeInsets.only(right: 1),
       style: ToggleStyle(
-        indicatorColor: AppColor.white,
+        indicatorColor: Colors.white,
         backgroundColor: _getBackgroundColor(),
         borderColor: Colors.transparent,
       ),
@@ -71,7 +73,7 @@ class _CustomSwitchButtonState extends State<CustomSwitchButton> {
           ? Image.asset('assets/images/ic_lang_en.png', width: 32)
           : Image.asset('assets/images/ic_lang_id.png', width: 32);
     }
-    return Container(); // Default icon for normal mode
+    return Container();
   }
 
   Widget _buildText(bool value) {
@@ -80,7 +82,9 @@ class _CustomSwitchButtonState extends State<CustomSwitchButton> {
         child: TextWidget(
           value ? 'EN' : 'ID',
           fontSize: 12,
-          color: AppColor.secondary,
+          color: context.read<AppBloc>().state.isDarkMode
+              ? Colors.black
+              : AppColor.whiteAccent,
           translate: false,
         ),
       );
