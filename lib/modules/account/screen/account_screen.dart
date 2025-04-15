@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/app_constant.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/config/app_info.dart';
@@ -17,10 +17,10 @@ import 'package:anilist/widget/button/custom_switch_button.dart';
 import 'package:anilist/widget/text/text_widget.dart';
 
 class AccountScreen extends StatefulWidget {
-  final Function() onChangeLocale;
+  final Function() onValueChanged;
   const AccountScreen({
     super.key,
-    required this.onChangeLocale,
+    required this.onValueChanged,
   });
 
   static const String path = 'account';
@@ -42,26 +42,23 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 500),
-          child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ..._applicationSection(context),
-                divide24,
-                ..._otherInfoSection(context),
-                divide24,
-                ..._accountSection(context),
-                SizedBox(
-                    height: kBottomNavigationBarHeight +
-                        MediaQuery.paddingOf(context).bottom +
-                        20)
-              ],
-            ),
-          )),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ..._applicationSection(context),
+            divide24,
+            ..._otherInfoSection(context),
+            divide24,
+            ..._accountSection(context),
+            SizedBox(
+                height: kBottomNavigationBarHeight +
+                    MediaQuery.paddingOf(context).bottom +
+                    20)
+          ],
+        ),
+      ),
     );
   }
 
@@ -77,7 +74,7 @@ class _AccountScreenState extends State<AccountScreen> {
           switchType: SwitchType.language,
           onChanged: (value) {
             context.setLocale(Locale(value == true ? 'en' : 'id'));
-            widget.onChangeLocale();
+            widget.onValueChanged();
           },
         ),
       ),
@@ -126,11 +123,11 @@ class _AccountScreenState extends State<AccountScreen> {
             return CustomSwitchButton(
               value: state.isDarkMode,
               initialValue: state.isDarkMode,
-              enable: false,
               onChanged: (value) {
                 context
                     .read<AppBloc>()
                     .add(UpdateThemeEvent(isDarkMode: value));
+                widget.onValueChanged();
               },
             );
           },
@@ -152,12 +149,12 @@ class _AccountScreenState extends State<AccountScreen> {
       divide8,
       SettingCard(
         title: LocaleKeys.leave_a_review,
-        titleColor: Colors.yellow,
+        titleColor: Colors.yellow.shade600,
         description: AppInfo.version,
         onTap: () {
           customLaunchUrl(AppConstant.playstoreUrl);
         },
-        trailing: Icon(Icons.star, color: Colors.yellow),
+        trailing: Icon(Icons.star, color: Colors.yellow.shade600),
       ),
     ];
   }

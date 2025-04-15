@@ -1,5 +1,6 @@
-import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/core/locale/locale_keys.g.dart';
+import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/account/screen/account_screen.dart';
 import 'package:anilist/modules/home/screen/home_screen.dart';
 import 'package:anilist/modules/my_list/screen/my_list_screen.dart';
@@ -12,6 +13,7 @@ import 'package:anilist/widget/wrapper/glassmorphism.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -49,8 +51,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: systemUiOverlayStyleLight.copyWith(
-          statusBarColor: AppColor.secondary),
+      value: (context.read<AppBloc>().state.isDarkMode
+              ? systemUiOverlayStyleLight
+              : systemUiOverlayStyleDark)
+          .copyWith(statusBarColor: AppColor.secondary),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: AppColor.secondary,
@@ -60,7 +64,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const HomeScreen(),
               MyListScreen(),
               AccountScreen(
-                onChangeLocale: () {
+                onValueChanged: () {
                   setState(() {});
                 },
               ),
@@ -68,7 +72,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Align(
               alignment: const Alignment(0.0, 0.95),
               child: Glassmorphism(
-                blur: 3,
+                blur: 1,
                 opacity: 0.05,
                 borderRadius: 300,
                 child: Container(
@@ -76,29 +80,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       borderRadius: BorderRadius.circular(300),
                       border: Border.all(color: AppColor.primary)),
                   width: MediaQuery.sizeOf(context).width * 0.70,
-                  child: BottomNavigationBar(
-                    items: [
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.home_filled),
-                        label: LocaleKeys.home.tr(),
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.my_library_books_rounded),
-                        label: LocaleKeys.mylist.tr(),
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.person),
-                        label: LocaleKeys.account.tr(),
-                      ),
-                    ],
-                    currentIndex: _selectedIndex,
-                    backgroundColor: Colors.black.withOpacity(0.20),
-                    selectedItemColor: AppColor.primary,
-                    unselectedItemColor: Colors.white,
-                    selectedLabelStyle: const TextStyle(fontSize: 12),
-                    showUnselectedLabels: false,
-                    showSelectedLabels: true,
-                    onTap: _onItemTapped,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(300),
+                    child: BottomNavigationBar(
+                      items: [
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.home_filled),
+                          label: LocaleKeys.home.tr(),
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.my_library_books_rounded),
+                          label: LocaleKeys.mylist.tr(),
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.person),
+                          label: LocaleKeys.account.tr(),
+                        ),
+                      ],
+                      currentIndex: _selectedIndex,
+                      backgroundColor: context.read<AppBloc>().state.isDarkMode
+                          ? Colors.black.withOpacity(0.20)
+                          : Colors.black,
+                      selectedItemColor: AppColor.primary,
+                      unselectedItemColor: Colors.white,
+                      selectedLabelStyle: const TextStyle(fontSize: 12),
+                      showUnselectedLabels: false,
+                      showSelectedLabels: true,
+                      onTap: _onItemTapped,
+                    ),
                   ),
                 ),
               ),

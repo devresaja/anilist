@@ -1,5 +1,6 @@
-import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
+import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/global/model/anime.dart';
 import 'package:anilist/global/model/user_data.dart';
 import 'package:anilist/modules/home/components/anime_card.dart';
@@ -119,8 +120,11 @@ class _SharedMyListScreenState extends State<SharedMyListScreen> {
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
                   SliverAppBar(
                       surfaceTintColor: Colors.transparent,
-                      systemOverlayStyle: systemUiOverlayStyleLight.copyWith(
-                          statusBarColor: Colors.transparent),
+                      systemOverlayStyle:
+                          (context.read<AppBloc>().state.isDarkMode
+                                  ? systemUiOverlayStyleLight
+                                  : systemUiOverlayStyleDark)
+                              .copyWith(statusBarColor: Colors.transparent),
                       backgroundColor: AppColor.secondary,
                       pinned: true,
                       leading: IconButton(
@@ -129,7 +133,7 @@ class _SharedMyListScreenState extends State<SharedMyListScreen> {
                           },
                           icon: Icon(
                             Icons.arrow_back,
-                            color: AppColor.white,
+                            color: AppColor.black,
                           )),
                       snap: false,
                       floating: false,
@@ -141,7 +145,7 @@ class _SharedMyListScreenState extends State<SharedMyListScreen> {
                           child: TextWidget(
                             _userData.name,
                             maxLines: 1,
-                            color: AppColor.white,
+                            color: AppColor.black,
                             ellipsed: true,
                           ),
                         ),
@@ -159,7 +163,7 @@ class _SharedMyListScreenState extends State<SharedMyListScreen> {
                             divide8,
                             TextWidget(
                               _userData.name,
-                              color: AppColor.white,
+                              color: AppColor.black,
                               maxLines: 2,
                               ellipsed: true,
                             ),

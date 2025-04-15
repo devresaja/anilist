@@ -4,7 +4,7 @@ import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/modules/detail_anime/screen/detail_anime_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/global/model/anime.dart';
 import 'package:anilist/modules/home/bloc/home_bloc.dart';
 import 'package:anilist/modules/home/components/anime_card.dart';
@@ -110,7 +110,8 @@ class _HomeRandomState extends State<HomeRandom> {
                 painter: BorderPainter(isLoading: false),
                 child: ClipPath(
                   clipper: HorizontalCutClipper(),
-                  child: SizedBox(
+                  child: Container(
+                    color: Colors.black.withOpacity(0.7),
                     height: 100,
                     width: double.infinity,
                     child: Stack(
@@ -153,7 +154,7 @@ class _HomeRandomState extends State<HomeRandom> {
                                                     animeId: _data!.malId)));
                                       },
                                       text: LocaleKeys.see_detail,
-                                      textColor: Colors.black,
+                                      textColor: AppColor.white,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ],

@@ -1,4 +1,5 @@
 import 'package:anilist/core/locale/locale_keys.g.dart';
+import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/ads/bloc/ads_bloc.dart';
 import 'package:anilist/modules/ads/data/admob_api.dart';
 import 'package:anilist/modules/detail_anime/bloc/detail_anime_bloc.dart';
@@ -8,8 +9,9 @@ import 'package:anilist/services/deeplink_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/page/view_handler_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/widget/text/text_widget.dart';
 import 'package:last_pod_player/last_pod_player.dart';
@@ -76,9 +78,12 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: systemUiOverlayStyleLight.copyWith(
+        statusBarColor: Colors.black,
+      ),
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColor.secondary,
         body: MultiBlocProvider(
           providers: [
             BlocProvider(
@@ -116,17 +121,20 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
   Column _buildView(BuildContext context) {
     return Column(
       children: [
+        SizedBox(height: MediaQuery.paddingOf(context).top),
         SizedBox(
             width: MediaQuery.sizeOf(context).width,
-            height: MediaQuery.sizeOf(context).height * 0.30,
             child: Stack(
               children: [
                 _podPlayerController != null
                     ? PodVideoPlayer(controller: _podPlayerController!)
-                    : const Center(
-                        child: TextWidget(
-                          LocaleKeys.trailer_not_available,
-                          color: AppColor.white,
+                    : SizedBox(
+                        height: MediaQuery.sizeOf(context).height * 0.34,
+                        child: Center(
+                          child: TextWidget(
+                            LocaleKeys.trailer_not_available,
+                            color: AppColor.white,
+                          ),
                         ),
                       ),
                 _buildAds(),
@@ -137,7 +145,6 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
           child: SingleChildScrollView(
             child: Container(
               width: MediaQuery.sizeOf(context).width,
-              color: Colors.black,
               padding: const EdgeInsets.all(15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,7 +152,7 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
                   //title
                   TextWidget(
                     _data!.title ?? '-',
-                    color: Colors.white,
+                    color: AppColor.black,
                     fontSize: 22,
                     weight: FontWeight.bold,
                   ),
@@ -174,7 +181,7 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
                                         child: TextWidget(
                                       genre.name ?? '-',
                                       fontSize: 13,
-                                      color: Colors.white,
+                                      color: AppColor.black,
                                     )),
                                   ),
                                 ))
@@ -213,13 +220,19 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
                                 children: [
                                   Icon(
                                     Icons.share_outlined,
-                                    color: AppColor.whiteAccent,
+                                    color:
+                                        context.read<AppBloc>().state.isDarkMode
+                                            ? AppColor.whiteAccent
+                                            : AppColor.black,
                                     size: 18,
                                   ),
                                   divideW4,
                                   TextWidget(
                                     LocaleKeys.share,
-                                    color: AppColor.whiteAccent,
+                                    color:
+                                        context.read<AppBloc>().state.isDarkMode
+                                            ? AppColor.whiteAccent
+                                            : AppColor.black,
                                   ),
                                   divideW4,
                                 ],

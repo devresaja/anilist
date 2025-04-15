@@ -1,4 +1,4 @@
-import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/core/routes/navigator_key.dart';
@@ -15,6 +15,10 @@ import 'package:url_launcher/url_launcher.dart';
 SystemUiOverlayStyle systemUiOverlayStyleLight = const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.light);
+
+SystemUiOverlayStyle systemUiOverlayStyleDark = const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.dark);
 
 Widget loading({double? size}) {
   return Center(
@@ -33,7 +37,7 @@ Widget loading({double? size}) {
 Widget refreshComponent({required Function() onTap}) {
   return IconButton(
     onPressed: onTap,
-    icon: const Icon(
+    icon: Icon(
       Icons.refresh,
       color: AppColor.primary,
     ),

@@ -1,4 +1,4 @@
-import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
@@ -81,13 +81,21 @@ class _MyListButtonState extends State<MyListButton> {
                 children: [
                   Icon(
                     _isMyList ? Icons.bookmark : Icons.bookmark_outline,
-                    color: _isMyList ? AppColor.primary : AppColor.whiteAccent,
+                    color: _isMyList
+                        ? AppColor.primary
+                        : context.read<AppBloc>().state.isDarkMode
+                            ? AppColor.whiteAccent
+                            : AppColor.black,
                     size: 18,
                   ),
                   divideW4,
                   TextWidget(
                     LocaleKeys.mylist,
-                    color: _isMyList ? AppColor.primary : AppColor.whiteAccent,
+                    color: _isMyList
+                        ? AppColor.primary
+                        : context.read<AppBloc>().state.isDarkMode
+                            ? AppColor.whiteAccent
+                            : AppColor.black,
                   ),
                   divideW4,
                 ],

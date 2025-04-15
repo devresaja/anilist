@@ -1,4 +1,4 @@
-import 'package:anilist/constant/app_color.dart';
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:flutter/material.dart';
 
 class CostumTextField extends StatelessWidget {
@@ -38,7 +38,7 @@ class CostumTextField extends StatelessWidget {
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(color: AppColor.accent, fontSize: .04),
+            hintStyle: TextStyle(color: AppColor.accent, fontSize: .04),
             prefixIcon: Icon(
               prefixIcon,
               color: AppColor.accent,

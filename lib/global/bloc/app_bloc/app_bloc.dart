@@ -1,3 +1,4 @@
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/global/model/user_data.dart';
 import 'package:anilist/services/local_storage_service.dart';
 import 'package:anilist/services/notification_service.dart';
@@ -68,8 +69,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     Emitter<AppState> emit,
   ) async {
     LocalStorageService.setIsDarkMode(event.isDarkMode);
-
-    // AppColor.updateTheme(newTheme);
+    AppColor.updateTheme();
     emit(state.copyWith(isDarkMode: event.isDarkMode));
   }
 
