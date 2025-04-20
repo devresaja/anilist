@@ -98,19 +98,28 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
             minifyEnabled true
             shrinkResources true
         }
 
         profile {
-            signingConfig signingConfigs.release
+            signingConfig null
         }
 
         debug {
-            signingConfig signingConfigs.debug
+            signingConfig null
         }
     }
+
+    android.productFlavors.all { flavor ->
+        if(flavor.name == "prod") {
+            flavor.signingConfig = signingConfigs.release
+        } else {
+            flavor.signingConfig = signingConfigs.debug
+        }
+
+
+    }    
 }
 
 flutter {
