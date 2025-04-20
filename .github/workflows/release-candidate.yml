@@ -3,7 +3,7 @@ name: Release Candidate
 on:
   push:
     tags:
-      - 'v*-rc.*'
+      - 'v*-rc*'
 
 env:
   FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
@@ -48,6 +48,12 @@ jobs:
 
       - name: Upload symbols to Firebase Crashlytics
         run: firebase crashlytics:symbols:upload --app=${{ secrets.FIREBASE_APP_ID_DEV }} symbols
+
+      - name: Upload APK to Firebase App Distribution
+        run: |
+          firebase appdistribution:distribute build/app/outputs/flutter-apk/app-dev-release.apk \
+            --app ${{ secrets.FIREBASE_APP_ID_DEV }} \
+            --groups "internal"
 
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
