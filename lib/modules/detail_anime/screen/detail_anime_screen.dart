@@ -133,7 +133,7 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
                         child: Center(
                           child: TextWidget(
                             LocaleKeys.trailer_not_available,
-                            color: AppColor.white,
+                            color: AppColor.black,
                           ),
                         ),
                       ),
