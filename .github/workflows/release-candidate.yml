@@ -19,8 +19,6 @@ jobs:
       - name: Decode secrets base64
         run: |
           echo "${{ secrets.ENV_DEV }}" | base64 --decode > .env.dev
-          echo "${{ secrets.KEY_PROPERTIES }}" | base64 --decode > android/key.properties
-          echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/anilist-keystore.jks  
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -38,7 +36,7 @@ jobs:
           dart run build_runner clean
           dart run build_runner build --define=envied_generator:envied=path=.env.dev
 
-      - name: Release
+      - name: Build
         run: |
           flutter build aab --release --flavor dev --dart-define=FLAVOR=dev --split-debug-info=symbols --obfuscate 
           flutter build apk --release --flavor dev --dart-define=FLAVOR=dev --split-debug-info=symbols --obfuscate
