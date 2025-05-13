@@ -24,9 +24,9 @@ Anilist is built with Flutter using the Bloc pattern and integrates various Fire
 ## Tools
 - [GitHub](https://github.com/) - Version Control System
 - [GitHub Actions](https://github.com/features/actions) - CI/CD
-- [Jira](https://lowpriority.atlassian.net) - Project Management  
-  ↳ [Dashboard](https://lowpriority.atlassian.net/jira/dashboards/10003)
-- [Postman](https://www.postman.com/) - API Documentation  
+- [ClickUp](https://lowpriority.atlassian.net) - Project Management  
+  ↳ [Board](https://sharing.clickup.com/90181182112/b/h/6-901807732402-2/b7eded0a165f1b1)
+- [Postman](https://www.postman.com/) - API Collection  
   ↳ [Collection](https://www.postman.com/resdev-3827892/anilist/collection/aphktk6/jikan-moe?action=share&creator=44337202)
 
 
