@@ -323,7 +323,7 @@ class _MyListScreenState extends State<MyListScreen> {
   void _shareMyList(BuildContext context) {
     DeepLinkService.generateDeeplink(
       type: DeepLinkType.mylist,
-      id: context.read<AppBloc>().state.user!.userId,
+      id: context.read<AppBloc>().state.user!.userId!,
     );
   }
 

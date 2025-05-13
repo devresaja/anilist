@@ -44,6 +44,11 @@ class SessionService {
   Future<void> _checkSession(BuildContext context) async {
     if (context.read<AppBloc>().state.user == null) return;
 
+    if (context.read<AppBloc>().state.user?.userId == null) {
+      _showDialog(context);
+      return;
+    }
+
     try {
       await _firebaseAuth.currentUser?.reload();
       final user = _firebaseAuth.currentUser;
