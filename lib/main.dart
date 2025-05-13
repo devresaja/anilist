@@ -19,7 +19,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
 
 Future<void> main() async {
@@ -137,26 +136,27 @@ class _MyAppState extends State<MyApp> {
           create: (context) => MyListBloc(),
         ),
       ],
-      child: ScreenUtilInit(
-        designSize: const Size(360, 690),
-        minTextAdapt: true,
-        splitScreenMode: false,
-        child: MaterialApp(
-          title: AppInfo.appName,
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          locale: context.locale,
-          theme: themeConfig(),
-          navigatorKey: navigatorKey,
-          debugShowCheckedModeBanner: kDebugMode,
-          home: MediaQuery(
-            data: MediaQuery.of(context)
-                .copyWith(textScaler: TextScaler.noScaling),
-            child: widget.userData != null
-                ? const DashboardScreen()
-                : const LoginScreen(),
-          ),
-        ),
+      child: BlocBuilder<AppBloc, AppState>(
+        buildWhen: (previous, current) =>
+            previous.isDarkMode != current.isDarkMode,
+        builder: (context, state) {
+          return MaterialApp(
+            title: AppInfo.appName,
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
+            theme: themeConfig(isDarkMode: state.isDarkMode),
+            navigatorKey: navigatorKey,
+            debugShowCheckedModeBanner: kDebugMode,
+            home: MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: TextScaler.noScaling),
+              child: widget.userData != null
+                  ? const DashboardScreen()
+                  : const LoginScreen(),
+            ),
+          );
+        },
       ),
     );
   }
