@@ -2,13 +2,14 @@ import 'package:anilist/core/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-ThemeData themeConfig({bool? useMaterial3}) {
+ThemeData themeConfig({required bool isDarkMode, bool? useMaterial3}) {
   return ThemeData(
     useMaterial3: useMaterial3 ?? false,
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: appBarTheme(),
     textTheme: textTheme(),
     fontFamily: 'NunitoSans',
+    brightness: isDarkMode ? Brightness.dark : Brightness.light,
     inputDecorationTheme: inputDecorationTheme(),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     textSelectionTheme: TextSelectionThemeData(
@@ -17,8 +18,11 @@ ThemeData themeConfig({bool? useMaterial3}) {
   );
 }
 
-Theme disableMaterial3({required Widget child}) {
-  return Theme(data: themeConfig(useMaterial3: false), child: child);
+Theme disableMaterial3({required bool isDarkMode, required Widget child}) {
+  return Theme(
+    data: themeConfig(isDarkMode: isDarkMode, useMaterial3: false),
+    child: child,
+  );
 }
 
 AppBarTheme appBarTheme() {
