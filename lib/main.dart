@@ -17,7 +17,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
 
@@ -53,12 +52,6 @@ Future<void> main() async {
   // NOTE: This line must be commented out due to commercial purposes
   await AdMobService.init();
   // END Initializes services for private environment.
-
-  // Locks screen orientation to portrait mode only.
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
 
   // Init local db
   await LocalDatabaseService().init();
@@ -148,6 +141,10 @@ class _MyAppState extends State<MyApp> {
             theme: themeConfig(isDarkMode: state.isDarkMode),
             navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: kDebugMode,
+            builder: (_, child) => SafeArea(
+              top: false,
+              child: child!,
+            ),
             home: MediaQuery(
               data: MediaQuery.of(context)
                   .copyWith(textScaler: TextScaler.noScaling),

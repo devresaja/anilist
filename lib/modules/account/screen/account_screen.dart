@@ -1,3 +1,4 @@
+import 'package:anilist/extension/view_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,22 +43,24 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: SingleChildScrollView(
+      left: false,
+      right: false,
+      bottom: false,
+      child: ListView(
         padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ..._applicationSection(context),
-            divide24,
-            ..._otherInfoSection(context),
-            divide24,
-            ..._accountSection(context),
+        children: [
+          ..._applicationSection(context),
+          divide24,
+          ..._otherInfoSection(context),
+          divide24,
+          ..._accountSection(context),
+          if (!context.isWideScreen)
             SizedBox(
                 height: kBottomNavigationBarHeight +
-                    MediaQuery.paddingOf(context).bottom +
-                    20)
-          ],
-        ),
+                    MediaQuery.paddingOf(context).bottom)
+          else
+            divide16,
+        ],
       ),
     );
   }
