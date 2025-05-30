@@ -149,15 +149,17 @@ class _SearchScreenState extends State<SearchScreen> {
             horizontalGridSpacing: 8,
             rowMainAxisAlignment: MainAxisAlignment.center,
             gridItems: _animes
-                .map((anime) => AnimeCard(
-                      width: 160,
-                      height: 200,
-                      animeId: anime.malId,
-                      imageUrl: anime.images?.jpg?.imageUrl,
-                      score: anime.score,
-                      title: anime.title,
-                      type: anime.type,
-                      episode: anime.episodes,
+                .map((anime) => AspectRatio(
+                      aspectRatio: 6 / 9,
+                      child: AnimeCard(
+                        animeId: anime.malId,
+                        imageUrl: anime.images?.jpg?.imageUrl,
+                        score: anime.score,
+                        title: anime.title,
+                        type: anime.type,
+                        episode: anime.episodes,
+                        isDynamicSize: true,
+                      ),
                     ))
                 .toList(),
             builder: (context, items) {

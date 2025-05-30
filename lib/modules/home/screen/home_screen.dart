@@ -2,6 +2,7 @@ import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/core/routes/route.dart';
+import 'package:anilist/extension/view_extension.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/global/widget/speech_to_text_button.dart';
 import 'package:anilist/modules/home/components/anime_list.dart';
@@ -31,10 +32,6 @@ class HomeScreen extends StatelessWidget {
         _buildAppBar(context),
       ],
       body: SingleChildScrollView(
-        padding: EdgeInsets.only(
-            bottom: MediaQuery.paddingOf(context).bottom +
-                kBottomNavigationBarHeight +
-                40),
         child: Column(
           children: [
             divide16,
@@ -50,6 +47,12 @@ class HomeScreen extends StatelessWidget {
             const AnimeListWidget(
               animeListType: AnimeListType.top,
             ),
+            if (!context.isWideScreen)
+              SizedBox(
+                  height: kBottomNavigationBarHeight +
+                      MediaQuery.paddingOf(context).bottom)
+            else
+              divide16,
           ],
         ),
       ),

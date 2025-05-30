@@ -83,179 +83,183 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
         statusBarColor: Colors.black,
       ),
       child: Scaffold(
-        backgroundColor: AppColor.secondary,
-        body: MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (context) => _detailAnimeBloc,
+          backgroundColor: AppColor.secondary,
+          body: MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => _detailAnimeBloc,
+              ),
+              BlocProvider(
+                create: (context) => _adsBloc,
+              ),
+            ],
+            child: BlocConsumer<DetailAnimeBloc, DetailAnimeState>(
+              bloc: _detailAnimeBloc,
+              listener: (context, state) {
+                if (state is GetAnimeByIdLoadingState) {
+                  _viewMode = ViewMode.loading;
+                } else if (state is GetAnimeByIdLoadedState) {
+                  _data = state.data.data;
+                  _initPlayer();
+                  _viewMode = ViewMode.loaded;
+                } else if (state is GetAnimeByIdFailedState) {
+                  _viewMode = ViewMode.failed;
+                }
+              },
+              builder: (context, state) {
+                return ViewHandlerWidget(
+                  viewMode: _viewMode,
+                  child: _data == null ? loading() : _buildView(),
+                );
+              },
             ),
-            BlocProvider(
-              create: (context) => _adsBloc,
-            ),
-          ],
-          child: BlocConsumer<DetailAnimeBloc, DetailAnimeState>(
-            bloc: _detailAnimeBloc,
-            listener: (context, state) {
-              if (state is GetAnimeByIdLoadingState) {
-                _viewMode = ViewMode.loading;
-              } else if (state is GetAnimeByIdLoadedState) {
-                _data = state.data.data;
-                _initPlayer();
-                _viewMode = ViewMode.loaded;
-              } else if (state is GetAnimeByIdFailedState) {
-                _viewMode = ViewMode.failed;
-              }
-            },
-            builder: (context, state) {
-              return ViewHandlerWidget(
-                viewMode: _viewMode,
-                child: _data == null ? loading() : _buildView(context),
-              );
-            },
+          )),
+    );
+  }
+
+  Widget _buildView() {
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        Container(
+            color: Colors.black, height: MediaQuery.paddingOf(context).top),
+        SizedBox(
+          width: MediaQuery.sizeOf(context).width,
+          child: Stack(
+            children: [
+              _podPlayerController != null
+                  ? PodVideoPlayer(
+                      controller: _podPlayerController!,
+                    )
+                  : SizedBox(
+                      height: MediaQuery.sizeOf(context).height * 0.34,
+                      child: Center(
+                        child: TextWidget(
+                          LocaleKeys.trailer_not_available,
+                          color: AppColor.black,
+                        ),
+                      ),
+                    ),
+              _buildAds(),
+            ],
           ),
         ),
+        //detail anime
+        Container(
+          width: MediaQuery.sizeOf(context).width,
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //title
+              TextWidget(
+                _data!.title ?? '-',
+                color: AppColor.black,
+                fontSize: 22,
+                weight: FontWeight.bold,
+              ),
+              divide10,
+
+              //genre
+              if (_data!.genres?.isNotEmpty ?? false) ...[
+                _buildGenre(),
+                divide16
+              ],
+
+              // menu
+              _buildMenu(),
+
+              divide10,
+              //synopsis
+              TextWidget(
+                _data!.synopsis ?? '-',
+                color: AppColor.accent,
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  SingleChildScrollView _buildMenu() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          MyListButton(anime: _data!),
+          divideW10,
+
+          // share
+          Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(300),
+            child: InkWell(
+              onTap: () {
+                DeepLinkService.generateDeeplink(
+                    type: DeepLinkType.anime,
+                    id: widget.argument.animeId.toString());
+              },
+              borderRadius: BorderRadius.circular(300),
+              child: Ink(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColor.secondaryAccent,
+                  borderRadius: BorderRadius.circular(300),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.share_outlined,
+                      color: context.read<AppBloc>().state.isDarkMode
+                          ? AppColor.whiteAccent
+                          : AppColor.black,
+                      size: 18,
+                    ),
+                    divideW4,
+                    TextWidget(
+                      LocaleKeys.share,
+                      color: context.read<AppBloc>().state.isDarkMode
+                          ? AppColor.whiteAccent
+                          : AppColor.black,
+                    ),
+                    divideW4,
+                  ],
+                ),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
 
-  Column _buildView(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(height: MediaQuery.paddingOf(context).top),
-        SizedBox(
-            width: MediaQuery.sizeOf(context).width,
-            child: Stack(
-              children: [
-                _podPlayerController != null
-                    ? PodVideoPlayer(controller: _podPlayerController!)
-                    : SizedBox(
-                        height: MediaQuery.sizeOf(context).height * 0.34,
-                        child: Center(
-                          child: TextWidget(
-                            LocaleKeys.trailer_not_available,
-                            color: AppColor.black,
-                          ),
-                        ),
-                      ),
-                _buildAds(),
-              ],
-            )),
-        //detail anime
-        Expanded(
-          child: SingleChildScrollView(
-            child: Container(
-              width: MediaQuery.sizeOf(context).width,
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //title
-                  TextWidget(
-                    _data!.title ?? '-',
-                    color: AppColor.black,
-                    fontSize: 22,
-                    weight: FontWeight.bold,
-                  ),
-                  divide10,
-
-                  //genre
-                  if (_data!.genres?.isNotEmpty ?? false)
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: _data!.genres!
-                            .map((genre) => Padding(
-                                  padding: EdgeInsets.only(
-                                      right: MediaQuery.sizeOf(context).width *
-                                          0.02),
-                                  child: Container(
-                                    padding: const EdgeInsets.only(
-                                        right: 4, left: 4, top: 1, bottom: 1),
-                                    decoration: BoxDecoration(
-                                      border:
-                                          Border.all(color: AppColor.primary),
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: AppColor.secondary,
-                                    ),
-                                    child: Center(
-                                        child: TextWidget(
-                                      genre.name ?? '-',
-                                      fontSize: 13,
-                                      color: AppColor.black,
-                                    )),
-                                  ),
-                                ))
-                            .toList(),
-                      ),
+  SingleChildScrollView _buildGenre() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: _data!.genres!
+            .map((genre) => Padding(
+                  padding: EdgeInsets.only(
+                      right: MediaQuery.sizeOf(context).width * 0.02),
+                  child: Container(
+                    padding: const EdgeInsets.only(
+                        right: 4, left: 4, top: 1, bottom: 1),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColor.primary),
+                      borderRadius: BorderRadius.circular(10),
+                      color: AppColor.secondary,
                     ),
-                  if (_data!.genres?.isNotEmpty ?? false) divide16,
-
-                  // menu
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        MyListButton(anime: _data!),
-                        divideW10,
-
-                        // share
-                        Material(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(300),
-                          child: InkWell(
-                            onTap: () {
-                              DeepLinkService.generateDeeplink(
-                                  type: DeepLinkType.anime,
-                                  id: widget.argument.animeId.toString());
-                            },
-                            borderRadius: BorderRadius.circular(300),
-                            child: Ink(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: AppColor.secondaryAccent,
-                                borderRadius: BorderRadius.circular(300),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.share_outlined,
-                                    color:
-                                        context.read<AppBloc>().state.isDarkMode
-                                            ? AppColor.whiteAccent
-                                            : AppColor.black,
-                                    size: 18,
-                                  ),
-                                  divideW4,
-                                  TextWidget(
-                                    LocaleKeys.share,
-                                    color:
-                                        context.read<AppBloc>().state.isDarkMode
-                                            ? AppColor.whiteAccent
-                                            : AppColor.black,
-                                  ),
-                                  divideW4,
-                                ],
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
+                    child: Center(
+                        child: TextWidget(
+                      genre.name ?? '-',
+                      fontSize: 13,
+                      color: AppColor.black,
+                    )),
                   ),
-
-                  divide10,
-                  //synopsis
-                  TextWidget(
-                    _data!.synopsis ?? '-',
-                    color: AppColor.accent,
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
+                ))
+            .toList(),
+      ),
     );
   }
 
