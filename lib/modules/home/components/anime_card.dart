@@ -19,6 +19,7 @@ class AnimeCard extends StatelessWidget {
   final double? width;
   final double? height;
   final bool imageOnly;
+  final bool isDynamicSize;
 
   const AnimeCard({
     super.key,
@@ -31,6 +32,7 @@ class AnimeCard extends StatelessWidget {
     this.width,
     this.height,
     this.imageOnly = false,
+    this.isDynamicSize = false,
   });
 
   @override
@@ -38,27 +40,29 @@ class AnimeCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Container(
-        width: width ?? 140,
-        height: height ?? 190,
+        width: isDynamicSize ? null : width ?? 140,
+        height: isDynamicSize ? null : height ?? 190,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
         ),
         child: imageOnly
             ? CachedImage(
                 imageUrl: imageUrl,
-                width: width ?? 140,
-                height: height ?? 190,
+                width: isDynamicSize ? null : width ?? 140,
+                height: isDynamicSize ? null : height ?? 190,
                 isRounded: true,
               )
             : Stack(
                 children: [
                   Stack(
+                    fit: StackFit.expand,
                     children: [
                       CachedImage(
                         imageUrl: imageUrl,
-                        width: width ?? 140,
-                        height: height ?? 190,
+                        width: isDynamicSize ? null : width ?? 140,
+                        height: isDynamicSize ? null : height ?? 190,
                         isRounded: true,
+                        fit: BoxFit.fill,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 3, right: 3),

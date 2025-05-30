@@ -1,6 +1,7 @@
 import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/locale/locale_keys.g.dart';
+import 'package:anilist/extension/view_extension.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/global/model/anime.dart';
 import 'package:anilist/modules/ads/bloc/ads_bloc.dart';
@@ -75,6 +76,9 @@ class _MyListScreenState extends State<MyListScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      left: false,
+      right: false,
+      bottom: false,
       child: Scaffold(
         backgroundColor: AppColor.secondary,
         body: Column(
@@ -138,22 +142,24 @@ class _MyListScreenState extends State<MyListScreen> {
   Widget _buildView() {
     return ResponsiveGridListBuilder(
       minItemWidth: 160,
-      minItemsPerRow: 2,
       horizontalGridMargin: 16,
+      minItemsPerRow: 2,
       verticalGridSpacing: 16,
       horizontalGridSpacing: 8,
       rowMainAxisAlignment: MainAxisAlignment.center,
       gridItems: _animes
-          .map((anime) => AnimeCard(
-                key: ValueKey(anime.malId),
-                width: 160,
-                height: 200,
-                animeId: anime.malId,
-                imageUrl: anime.images?.jpg?.imageUrl,
-                score: anime.score,
-                title: anime.title,
-                type: anime.type,
-                episode: anime.episodes,
+          .map((anime) => AspectRatio(
+                aspectRatio: 6 / 9,
+                child: AnimeCard(
+                  key: ValueKey(anime.malId),
+                  animeId: anime.malId,
+                  imageUrl: anime.images?.jpg?.imageUrl,
+                  score: anime.score,
+                  title: anime.title,
+                  type: anime.type,
+                  episode: anime.episodes,
+                  isDynamicSize: true,
+                ),
               ))
           .toList(),
       builder: (context, items) {
@@ -169,11 +175,13 @@ class _MyListScreenState extends State<MyListScreen> {
               divide10,
               loading(),
             ],
-            SizedBox(
-              height: MediaQuery.paddingOf(context).bottom +
-                  kBottomNavigationBarHeight +
-                  40,
-            ),
+            if (!context.isWideScreen)
+              SizedBox(
+                height: MediaQuery.paddingOf(context).bottom +
+                    kBottomNavigationBarHeight,
+              )
+            else
+              divide16,
           ],
         );
       },

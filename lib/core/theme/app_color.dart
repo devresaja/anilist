@@ -72,7 +72,7 @@ class DarkColor implements AppColorBase {
   @override
   Color primary = const Color(0xFF3dd8c5);
   @override
-  Color secondary = const Color(0xff0e0f0f);
+  Color secondary = const Color.fromARGB(255, 18, 19, 20);
   @override
   Color secondaryAccent = const Color.fromARGB(255, 24, 24, 24);
   @override
