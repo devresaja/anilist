@@ -8,6 +8,8 @@ import 'package:anilist/modules/my_list/components/my_list_button.dart';
 import 'package:anilist/services/deeplink_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/page/view_handler_widget.dart';
+import 'package:anilist/widget/video/youtube_embeded_player.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -123,27 +125,10 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
       children: [
         Container(
             color: Colors.black, height: MediaQuery.paddingOf(context).top),
-        SizedBox(
-          width: MediaQuery.sizeOf(context).width,
-          child: Stack(
-            children: [
-              _podPlayerController != null
-                  ? PodVideoPlayer(
-                      controller: _podPlayerController!,
-                    )
-                  : SizedBox(
-                      height: MediaQuery.sizeOf(context).height * 0.34,
-                      child: Center(
-                        child: TextWidget(
-                          LocaleKeys.trailer_not_available,
-                          color: AppColor.black,
-                        ),
-                      ),
-                    ),
-              _buildAds(),
-            ],
-          ),
-        ),
+
+        //player
+        _buildPlayer(),
+
         //detail anime
         Container(
           width: MediaQuery.sizeOf(context).width,
@@ -179,6 +164,40 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildPlayer() {
+    if (kIsWeb && _data!.trailer!.youtubeId != null) {
+      return YoutubeEmbededPlayer(
+        videoId: _data!.trailer!.youtubeId!,
+        aspectRatio: 5 / 2,
+      );
+    }
+
+    if (_podPlayerController != null) {
+      return SizedBox(
+        width: MediaQuery.sizeOf(context).width,
+        child: Stack(
+          children: [
+            PodVideoPlayer(
+              controller: _podPlayerController!,
+              frameAspectRatio: 16 / 9,
+            ),
+            _buildAds(),
+          ],
+        ),
+      );
+    }
+
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: Center(
+        child: TextWidget(
+          LocaleKeys.trailer_not_available,
+          color: AppColor.black,
+        ),
+      ),
     );
   }
 
