@@ -70,7 +70,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   ) async {
     LocalStorageService.setIsDarkMode(event.isDarkMode);
     AppColor.updateTheme();
-    emit(state.copyWith(isDarkMode: event.isDarkMode));
+    emit(state.copyWith(
+        isDarkMode: event.isDarkMode,
+        appStateErrorType: AppStateErrorType.none,
+        appStateLoadingType: AppStateLoadingType.none));
   }
 
   Future<void> _removeUserData(
