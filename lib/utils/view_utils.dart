@@ -98,6 +98,9 @@ Future<dynamic> showConfirmationDialog({
           },
           child: AlertDialog(
             backgroundColor: AppColor.secondary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

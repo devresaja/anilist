@@ -51,7 +51,7 @@ class CustomSearchBar extends StatelessWidget {
         child: Row(
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 8, right: 6),
+              padding: const EdgeInsets.only(left: 12, right: 6),
               child: SvgUI(
                 icon ?? 'ic_search.svg',
                 size: iconSize,

@@ -106,7 +106,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   divideW6,
                   Padding(
-                      padding: const EdgeInsets.only(top: 8),
+                      padding: const EdgeInsets.only(top: 4),
                       child: SpeechToTextButton(
                         onResult: (search) {
                           if (ModalRoute.of(context)?.isCurrent ?? false) {
