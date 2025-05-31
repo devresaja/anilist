@@ -53,5 +53,6 @@
     "update_available_message": "Version {version} is now available. Please update for better experience.",
     "update": "Update",
     "no_result_found": "No result found..",
-    "something_wrong": "Something's wrong"
+    "something_wrong": "Something's wrong",
+    "not_available": "Currently unavailable"
 }

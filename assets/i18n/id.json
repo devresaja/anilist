@@ -53,5 +53,6 @@
     "update_available_message": "Versi {version} sekarang tersedia. Silakan perbarui untuk pengalaman yang lebih baik.",
     "update": "Perbarui",
     "no_result_found": "Hasil tidak ditemukan..",
-    "something_wrong": "Terjadi kesalahan"
+    "something_wrong": "Terjadi kesalahan",
+    "not_available": "Sedang tidak tersedia"
 }

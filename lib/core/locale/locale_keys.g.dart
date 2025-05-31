@@ -58,5 +58,6 @@ abstract class  LocaleKeys {
   static const update = 'update';
   static const no_result_found = 'no_result_found';
   static const something_wrong = 'something_wrong';
+  static const not_available = 'not_available';
 
 }

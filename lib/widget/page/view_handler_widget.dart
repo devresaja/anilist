@@ -14,13 +14,14 @@ enum ViewMode {
   failed,
   loadMore,
   loadMax,
+  maintenance,
 }
 
 class ViewHandlerWidget extends StatefulWidget {
   final ViewMode viewMode;
   final Widget child;
   final Function()? onTapError;
-  final Widget? customLoading, customEmpty, customFailed;
+  final Widget? customLoading, customEmpty, customFailed, customMaintenance;
   const ViewHandlerWidget({
     required this.child,
     super.key,
@@ -29,6 +30,7 @@ class ViewHandlerWidget extends StatefulWidget {
     this.customEmpty,
     this.customFailed,
     this.customLoading,
+    this.customMaintenance,
   });
 
   @override
@@ -87,6 +89,25 @@ class _ViewHandlerWidgetState extends State<ViewHandlerWidget> {
                       ),
                     ),
                   ]
+                ],
+              ),
+        );
+      case ViewMode.maintenance:
+        return Center(
+          child: widget.customMaintenance ??
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SvgUI(
+                    'ic_maintenance.svg',
+                    size: 100,
+                  ),
+                  divide24,
+                  TextWidget(
+                    LocaleKeys.not_available,
+                    fontSize: 16,
+                  ),
                 ],
               ),
         );
