@@ -69,7 +69,8 @@ class CodegenLoader extends AssetLoader{
   "update_available_message": "Version {version} is now available. Please update for better experience.",
   "update": "Update",
   "no_result_found": "No result found..",
-  "something_wrong": "Something's wrong"
+  "something_wrong": "Something's wrong",
+  "not_available": "Currently unavailable"
 };
 static const Map<String,dynamic> _id = {
   "welcome": "Selamat datang",
@@ -126,7 +127,8 @@ static const Map<String,dynamic> _id = {
   "update_available_message": "Versi {version} sekarang tersedia. Silakan perbarui untuk pengalaman yang lebih baik.",
   "update": "Perbarui",
   "no_result_found": "Hasil tidak ditemukan..",
-  "something_wrong": "Terjadi kesalahan"
+  "something_wrong": "Terjadi kesalahan",
+  "not_available": "Sedang tidak tersedia"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en": _en, "id": _id};
 }
