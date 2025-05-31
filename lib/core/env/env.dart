@@ -12,21 +12,57 @@ abstract class Env {
 
   static String get url => 'https://api.jikan.moe/v4';
 
-  static String get firebaseApiKey {
+  static String get firebaseAndroidApiKey {
     switch (_envType) {
       case EnvType.prod:
-        return EnvProd.firebaseApiKey;
+        return EnvProd.firebaseAndroidApiKey;
       case EnvType.dev:
-        return EnvDev.firebaseApiKey;
+        return EnvDev.firebaseAndroidApiKey;
     }
   }
 
-  static String get firebaseAppId {
+  static String get firebaseAndroidAppId {
     switch (_envType) {
       case EnvType.prod:
-        return EnvProd.firebaseAppId;
+        return EnvProd.firebaseAndroidAppId;
       case EnvType.dev:
-        return EnvDev.firebaseAppId;
+        return EnvDev.firebaseAndroidAppId;
+    }
+  }
+
+  static String get firebaseWebApiKey {
+    switch (_envType) {
+      case EnvType.prod:
+        return EnvProd.firebaseWebApiKey;
+      case EnvType.dev:
+        return EnvDev.firebaseWebApiKey;
+    }
+  }
+
+  static String get firebaseWebAppId {
+    switch (_envType) {
+      case EnvType.prod:
+        return EnvProd.firebaseWebAppId;
+      case EnvType.dev:
+        return EnvDev.firebaseWebAppId;
+    }
+  }
+
+  static String get firebaseAuthDomain {
+    switch (_envType) {
+      case EnvType.prod:
+        return EnvProd.firebaseAuthDomain;
+      case EnvType.dev:
+        return EnvDev.firebaseAuthDomain;
+    }
+  }
+
+  static String get firebaseMeasurementId {
+    switch (_envType) {
+      case EnvType.prod:
+        return EnvProd.firebaseMeasurementId;
+      case EnvType.dev:
+        return EnvDev.firebaseMeasurementId;
     }
   }
 
