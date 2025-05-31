@@ -91,7 +91,6 @@ class _SearchScreenState extends State<SearchScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
             Expanded(
               child: BlocProvider(
                 create: (context) => _searchBloc,
@@ -136,73 +135,91 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildView() {
-    return Column(
-      children: [
-        Expanded(
-          child: ResponsiveGridListBuilder(
-            verticalGridMargin: 16,
-            minItemWidth: 160,
-            minItemsPerRow: 2,
-            horizontalGridMargin: 16,
-            verticalGridSpacing: 16,
-            horizontalGridSpacing: 8,
-            rowMainAxisAlignment: MainAxisAlignment.center,
-            gridItems: _animes
-                .map((anime) => AspectRatio(
-                      aspectRatio: 6 / 9,
-                      child: AnimeCard(
-                        animeId: anime.malId,
-                        imageUrl: anime.images?.jpg?.imageUrl,
-                        score: anime.score,
-                        title: anime.title,
-                        type: anime.type,
-                        episode: anime.episodes,
-                        isDynamicSize: true,
-                      ),
-                    ))
-                .toList(),
-            builder: (context, items) {
-              return ListView(
-                controller: _scrollController,
-                children: [
-                  ...items,
-                  if (_viewMode == ViewMode.loadMore) loading()
-                ],
-              );
-            },
-          ),
+  CustomScrollView _buildView() {
+    return CustomScrollView(
+      controller: _scrollController,
+      slivers: [
+        SliverAppBar(
+          floating: true,
+          pinned: false,
+          leading: Container(),
+          backgroundColor: AppColor.secondary,
+          expandedHeight: 80,
+          collapsedHeight: 68,
+          flexibleSpace: _buildHeader(),
         ),
+        SliverToBoxAdapter(child: _buildList())
       ],
     );
   }
 
-  Row _buildHeader() {
-    return Row(
-      children: [
-        divideW16,
-        Flexible(
-          child: CustomSearchBar(
-            height: 46,
-            margin: EdgeInsets.only(top: 10, bottom: 10),
-            withPaddingHorizontal: false,
-            hintText: LocaleKeys.search_title,
-            controller: _searchController,
-            onSubmitted: (value) {
-              _refreshBloc();
-            },
+  Widget _buildList() {
+    return ResponsiveGridListBuilder(
+      minItemWidth: 160,
+      minItemsPerRow: 2,
+      horizontalGridMargin: 16,
+      verticalGridSpacing: 16,
+      horizontalGridSpacing: 8,
+      rowMainAxisAlignment: MainAxisAlignment.center,
+      gridItems: _animes
+          .map((anime) => AspectRatio(
+                aspectRatio: 6 / 9,
+                child: AnimeCard(
+                  animeId: anime.malId,
+                  imageUrl: anime.images?.jpg?.imageUrl,
+                  score: anime.score,
+                  title: anime.title,
+                  type: anime.type,
+                  episode: anime.episodes,
+                  isDynamicSize: true,
+                ),
+              ))
+          .toList(),
+      builder: (context, items) {
+        return ListView(
+          primary: false,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            ...items,
+            if (_viewMode == ViewMode.loadMore) loading(),
+            divide16,
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        children: [
+          divideW16,
+          Flexible(
+            child: CustomSearchBar(
+              height: 46,
+              withPaddingHorizontal: false,
+              hintText: LocaleKeys.search_title,
+              controller: _searchController,
+              onSubmitted: (value) {
+                _refreshBloc();
+              },
+            ),
           ),
-        ),
-        divideW6,
-        Padding(
-            padding: const EdgeInsets.only(top: 8),
+          divideW6,
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
             child: SpeechToTextButton(
               onResult: (value) {
                 _searchController.text = value;
                 _refreshBloc();
               },
-            ))
-      ],
+            ),
+          ),
+          divideW16,
+        ],
+      ),
     );
   }
 }
