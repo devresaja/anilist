@@ -8,7 +8,6 @@ import 'package:anilist/modules/my_list/components/my_list_button.dart';
 import 'package:anilist/services/deeplink_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/page/view_handler_widget.dart';
-import 'package:anilist/widget/video/youtube_embeded_player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,6 +16,8 @@ import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/widget/text/text_widget.dart';
 import 'package:last_pod_player/last_pod_player.dart';
+import 'package:anilist/widget/video/youtube_embeded_player_dummy.dart'
+    if (dart.library.html) 'package:anilist/widget/video/youtube_embeded_player.dart';
 
 class DetailAnimeArgument {
   final int animeId;
@@ -206,8 +207,10 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          MyListButton(anime: _data!),
-          divideW10,
+          if (!kIsWeb) ...[
+            MyListButton(anime: _data!),
+            divideW10,
+          ],
 
           // share
           Material(
