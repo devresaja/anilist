@@ -33,6 +33,7 @@ class HomeScreen extends StatelessWidget {
       ],
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             divide16,
             const HomeHeader(title: LocaleKeys.ongoing_anime),

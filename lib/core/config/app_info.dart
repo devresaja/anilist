@@ -1,4 +1,5 @@
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter/foundation.dart';
 
 class AppInfo {
   static late final String _appName;
@@ -7,7 +8,7 @@ class AppInfo {
 
   static String get version => 'v$_version';
   static String get fullVersion => 'v$_version+$_buildNumber';
-  static String get appName => _appName;
+  static String get appName => kIsWeb ? 'Anilist' : _appName;
 
   static Future<void> init() async {
     final info = await PackageInfo.fromPlatform();

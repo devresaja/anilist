@@ -1,5 +1,6 @@
 import 'package:anilist/extension/view_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -81,41 +82,43 @@ class _AccountScreenState extends State<AccountScreen> {
           },
         ),
       ),
-      divide8,
-      SettingCard(
-        title: LocaleKeys.notification,
-        description: LocaleKeys.enable_notification,
-        trailing: BlocConsumer<AppBloc, AppState>(
-          buildWhen: (previous, current) => previous != current,
-          listener: (context, state) {
-            if (state.appStateErrorType == AppStateErrorType.notification) {
-              showConfirmationDialog(
-                context: context,
-                title: LocaleKeys.allow_notification_permission,
-                okText: LocaleKeys.settings,
-                onTapOk: () async {
-                  await openAppSettings();
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                  }
+      if (!kIsWeb) ...[
+        divide8,
+        SettingCard(
+          title: LocaleKeys.notification,
+          description: LocaleKeys.enable_notification,
+          trailing: BlocConsumer<AppBloc, AppState>(
+            buildWhen: (previous, current) => previous != current,
+            listener: (context, state) {
+              if (state.appStateErrorType == AppStateErrorType.notification) {
+                showConfirmationDialog(
+                  context: context,
+                  title: LocaleKeys.allow_notification_permission,
+                  okText: LocaleKeys.settings,
+                  onTapOk: () async {
+                    await openAppSettings();
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  },
+                );
+              }
+            },
+            builder: (context, state) {
+              return CustomSwitchButton(
+                value: state.isNotificationEnable,
+                isLoading: state.appStateLoadingType ==
+                    AppStateLoadingType.notification,
+                onChanged: (value) {
+                  context
+                      .read<AppBloc>()
+                      .add(UpdateNotificationSettingEvent(isEnable: value));
                 },
               );
-            }
-          },
-          builder: (context, state) {
-            return CustomSwitchButton(
-              value: state.isNotificationEnable,
-              isLoading:
-                  state.appStateLoadingType == AppStateLoadingType.notification,
-              onChanged: (value) {
-                context
-                    .read<AppBloc>()
-                    .add(UpdateNotificationSettingEvent(isEnable: value));
-              },
-            );
-          },
+            },
+          ),
         ),
-      ),
+      ],
       divide8,
       SettingCard(
         title: LocaleKeys.dark_mode,

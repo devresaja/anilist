@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:anilist/modules/ads/data/admob_api.dart';
 import 'package:anilist/services/local_storage_service.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 // import 'package:anilist/modules/ads/data/unity_ads_api.dart';
 // import 'package:unity_ads_plugin/unity_ads_plugin.dart';
 
@@ -21,6 +22,11 @@ class AdsBloc extends Bloc<AdsEvent, AdsState> {
       //   emit(ShowRewardedAdLoadedState());
       //   return;
       // }
+
+      if (kIsWeb) {
+        emit(ShowRewardedAdLoadedState());
+        return;
+      }
 
       // Check remaining attempt
       // If attempt is not 0, decrease attempt and continue

@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -50,13 +50,18 @@ class _CachedImageState extends State<CachedImage> {
   }
 
   void _getData() {
-    if (widget.imageUrl != null) {
-      _loadImage(widget.imageUrl!);
-    } else {
+    if (widget.imageUrl == null) {
       setState(() {
         _isEmpty = true;
       });
+      return;
     }
+
+    if (kIsWeb) {
+      return;
+    }
+
+    _loadImage(widget.imageUrl!);
   }
 
   @override
@@ -82,8 +87,11 @@ class _CachedImageState extends State<CachedImage> {
     if (_isEmpty) {
       return _buildEmptyWidget();
     }
+    if (kIsWeb) {
+      return _buildNetworkImage();
+    }
     if (_cachedImage != null) {
-      return _buildImage();
+      return _buildCachedImage();
     }
     return _buildPlaceholder();
   }
@@ -98,7 +106,16 @@ class _CachedImageState extends State<CachedImage> {
     );
   }
 
-  Widget _buildImage() {
+  Image _buildNetworkImage() {
+    return Image.network(
+      widget.imageUrl!,
+      fit: widget.fit,
+      width: widget.width,
+      height: widget.height,
+    );
+  }
+
+  Widget _buildCachedImage() {
     return Image.memory(
       _cachedImage!,
       fit: widget.fit,

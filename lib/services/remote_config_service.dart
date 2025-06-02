@@ -4,6 +4,7 @@ import 'package:anilist/core/routes/navigator_key.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/foundation.dart';
 
 class RemoteConfigService {
   RemoteConfigService._privateConstructor();
@@ -16,6 +17,8 @@ class RemoteConfigService {
   bool _isInitialized = false;
 
   Future<void> init() async {
+    if (kIsWeb) return;
+
     if (_isInitialized) return;
     _isInitialized = true;
 
@@ -29,12 +32,14 @@ class RemoteConfigService {
     await _remoteConfig.fetchAndActivate();
     _checkForUpdate();
 
-    _remoteConfig.onConfigUpdated.listen(
-      (event) async {
-        await _remoteConfig.activate();
-        _checkForUpdate();
-      },
-    );
+    if (!kIsWeb) {
+      _remoteConfig.onConfigUpdated.listen(
+        (event) async {
+          await _remoteConfig.activate();
+          _checkForUpdate();
+        },
+      );
+    }
   }
 
   void _checkForUpdate() {

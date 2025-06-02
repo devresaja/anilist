@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "set-index-dev",
+            "type": "shell",
+            "command": "Copy-Item -Path web/index_dev.html -Destination web/index.html -Force",
+            "problemMatcher": [],
+            "options": {
+                "shell": {
+                    "executable": "powershell.exe"
+                }
+            }
+        },
+        {
+            "label": "set-index-prod",
+            "type": "shell",
+            "command": "Copy-Item -Path web/index_prod.html -Destination web/index.html -Force",
+            "problemMatcher": [],
+            "options": {
+                "shell": {
+                    "executable": "powershell.exe"
+                }
+            }
+        }
+    ]
+}

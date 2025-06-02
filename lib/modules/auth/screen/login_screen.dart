@@ -3,6 +3,7 @@ import 'package:anilist/constant/dimension.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/core/routes/route.dart';
+import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/extension/view_extension.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/auth/bloc/auth_bloc.dart';
@@ -46,112 +47,149 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Scaffold(
           body: BlocProvider(
             create: (context) => _authBloc,
-            child: Stack(
-              children: [
-                ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                      Colors.black.withOpacity(0.7), BlendMode.srcOver),
-                  child: Image(
-                    width: MediaQuery.sizeOf(context).width,
-                    height: MediaQuery.sizeOf(context).height,
-                    image: const AssetImage('assets/images/zero.jpg'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 2, sigmaY: 3),
-                  child: Container(
-                    color: Colors.black.withOpacity(0.3),
-                  ),
-                ),
-                Padding(
-                  padding: Dimension.horizontalPadding,
-                  child: context.isWideScreen
-                      ? _buildWideScreen(context)
-                      : _buildSmallScreen(context),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 16, right: 16),
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: CustomSwitchButton(
-                      value: context.locale.languageCode == 'en',
-                      switchType: SwitchType.language,
-                      onChanged: (value) {
-                        context.setLocale(Locale(value == true ? 'en' : 'id'));
-                      },
-                    ),
-                  ),
-                )
-              ],
-            ),
+            child: context.isWideScreen
+                ? _buildWideScreen(context)
+                : _buildSmallScreen(context),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildWideScreen(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+  Stack _buildSmallScreen(BuildContext context) {
+    return Stack(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Flexible(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return SvgUI(
-                    'ic_logo.svg',
-                    size: constraints.maxWidth * 0.6,
-                  );
-                },
-              ),
-            ),
-            Flexible(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildLoginButton(),
-                  divide24,
-                  CustomDivider(
-                    text: LocaleKeys.or,
-                    textSpacing: MediaQuery.sizeOf(context).width * 0.06,
-                  ),
-                  divide6,
-                  _buildGuestButton(context),
-                ],
-              ),
-            ),
-          ],
+        ColorFiltered(
+          colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.7), BlendMode.srcOver),
+          child: Image(
+            width: MediaQuery.sizeOf(context).width,
+            height: MediaQuery.sizeOf(context).height,
+            image: const AssetImage('assets/images/zero.jpg'),
+            fit: BoxFit.cover,
+          ),
         ),
+        BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 2, sigmaY: 3),
+          child: Container(
+            color: Colors.black.withOpacity(0.3),
+          ),
+        ),
+        Padding(
+          padding: Dimension.horizontalPadding,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Spacer(),
+              const Spacer(),
+              SvgUI(
+                'ic_logo.svg',
+                size: 200,
+              ),
+              const Spacer(),
+              _buildLoginButton(),
+              divide24,
+              CustomDivider(
+                text: LocaleKeys.or,
+                textSpacing: MediaQuery.sizeOf(context).width * 0.10,
+              ),
+              divide6,
+              _buildGuestButton(context),
+              SizedBox(
+                height: MediaQuery.sizeOf(context).height * 0.02,
+              )
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 16, right: 16),
+          child: Align(
+            alignment: Alignment.topRight,
+            child: CustomSwitchButton(
+              value: context.locale.languageCode == 'en',
+              switchType: SwitchType.language,
+              onChanged: (value) {
+                context.setLocale(Locale(value == true ? 'en' : 'id'));
+              },
+            ),
+          ),
+        )
       ],
     );
   }
 
-  Column _buildSmallScreen(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildWideScreen(BuildContext context) {
+    return Row(
       children: [
-        const Spacer(),
-        const Spacer(),
-        SvgUI(
-          'ic_logo.svg',
-          size: 200,
+        Flexible(
+          flex: 2,
+          child: Stack(
+            children: [
+              ColorFiltered(
+                colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(0.7), BlendMode.srcOver),
+                child: Image(
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height,
+                  image: const AssetImage('assets/images/zero.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 2, sigmaY: 3),
+                child: Container(
+                  color: Colors.black.withOpacity(0.3),
+                ),
+              ),
+              Center(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SvgUI(
+                      'ic_logo.svg',
+                      size: constraints.maxWidth * 0.4,
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
-        const Spacer(),
-        _buildLoginButton(),
-        divide24,
-        CustomDivider(
-          text: LocaleKeys.or,
-          textSpacing: MediaQuery.sizeOf(context).width * 0.10,
+        Flexible(
+          flex: 3,
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColor.white,
+              border: Border(
+                left: BorderSide(
+                  color: AppColor.primary,
+                  width: 1,
+                ),
+              ),
+            ),
+            height: MediaQuery.of(context).size.height,
+            child: LayoutBuilder(builder: (context, constraints) {
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: constraints.maxWidth * 0.15),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildLoginButton(),
+                      divide24,
+                      CustomDivider(
+                        text: LocaleKeys.or,
+                        textSpacing: MediaQuery.of(context).size.width * 0.05,
+                      ),
+                      divide6,
+                      _buildGuestButton(context),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ),
         ),
-        divide6,
-        _buildGuestButton(context),
-        SizedBox(
-          height: MediaQuery.sizeOf(context).height * 0.02,
-        )
       ],
     );
   }
@@ -194,6 +232,7 @@ class _LoginScreenState extends State<LoginScreen> {
         return CustomButton(
           text: LocaleKeys.sign_in_with_google,
           isLoading: state is LoginByGoogleLoadingState,
+          color: context.isWideScreen ? AppColor.white : null,
           imagePath: 'assets/images/google.png',
           onTap: () {
             _authBloc.add(LoginByGoogleEvent());
