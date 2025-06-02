@@ -73,7 +73,7 @@ jobs:
         run: curl -sL https://firebase.tools | bash         
 
       - name: Upload symbols to Firebase Crashlytics
-        run: firebase crashlytics:symbols:upload --app=${{ secrets.FIREBASE_APP_ID }} symbols
+        run: firebase crashlytics:symbols:upload --app=${{ secrets.FIREBASE_ANDROID_APP_ID }} symbols
 
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
