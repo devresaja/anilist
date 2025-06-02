@@ -5,6 +5,7 @@ import 'package:anilist/modules/my_list/data/my_list_local_api.dart';
 import 'package:anilist/services/local_storage_service.dart';
 import 'package:either_dart/either.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthApi {
@@ -12,8 +13,10 @@ class AuthApi {
     try {
       await GoogleSignIn().signOut();
       await FirebaseAuth.instance.signOut();
-      await MyListLocalApi().clear();
       await LocalStorageService.removeValue();
+      if (!kIsWeb) {
+        await MyListLocalApi().clear();
+      }
       return Right(true);
     } catch (e) {
       return Left(e.toString());

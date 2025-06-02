@@ -2,6 +2,7 @@ import 'package:anilist/global/model/anime.dart';
 import 'package:anilist/modules/home/bloc/home_bloc.dart';
 import 'package:anilist/modules/home/components/anime_card.dart';
 import 'package:anilist/widget/page/view_handler_widget.dart';
+import 'package:anilist/widget/wrapper/drag_scroll_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -65,10 +66,8 @@ class _AnimeListWidgetState extends State<AnimeListWidget> {
     );
   }
 
-  SingleChildScrollView _buildView() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      scrollDirection: Axis.horizontal,
+  Widget _buildView() {
+    return DragScrollWrapper(
       child: Row(
         children: List.generate(_animes.length, (index) {
           final anime = _animes[index];

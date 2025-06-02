@@ -1,6 +1,7 @@
 import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/text/text_widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
@@ -36,7 +37,7 @@ class CustomButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          padding: EdgeInsets.symmetric(vertical: kIsWeb ? 16 : 10),
           backgroundColor: color ?? Colors.transparent,
           side: BorderSide(color: borderColor ?? AppColor.primary),
           shape: RoundedRectangleBorder(

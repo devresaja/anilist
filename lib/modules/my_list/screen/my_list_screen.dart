@@ -12,6 +12,7 @@ import 'package:anilist/services/deeplink_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/page/view_handler_widget.dart';
 import 'package:anilist/widget/text/text_widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
@@ -50,9 +51,12 @@ class _MyListScreenState extends State<MyListScreen> {
   bool _isLoadingCloud = false;
   VoidCallback? _pendingCloudAction;
 
-  @override
-  void initState() {
-    super.initState();
+  _initBloc() {
+    if (kIsWeb) {
+      _updateViewMode(ViewMode.maintenance);
+      return;
+    }
+
     _myListBloc = context.read<MyListBloc>();
     _getBloc();
     _scrollController.addInfiniteScrollListener(
@@ -62,6 +66,12 @@ class _MyListScreenState extends State<MyListScreen> {
         _updateViewMode(ViewMode.loadMore);
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initBloc();
   }
 
   late int _totalItems;
@@ -238,7 +248,7 @@ class _MyListScreenState extends State<MyListScreen> {
           },
           builder: (context, state) {
             return Padding(
-              padding: const EdgeInsets.only(left: 16),
+              padding: EdgeInsets.only(left: 16, top: kIsWeb ? 16 : 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -246,25 +256,26 @@ class _MyListScreenState extends State<MyListScreen> {
                     LocaleKeys.mylist,
                     fontSize: 16,
                   ),
-                  Row(
-                    children: [
-                      _buildCloudIconButton(
-                        icon: Icons.cloud_download,
-                        onTap: () => _downloadFromCloud(context),
-                        isDisabled: _isLoadingCloud,
-                      ),
-                      _buildCloudIconButton(
-                        icon: Icons.cloud_upload,
-                        onTap: () => _uploadToCloud(context),
-                        isDisabled: _isLoadingCloud,
-                      ),
-                      _buildCloudIconButton(
-                        icon: Icons.share_outlined,
-                        onTap: () => _shareMyList(context),
-                        isDisabled: _isLoadingCloud,
-                      ),
-                    ],
-                  )
+                  if (!kIsWeb)
+                    Row(
+                      children: [
+                        _buildCloudIconButton(
+                          icon: Icons.cloud_download,
+                          onTap: () => _downloadFromCloud(context),
+                          isDisabled: _isLoadingCloud,
+                        ),
+                        _buildCloudIconButton(
+                          icon: Icons.cloud_upload,
+                          onTap: () => _uploadToCloud(context),
+                          isDisabled: _isLoadingCloud,
+                        ),
+                        _buildCloudIconButton(
+                          icon: Icons.share_outlined,
+                          onTap: () => _shareMyList(context),
+                          isDisabled: _isLoadingCloud,
+                        ),
+                      ],
+                    )
                 ],
               ),
             );

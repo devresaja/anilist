@@ -23,38 +23,39 @@ import 'package:shorebird_code_push/shorebird_code_push.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // START Initializes services for private environment.
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await AppInfo.init();
 
-  await NotificationService.initNotification();
+  if (!kIsWeb) {
+    // Sets up error handling with Firebase Crashlytics
+    FirebaseCrashlytics.instance.setCustomKey(
+      'shorebird_patch_number',
+      '${await ShorebirdCodePush().currentPatchNumber()}',
+    );
 
-  // Sets up error handling with Firebase Crashlytics
-  final patchNumber = await ShorebirdCodePush().currentPatchNumber();
-  FirebaseCrashlytics.instance.setCustomKey(
-    'shorebird_patch_number',
-    '$patchNumber',
-  );
-  FirebaseCrashlytics.instance.setCustomKey(
-    'app_version',
-    AppInfo.version,
-  );
+    FirebaseCrashlytics.instance.setCustomKey(
+      'app_version',
+      AppInfo.version,
+    );
 
-  FlutterError.onError = (errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
+    FlutterError.onError = (errorDetails) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+    };
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
 
-  // NOTE: This line must be commented out due to commercial purposes
-  await AdMobService.init();
-  // END Initializes services for private environment.
+    // Init notification
+    await NotificationService.initNotification();
 
-  // Init local db
-  await LocalDatabaseService().init();
+    // NOTE: This line must be commented out due to commercial purposes
+    await AdMobService.init();
+
+    // Init local db
+    await LocalDatabaseService().init();
+  }
 
   // Init locale
   await EasyLocalization.ensureInitialized();
