@@ -46,12 +46,12 @@ jobs:
         run: curl -sL https://firebase.tools | bash         
 
       - name: Upload symbols to Firebase Crashlytics
-        run: firebase crashlytics:symbols:upload --app=${{ secrets.FIREBASE_APP_ID_DEV }} symbols
+        run: firebase crashlytics:symbols:upload --app=${{ secrets.FIREBASE_ANDROID_APP_ID_DEV }} symbols
 
       - name: Upload APK to Firebase App Distribution
         run: |
           firebase appdistribution:distribute build/app/outputs/flutter-apk/app-dev-release.apk \
-            --app ${{ secrets.FIREBASE_APP_ID_DEV }} \
+            --app ${{ secrets.FIREBASE_ANDROID_APP_ID_DEV }} \
             --groups "internal"
 
       - name: Upload APK as artifact
