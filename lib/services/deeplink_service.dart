@@ -1,4 +1,3 @@
-import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/modules/detail_anime/screen/detail_anime_screen.dart';
 import 'package:anilist/modules/my_list/screen/shared_my_list_screen.dart';
 import 'package:anilist/utils/view_utils.dart';
@@ -81,14 +80,11 @@ class DeepLinkService {
       BuildContext context, DeepLinkType type, String id) {
     switch (type) {
       case DeepLinkType.mylist:
-        pushTo(context,
-            screen: SharedMyListScreen(argument: SharedMyListArgument(id)),
-            routeName: SharedMyListScreen.path);
+        Navigator.pushNamed(context, SharedMyListScreen.path,
+            arguments: SharedMyListArgument(id));
       case DeepLinkType.anime:
-        pushTo(context,
-            screen: DetailAnimeScreen(
-                argument: DetailAnimeArgument(animeId: int.parse(id))),
-            routeName: DetailAnimeScreen.path);
+        Navigator.pushNamed(context, DetailAnimeScreen.path,
+            arguments: DetailAnimeArgument(animeId: int.parse(id)));
     }
   }
 }

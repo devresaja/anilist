@@ -4,6 +4,7 @@ import 'package:anilist/firebase_options.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/global/model/user_data.dart';
 import 'package:anilist/core/routes/navigator_key.dart';
+import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/core/theme/theme.config.dart';
 import 'package:anilist/modules/ads/data/admob_api.dart';
 import 'package:anilist/modules/auth/screen/login_screen.dart';
@@ -19,6 +20,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +28,10 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await AppInfo.init();
+
+  if (kIsWeb) {
+    setUrlStrategy(PathUrlStrategy());
+  }
 
   if (!kIsWeb) {
     // Sets up error handling with Firebase Crashlytics
@@ -144,15 +150,16 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: kDebugMode,
             builder: (_, child) => SafeArea(
               top: false,
-              child: child!,
+              child: MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: TextScaler.noScaling),
+                child: child!,
+              ),
             ),
-            home: MediaQuery(
-              data: MediaQuery.of(context)
-                  .copyWith(textScaler: TextScaler.noScaling),
-              child: widget.userData != null
-                  ? const DashboardScreen()
-                  : const LoginScreen(),
-            ),
+            initialRoute: widget.userData != null
+                ? DashboardScreen.path
+                : LoginScreen.path,
+            onGenerateRoute: RouteConfig.onGenerateRoute,
           );
         },
       ),

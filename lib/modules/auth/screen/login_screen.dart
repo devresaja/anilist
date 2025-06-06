@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'package:anilist/constant/dimension.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/locale/locale_keys.g.dart';
-import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/extension/view_extension.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
@@ -22,7 +21,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
-  static const String path = 'loginScreen';
+  static const String path = '/login';
   const LoginScreen({super.key});
 
   @override
@@ -202,8 +201,8 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
       onPressed: () {
-        pushAndRemoveUntil(context,
-            screen: const DashboardScreen(), routeName: DashboardScreen.path);
+        Navigator.pushNamedAndRemoveUntil(
+            context, DashboardScreen.path, (route) => false);
       },
       child: TextWidget(
         LocaleKeys.continue_as_guest,
@@ -223,7 +222,8 @@ class _LoginScreenState extends State<LoginScreen> {
           showCustomSnackBar(
               '${LocaleKeys.welcome.tr()} ${state.userData.email}');
 
-          pushAndRemoveUntil(context, screen: const DashboardScreen());
+          Navigator.pushNamedAndRemoveUntil(
+              context, DashboardScreen.path, (route) => false);
         } else if (state is LoginByGoogleFailedState) {
           showCustomSnackBar(state.message, isSuccess: false);
         }

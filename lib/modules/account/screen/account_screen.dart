@@ -9,7 +9,6 @@ import 'package:anilist/constant/app_constant.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/config/app_info.dart';
 import 'package:anilist/core/locale/locale_keys.g.dart';
-import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/account/components/setting_card.dart';
 import 'package:anilist/modules/auth/bloc/auth_bloc.dart';
@@ -25,7 +24,7 @@ class AccountScreen extends StatefulWidget {
     required this.onValueChanged,
   });
 
-  static const String path = 'account';
+  static const String path = '/account';
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();
@@ -186,7 +185,8 @@ class _AccountScreenState extends State<AccountScreen> {
             listener: (context, state) {
               if (state is LogoutLoadedState) {
                 context.read<AppBloc>().add(RemoveUserDataEvent());
-                pushAndRemoveUntil(context, screen: LoginScreen());
+                Navigator.pushNamedAndRemoveUntil(
+                    context, LoginScreen.path, (route) => false);
               } else if (state is LogoutFailedState) {
                 showCustomSnackBar(state.message, isSuccess: false);
               }
@@ -212,7 +212,8 @@ class _AccountScreenState extends State<AccountScreen> {
           title: LocaleKeys.login,
           titleColor: AppColor.primary,
           onTap: () {
-            pushAndRemoveUntil(context, screen: LoginScreen());
+            Navigator.pushNamedAndRemoveUntil(
+                context, LoginScreen.path, (route) => false);
           },
           trailing: Icon(Icons.login, color: AppColor.primary),
         ),

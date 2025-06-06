@@ -13,9 +13,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
-class SearchScreen extends StatefulWidget {
+class SearchArgument {
   final String search;
-  const SearchScreen({super.key, required this.search});
+  SearchArgument({required this.search});
+}
+
+class SearchScreen extends StatefulWidget {
+  final SearchArgument argument;
+  const SearchScreen({super.key, required this.argument});
+
+  static const String path = '/search';
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -53,7 +60,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    _searchController.text = widget.search;
+    _searchController.text = widget.argument.search;
 
     _getBloc();
 
