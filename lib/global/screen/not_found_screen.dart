@@ -1,4 +1,5 @@
 import 'package:anilist/core/locale/locale_keys.g.dart';
+import 'package:anilist/modules/dashboard/screen/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/theme/app_color.dart';
@@ -50,7 +51,14 @@ class NotFoundScreen extends StatelessWidget {
                   width: buttonWidth,
                   text: LocaleKeys.back,
                   color: AppColor.secondary,
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    } else {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, DashboardScreen.path, (route) => false);
+                    }
+                  },
                 ),
               ],
             ),
