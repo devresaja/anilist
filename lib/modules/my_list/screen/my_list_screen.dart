@@ -20,6 +20,8 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 class MyListScreen extends StatefulWidget {
   const MyListScreen({super.key});
 
+  static const String path = '/mylist';
+
   @override
   State<MyListScreen> createState() => _MyListScreenState();
 }

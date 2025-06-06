@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:anilist/core/locale/locale_keys.g.dart';
-import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/modules/detail_anime/screen/detail_anime_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -148,10 +147,10 @@ class _HomeRandomState extends State<HomeRandom> {
                                     const Spacer(),
                                     SmallRoundedCard(
                                       onTap: () {
-                                        pushTo(context,
-                                            screen: DetailAnimeScreen(
-                                                argument: DetailAnimeArgument(
-                                                    animeId: _data!.malId)));
+                                        Navigator.pushNamed(
+                                            context, DetailAnimeScreen.path,
+                                            arguments: DetailAnimeArgument(
+                                                animeId: _data!.malId));
                                       },
                                       text: LocaleKeys.see_detail,
                                       textColor: AppColor.white,

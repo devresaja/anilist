@@ -21,7 +21,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
-  static const String path = 'dashboardScreen';
+  static const String path = '/dashboard';
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();

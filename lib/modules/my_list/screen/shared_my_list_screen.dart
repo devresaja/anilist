@@ -23,7 +23,7 @@ class SharedMyListArgument {
 
 class SharedMyListScreen extends StatefulWidget {
   final SharedMyListArgument argument;
-  static const String path = 'mylist/shared';
+  static const String path = '/mylist/shared';
   const SharedMyListScreen({
     super.key,
     required this.argument,
