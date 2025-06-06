@@ -32,6 +32,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_web_plugins:
+    sdk: flutter
+
   animated_toggle_switch: ^0.8.3
   bloc: ^8.1.4
   carousel_slider: ^5.0.0

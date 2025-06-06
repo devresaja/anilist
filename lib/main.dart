@@ -19,8 +19,8 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:shorebird_code_push/shorebird_code_push.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
