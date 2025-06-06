@@ -54,5 +54,8 @@
     "update": "Perbarui",
     "no_result_found": "Hasil tidak ditemukan..",
     "something_wrong": "Terjadi kesalahan",
-    "not_available": "Sedang tidak tersedia"
+    "not_available": "Sedang tidak tersedia",
+    "page_not_found": "Halaman tidak ditemukan",
+    "page_not_found_description": "Halaman yang kamu cari tidak tersedia",
+    "back": "Kembali"
 }
