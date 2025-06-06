@@ -1,9 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-
 import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
-import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/modules/detail_anime/screen/detail_anime_screen.dart';
 import 'package:anilist/widget/blink.dart';
 import 'package:anilist/widget/image/cached_image.dart';
@@ -107,11 +104,8 @@ class AnimeCard extends StatelessWidget {
                     color: Colors.transparent,
                     child: InkWell(
                       onTap: () {
-                        pushTo(context,
-                            screen: DetailAnimeScreen(
-                                argument:
-                                    DetailAnimeArgument(animeId: animeId)),
-                            routeName: DetailAnimeScreen.path);
+                        Navigator.pushNamed(context, DetailAnimeScreen.path,
+                            arguments: DetailAnimeArgument(animeId: animeId));
                       },
                       borderRadius: BorderRadius.circular(12),
                     ),

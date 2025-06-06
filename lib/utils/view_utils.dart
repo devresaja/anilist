@@ -2,7 +2,6 @@ import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/core/routes/navigator_key.dart';
-import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/modules/auth/screen/login_screen.dart';
 import 'package:anilist/widget/button/custom_button.dart';
 import 'package:anilist/widget/page/view_handler_widget.dart';
@@ -72,7 +71,8 @@ void showAccessDeniedDialog(BuildContext context) {
     title: LocaleKeys.access_denied,
     description: LocaleKeys.login_required_message,
     okText: LocaleKeys.login,
-    onTapOk: () => pushAndRemoveUntil(context, screen: LoginScreen()),
+    onTapOk: () => Navigator.pushNamedAndRemoveUntil(
+        context, LoginScreen.path, (route) => false),
   );
 }
 

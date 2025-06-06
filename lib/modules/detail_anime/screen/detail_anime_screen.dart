@@ -34,7 +34,7 @@ class DetailAnimeScreen extends StatefulWidget {
     required this.argument,
   });
 
-  static const String path = 'anime/detail';
+  static const String path = '/anime/detail';
 
   @override
   State<DetailAnimeScreen> createState() => _DetailAnimeScreenState();

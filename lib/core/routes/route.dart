@@ -1,43 +1,47 @@
 import 'dart:developer';
-
+import 'package:anilist/global/screen/not_found_screen.dart';
+import 'package:anilist/modules/detail_anime/screen/detail_anime_screen.dart';
+import 'package:anilist/modules/my_list/screen/shared_my_list_screen.dart';
+import 'package:anilist/modules/search/screen/search_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:anilist/modules/dashboard/screen/dashboard_screen.dart';
+import 'package:anilist/modules/auth/screen/login_screen.dart';
 
-String currentRouteName = '';
+class RouteConfig {
+  static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+    var argument = settings.arguments;
+    log('current route name: ${settings.name}');
 
-void _updateCurrentRoute(String? routeName) {
-  currentRouteName = routeName ?? '';
-  log('current route -> $currentRouteName');
-}
+    switch (settings.name) {
+      case DashboardScreen.path:
+        return _routeTo(const DashboardScreen(), settings);
 
-void pushTo(BuildContext context, {required Widget screen, String? routeName}) {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => screen,
-          settings: RouteSettings(name: routeName)));
+      case LoginScreen.path:
+        return _routeTo(const LoginScreen(), settings);
 
-  _updateCurrentRoute(routeName);
-}
+      case SearchScreen.path:
+        return _routeTo(
+            SearchScreen(argument: argument as SearchArgument), settings);
 
-void pushReplacement(BuildContext context,
-    {required Widget screen, String? routeName}) {
-  Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-          builder: (context) => screen,
-          settings: RouteSettings(name: routeName)));
+      case DetailAnimeScreen.path:
+        return _routeTo(
+            DetailAnimeScreen(argument: argument as DetailAnimeArgument),
+            settings);
 
-  _updateCurrentRoute(routeName);
-}
+      case SharedMyListScreen.path:
+        return _routeTo(
+            SharedMyListScreen(argument: argument as SharedMyListArgument),
+            settings);
 
-void pushAndRemoveUntil(BuildContext context,
-    {required Widget screen, String? routeName}) {
-  Navigator.pushAndRemoveUntil(
-    context,
-    MaterialPageRoute(
-        builder: (context) => screen, settings: RouteSettings(name: routeName)),
-    (route) => false,
-  );
+      default:
+        return _routeTo(const NotFoundScreen(), settings);
+    }
+  }
 
-  _updateCurrentRoute(routeName);
+  static MaterialPageRoute _routeTo(Widget screen, RouteSettings settings) {
+    return MaterialPageRoute(
+      settings: settings,
+      builder: (context) => screen,
+    );
+  }
 }

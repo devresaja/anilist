@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:anilist/core/locale/locale_keys.g.dart';
-import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/auth/screen/login_screen.dart';
 import 'package:anilist/modules/my_list/data/my_list_local_api.dart';
@@ -75,8 +74,8 @@ class SessionService {
         await MyListLocalApi().clear();
         await LocalStorageService.removeValue();
         if (context.mounted) {
-          pushAndRemoveUntil(context,
-              screen: LoginScreen(), routeName: LoginScreen.path);
+          Navigator.pushNamedAndRemoveUntil(
+              context, LoginScreen.path, (route) => false);
         }
       },
     );

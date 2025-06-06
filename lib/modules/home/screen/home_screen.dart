@@ -1,7 +1,6 @@
 import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/locale/locale_keys.g.dart';
-import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/extension/view_extension.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/global/widget/speech_to_text_button.dart';
@@ -20,7 +19,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  static const String path = 'homeScreen';
+  static const String path = '/home';
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +70,7 @@ class HomeScreen extends StatelessWidget {
         snap: false,
         floating: false,
         expandedHeight: 180,
+        leading: Container(),
         flexibleSpace: Stack(
           children: [
             FlexibleSpaceBar(
@@ -101,7 +101,8 @@ class HomeScreen extends StatelessWidget {
                       withPaddingHorizontal: false,
                       hintText: LocaleKeys.search_title,
                       onSubmitted: (search) {
-                        pushTo(context, screen: SearchScreen(search: search));
+                        Navigator.pushNamed(context, SearchScreen.path,
+                            arguments: SearchArgument(search: search));
                       },
                     ),
                   ),
@@ -111,8 +112,8 @@ class HomeScreen extends StatelessWidget {
                       child: SpeechToTextButton(
                         onResult: (search) {
                           if (ModalRoute.of(context)?.isCurrent ?? false) {
-                            pushTo(context,
-                                screen: SearchScreen(search: search));
+                            Navigator.pushNamed(context, SearchScreen.path,
+                                arguments: SearchArgument(search: search));
                           }
                         },
                       ))
