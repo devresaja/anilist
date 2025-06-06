@@ -70,7 +70,10 @@ class CodegenLoader extends AssetLoader{
   "update": "Update",
   "no_result_found": "No result found..",
   "something_wrong": "Something's wrong",
-  "not_available": "Currently unavailable"
+  "not_available": "Currently unavailable",
+  "page_not_found": "Page Not Found",
+  "page_not_found_description": "The page you are looking for does not exist",
+  "back": "Back"
 };
 static const Map<String,dynamic> _id = {
   "welcome": "Selamat datang",
@@ -128,7 +131,10 @@ static const Map<String,dynamic> _id = {
   "update": "Perbarui",
   "no_result_found": "Hasil tidak ditemukan..",
   "something_wrong": "Terjadi kesalahan",
-  "not_available": "Sedang tidak tersedia"
+  "not_available": "Sedang tidak tersedia",
+  "page_not_found": "Halaman tidak ditemukan",
+  "page_not_found_description": "Halaman yang kamu cari tidak tersedia",
+  "back": "Kembali"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en": _en, "id": _id};
 }
