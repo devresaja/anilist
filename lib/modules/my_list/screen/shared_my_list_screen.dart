@@ -108,7 +108,7 @@ class _SharedMyListScreenState extends State<SharedMyListScreen> {
                 width: 160,
                 height: 200,
                 animeId: anime.malId,
-                imageUrl: anime.images?.jpg?.imageUrl,
+                imageUrl: anime.images?.webp?.imageUrl,
                 score: anime.score,
                 title: anime.title,
                 type: anime.type,
