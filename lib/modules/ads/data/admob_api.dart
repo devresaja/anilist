@@ -31,7 +31,7 @@ class AdMobService {
     Function()? onSkipped,
   }) async {
     await RewardedAd.load(
-      adUnitId: _formatAdUnitId(_getAdUnitId(adsType)),
+      adUnitId: _getAdUnitId(adsType),
       request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) async {
@@ -64,7 +64,7 @@ class AdMobService {
     Function()? onFailed,
   }) async {
     return BannerAd(
-      adUnitId: _formatAdUnitId(_bannerAdUnitId),
+      adUnitId: _bannerAdUnitId,
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
