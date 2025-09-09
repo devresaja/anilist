@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*-rc*'
+  workflow_dispatch:
 
 env:
   FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
