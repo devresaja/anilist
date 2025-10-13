@@ -165,7 +165,7 @@ class _MyListScreenState extends State<MyListScreen> {
                 child: AnimeCard(
                   key: ValueKey(anime.malId),
                   animeId: anime.malId,
-                  imageUrl: anime.images?.jpg?.imageUrl,
+                  imageUrl: anime.images?.webp?.imageUrl,
                   score: anime.score,
                   title: anime.title,
                   type: anime.type,

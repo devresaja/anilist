@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
+// import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,9 +30,9 @@ Future<void> main() async {
 
   await AppInfo.init();
 
-  if (kIsWeb) {
-    setUrlStrategy(PathUrlStrategy());
-  }
+  // if (kIsWeb) {
+  //   setUrlStrategy(PathUrlStrategy());
+  // }
 
   if (!kIsWeb) {
     // Sets up error handling with Firebase Crashlytics

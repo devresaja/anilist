@@ -123,7 +123,7 @@ class _HomeRandomState extends State<HomeRandom> {
                                 opacity: 0.3,
                                 child: CachedImage(
                                     width: double.infinity,
-                                    imageUrl: _data!.images?.jpg?.imageUrl)),
+                                    imageUrl: _data!.images?.webp?.imageUrl)),
                           ),
                         ),
                         Padding(
@@ -177,7 +177,7 @@ class _HomeRandomState extends State<HomeRandom> {
               imageOnly: true,
               width: 70,
               height: 110,
-              imageUrl: _data!.images?.jpg?.imageUrl,
+              imageUrl: _data!.images?.webp?.imageUrl,
               score: _data!.score,
               title: _data!.title,
               type: _data!.type,
