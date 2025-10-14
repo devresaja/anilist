@@ -30,7 +30,7 @@ val envDev = loadEnv(".env.dev")
 
 android {
     namespace = "com.anilist.android"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = "28.0.13004108"
 
     compileOptions {
@@ -45,8 +45,8 @@ android {
 
     defaultConfig {
         applicationId = "com.anilist.android"
-        minSdk = 23
-        targetSdk = 35
+        minSdk = 24
+        targetSdk = 36
         versionCode = flutterVersionCode
         versionName = flutterVersionName
 
