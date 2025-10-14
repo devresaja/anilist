@@ -75,7 +75,7 @@
             "name": "Web Dev",
             "request": "launch",
             "type": "dart",
-            "program": "lib/main.dart",
+            "program": "lib/main_web.dart",
             "preLaunchTask": "set-index-dev",
             "args": [
                 "-d",
@@ -91,7 +91,7 @@
             "name": "Web Prod",
             "request": "launch",
             "type": "dart",
-            "program": "lib/main.dart",
+            "program": "lib/main_web.dart",
             "preLaunchTask": "set-index-prod",
             "args": [
                 "-d",
