@@ -1,4 +1,6 @@
 import 'package:anilist/extension/view_extension.dart';
+import 'package:anilist/modules/account/screen/account_deletion_guide_screen.dart';
+import 'package:anilist/modules/account/screen/privacy_policy_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -149,7 +151,11 @@ class _AccountScreenState extends State<AccountScreen> {
       SettingCard(
         title: LocaleKeys.privacy_policy,
         onTap: () {
-          customLaunchUrl(AppConstant.privacyPolicy);
+          if (kIsWeb) {
+            context.pushNamed(PrivacyPolicyScreen.name);
+          } else {
+            customLaunchUrl(AppConstant.privacyPolicy);
+          }
         },
       ),
       divide8,
@@ -175,7 +181,11 @@ class _AccountScreenState extends State<AccountScreen> {
           description: LocaleKeys.delete_account_description,
           titleColor: AppColor.error,
           onTap: () {
-            customLaunchUrl(AppConstant.deleteAccountGuide);
+            if (kIsWeb) {
+              context.pushNamed(AccountDeletionGuideScreen.name);
+            } else {
+              customLaunchUrl(AppConstant.accountDeletionGuide);
+            }
           },
           trailing: Icon(Icons.delete, color: AppColor.error),
         ),

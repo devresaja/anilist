@@ -171,6 +171,20 @@ Future<void> customLaunchUrl(String url) async {
   }
 }
 
+Uri buildMailtoUri(String to, {String? subject, String? body}) {
+  final params = <String, String>{};
+  if (subject != null) params['subject'] = subject;
+  if (body != null) params['body'] = body;
+
+  final query = params.entries
+      .map(
+        (e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+      )
+      .join('&');
+
+  return Uri.parse('mailto:$to?$query');
+}
+
 extension ScrollControllerExtension on ScrollController {
   void addInfiniteScrollListener({
     required ViewMode Function() viewMode,

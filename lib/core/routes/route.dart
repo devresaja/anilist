@@ -1,6 +1,8 @@
 import 'package:anilist/core/routes/navigator_key.dart';
 import 'package:anilist/global/screen/not_found_screen.dart';
 import 'package:anilist/global/model/user_data.dart';
+import 'package:anilist/modules/account/screen/account_deletion_guide_screen.dart';
+import 'package:anilist/modules/account/screen/privacy_policy_screen.dart';
 import 'package:anilist/modules/detail_anime/screen/detail_anime_screen.dart';
 import 'package:anilist/modules/my_list/screen/shared_my_list_screen.dart';
 import 'package:anilist/modules/search/screen/search_screen.dart';
@@ -58,6 +60,18 @@ GoRouter routeConfig({UserData? userData}) => GoRouter(
         );
         return SharedMyListScreen(argument: argument);
       },
+    ),
+
+    GoRoute(
+      name: PrivacyPolicyScreen.name,
+      path: PrivacyPolicyScreen.path,
+      builder: (context, state) => const PrivacyPolicyScreen(),
+    ),
+
+    GoRoute(
+      name: AccountDeletionGuideScreen.name,
+      path: AccountDeletionGuideScreen.path,
+      builder: (context, state) => const AccountDeletionGuideScreen(),
     ),
   ],
 );
