@@ -1,3 +1,4 @@
+import 'package:anilist/constant/app_constant.dart';
 import 'package:anilist/modules/detail_anime/screen/detail_anime_screen.dart';
 import 'package:anilist/modules/my_list/screen/shared_my_list_screen.dart';
 import 'package:anilist/utils/view_utils.dart';
@@ -7,25 +8,6 @@ import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 enum DeepLinkType { mylist, anime }
-
-extension DeepLinkTypeExtension on DeepLinkType {
-  String get value {
-    switch (this) {
-      case DeepLinkType.mylist:
-        return 'mylist';
-      case DeepLinkType.anime:
-        return 'anime';
-    }
-  }
-
-  static DeepLinkType? fromValue(String? value) {
-    if (value == null) return null;
-    return DeepLinkType.values.firstWhere(
-      (e) => e.value == value,
-      orElse: () => DeepLinkType.anime,
-    );
-  }
-}
 
 class DeepLinkService {
   static final _appLinks = AppLinks();
@@ -45,45 +27,24 @@ class DeepLinkService {
   static void _onDeepLinkReceived(BuildContext context, Uri? link) {
     if (link == null) return;
 
-    final id = link.queryParameters['id'];
-    final type = DeepLinkTypeExtension.fromValue(link.queryParameters['type']);
-
-    if (id == null || type == null) return;
     if (!context.mounted) return;
 
-    _handleDeepLink(context, type, id);
+    context.push(link.toString());
   }
 
   static Future<void> generateDeeplink({
     required DeepLinkType type,
     required String id,
   }) async {
-    final uri = Uri(
-      scheme: 'https',
-      host: 'anilist-433306.firebaseapp.com',
-      path: '/anilist',
-      queryParameters: {'type': type.name, 'id': id},
-    );
+    late String uri;
 
-    await Share.share(uri.toString());
-  }
-
-  static void _handleDeepLink(
-    BuildContext context,
-    DeepLinkType type,
-    String id,
-  ) {
     switch (type) {
       case DeepLinkType.mylist:
-        context.pushNamed(
-          SharedMyListScreen.name,
-          pathParameters: SharedMyListArgument(id: id).toPathParams(),
-        );
+        uri = '${AppConstant.webUrl}${SharedMyListScreen.path}/$id';
       case DeepLinkType.anime:
-        context.pushNamed(
-          DetailAnimeScreen.name,
-          pathParameters: DetailAnimeArgument(animeId: id).toPathParams(),
-        );
+        uri = '${AppConstant.webUrl}${DetailAnimeScreen.path}/$id';
     }
+
+    await Share.share(uri.toString());
   }
 }
