@@ -13,21 +13,30 @@ import 'package:anilist/widget/wrapper/invisible_expanded_header.dart';
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 class SharedMyListArgument {
   final String id;
 
-  SharedMyListArgument(this.id);
+  SharedMyListArgument({required this.id});
+
+  Map<String, String> toPathParams() {
+    return {'id': id.toString()};
+  }
+
+  factory SharedMyListArgument.fromPathParams(Map<String, String> params) {
+    return SharedMyListArgument(id: params['id'] ?? '');
+  }
 }
 
 class SharedMyListScreen extends StatefulWidget {
   final SharedMyListArgument argument;
+
+  static const String name = 'mylistShared';
   static const String path = '/mylist/shared';
-  const SharedMyListScreen({
-    super.key,
-    required this.argument,
-  });
+
+  const SharedMyListScreen({super.key, required this.argument});
 
   @override
   State<SharedMyListScreen> createState() => _SharedMyListScreenState();
@@ -104,90 +113,94 @@ class _SharedMyListScreenState extends State<SharedMyListScreen> {
       horizontalGridSpacing: 8,
       rowMainAxisAlignment: MainAxisAlignment.center,
       gridItems: _animes
-          .map((anime) => AnimeCard(
-                width: 160,
-                height: 200,
-                animeId: anime.malId,
-                imageUrl: anime.images?.webp?.imageUrl,
-                score: anime.score,
-                title: anime.title,
-                type: anime.type,
-                episode: anime.episodes,
-              ))
+          .map(
+            (anime) => AnimeCard(
+              width: 160,
+              height: 200,
+              animeId: anime.malId,
+              imageUrl: anime.images?.webp?.imageUrl,
+              score: anime.score,
+              title: anime.title,
+              type: anime.type,
+              episode: anime.episodes,
+            ),
+          )
           .toList(),
       builder: (context, items) {
         return ExtendedNestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                  SliverAppBar(
-                      surfaceTintColor: Colors.transparent,
-                      systemOverlayStyle:
-                          (context.read<AppBloc>().state.isDarkMode
-                                  ? systemUiOverlayStyleLight
-                                  : systemUiOverlayStyleDark)
-                              .copyWith(statusBarColor: Colors.transparent),
-                      backgroundColor: AppColor.secondary,
-                      pinned: true,
-                      leading: IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: AppColor.black,
-                          )),
-                      snap: false,
-                      floating: false,
-                      expandedHeight: calculateAspectRationHeight(context,
-                          width: MediaQuery.sizeOf(context).width,
-                          aspectRatio: 1 / 0.55),
-                      flexibleSpace: FlexibleSpaceBar(
-                        title: InvisibleExpandedHeader(
-                          child: TextWidget(
-                            _userData.name,
-                            maxLines: 1,
-                            color: AppColor.black,
-                            ellipsed: true,
-                          ),
-                        ),
-                        background: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(height: MediaQuery.paddingOf(context).top),
-                            divide32,
-                            CachedImage(
-                              imageUrl: _userData.avatar,
-                              isCircle: true,
-                              width: 80,
-                              height: 80,
-                            ),
-                            divide8,
-                            TextWidget(
-                              _userData.name,
-                              color: AppColor.black,
-                              maxLines: 2,
-                              ellipsed: true,
-                            ),
-                            TextWidget(
-                              _userData.email,
-                              color: AppColor.accent,
-                              maxLines: 1,
-                              ellipsed: true,
-                            ),
-                          ],
-                        ),
-                      )),
-                ],
-            body: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: TextWidget('Total Anime $_totalItems'),
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverAppBar(
+              surfaceTintColor: Colors.transparent,
+              systemOverlayStyle:
+                  (context.read<AppBloc>().state.isDarkMode
+                          ? systemUiOverlayStyleLight
+                          : systemUiOverlayStyleDark)
+                      .copyWith(statusBarColor: Colors.transparent),
+              backgroundColor: AppColor.secondary,
+              pinned: true,
+              leading: IconButton(
+                onPressed: () {
+                  context.pop(context);
+                },
+                icon: Icon(Icons.arrow_back, color: AppColor.black),
+              ),
+              snap: false,
+              floating: false,
+              expandedHeight: calculateAspectRationHeight(
+                context,
+                width: MediaQuery.sizeOf(context).width,
+                aspectRatio: 1 / 0.55,
+              ),
+              flexibleSpace: FlexibleSpaceBar(
+                title: InvisibleExpandedHeader(
+                  child: TextWidget(
+                    _userData.name,
+                    maxLines: 1,
+                    color: AppColor.black,
+                    ellipsed: true,
+                  ),
                 ),
-                ...items,
-                divide16
-              ],
-            ));
+                background: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: MediaQuery.paddingOf(context).top),
+                    divide32,
+                    CachedImage(
+                      imageUrl: _userData.avatar,
+                      isCircle: true,
+                      width: 80,
+                      height: 80,
+                    ),
+                    divide8,
+                    TextWidget(
+                      _userData.name,
+                      color: AppColor.black,
+                      maxLines: 2,
+                      ellipsed: true,
+                    ),
+                    TextWidget(
+                      _userData.email,
+                      color: AppColor.accent,
+                      maxLines: 1,
+                      ellipsed: true,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+          body: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: TextWidget('Total Anime $_totalItems'),
+              ),
+              ...items,
+              divide16,
+            ],
+          ),
+        );
       },
     );
   }

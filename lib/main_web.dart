@@ -6,6 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:go_router/go_router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +17,9 @@ Future<void> main() async {
 
   // Use URL path strategy for web
   setUrlStrategy(PathUrlStrategy());
+
+  // Set GoRouter to use imperative APIs
+  GoRouter.optionURLReflectsImperativeAPIs = true;
 
   // Init locale
   await EasyLocalization.ensureInitialized();
@@ -28,10 +32,7 @@ Future<void> main() async {
 
   runApp(
     EasyLocalization(
-      supportedLocales: const [
-        Locale('en'),
-        Locale('id'),
-      ],
+      supportedLocales: const [Locale('en'), Locale('id')],
       path: 'assets/i18n',
       fallbackLocale: const Locale('en'),
       saveLocale: true,

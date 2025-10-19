@@ -79,7 +79,7 @@
             "preLaunchTask": "set-index-dev",
             "args": [
                 "-d",
-                "edge",
+                "chrome",
                 "--web-hostname",
                 "localhost",
                 "--web-port",
@@ -95,7 +95,7 @@
             "preLaunchTask": "set-index-prod",
             "args": [
                 "-d",
-                "edge",
+                "chrome",
                 "--web-hostname",
                 "localhost",
                 "--web-port",

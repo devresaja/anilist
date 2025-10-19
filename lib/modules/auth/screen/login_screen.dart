@@ -19,8 +19,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
+  static const String name = 'login';
   static const String path = '/login';
   const LoginScreen({super.key});
 
@@ -60,7 +62,9 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         ColorFiltered(
           colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.7), BlendMode.srcOver),
+            Colors.black.withOpacity(0.7),
+            BlendMode.srcOver,
+          ),
           child: Image(
             width: MediaQuery.sizeOf(context).width,
             height: MediaQuery.sizeOf(context).height,
@@ -70,9 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 2, sigmaY: 3),
-          child: Container(
-            color: Colors.black.withOpacity(0.3),
-          ),
+          child: Container(color: Colors.black.withOpacity(0.3)),
         ),
         Padding(
           padding: Dimension.horizontalPadding,
@@ -81,10 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const Spacer(),
               const Spacer(),
-              SvgUI(
-                'ic_logo.svg',
-                size: 200,
-              ),
+              SvgUI('ic_logo.svg', size: 200),
               const Spacer(),
               _buildLoginButton(),
               divide24,
@@ -94,9 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               divide6,
               _buildGuestButton(context),
-              SizedBox(
-                height: MediaQuery.sizeOf(context).height * 0.02,
-              )
+              SizedBox(height: MediaQuery.sizeOf(context).height * 0.02),
             ],
           ),
         ),
@@ -112,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
               },
             ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -126,7 +123,9 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               ColorFiltered(
                 colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.7), BlendMode.srcOver),
+                  Colors.black.withOpacity(0.7),
+                  BlendMode.srcOver,
+                ),
                 child: Image(
                   width: double.infinity,
                   height: MediaQuery.of(context).size.height,
@@ -136,9 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 2, sigmaY: 3),
-                child: Container(
-                  color: Colors.black.withOpacity(0.3),
-                ),
+                child: Container(color: Colors.black.withOpacity(0.3)),
               ),
               Center(
                 child: LayoutBuilder(
@@ -159,34 +156,34 @@ class _LoginScreenState extends State<LoginScreen> {
             decoration: BoxDecoration(
               color: AppColor.white,
               border: Border(
-                left: BorderSide(
-                  color: AppColor.primary,
-                  width: 1,
-                ),
+                left: BorderSide(color: AppColor.primary, width: 1),
               ),
             ),
             height: MediaQuery.of(context).size.height,
-            child: LayoutBuilder(builder: (context, constraints) {
-              return Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: constraints.maxWidth * 0.15),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildLoginButton(),
-                      divide24,
-                      CustomDivider(
-                        text: LocaleKeys.or,
-                        textSpacing: MediaQuery.of(context).size.width * 0.05,
-                      ),
-                      divide6,
-                      _buildGuestButton(context),
-                    ],
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: constraints.maxWidth * 0.15,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildLoginButton(),
+                        divide24,
+                        CustomDivider(
+                          text: LocaleKeys.or,
+                          textSpacing: MediaQuery.of(context).size.width * 0.05,
+                        ),
+                        divide6,
+                        _buildGuestButton(context),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            }),
+                );
+              },
+            ),
           ),
         ),
       ],
@@ -196,17 +193,12 @@ class _LoginScreenState extends State<LoginScreen> {
   TextButton _buildGuestButton(BuildContext context) {
     return TextButton(
       style: TextButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(300),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(300)),
       ),
       onPressed: () {
-        Navigator.pushNamedAndRemoveUntil(
-            context, DashboardScreen.path, (route) => false);
+        context.go(DashboardScreen.path);
       },
-      child: TextWidget(
-        LocaleKeys.continue_as_guest,
-      ),
+      child: TextWidget(LocaleKeys.continue_as_guest),
     );
   }
 
@@ -215,15 +207,14 @@ class _LoginScreenState extends State<LoginScreen> {
       bloc: _authBloc,
       listener: (context, state) {
         if (state is LoginByGoogleLoadedState) {
-          context
-              .read<AppBloc>()
-              .add(SetUserDataEvent(userData: state.userData));
+          context.read<AppBloc>().add(
+            SetUserDataEvent(userData: state.userData),
+          );
 
           showCustomSnackBar(
-              '${LocaleKeys.welcome.tr()} ${state.userData.email}');
-
-          Navigator.pushNamedAndRemoveUntil(
-              context, DashboardScreen.path, (route) => false);
+            '${LocaleKeys.welcome.tr()} ${state.userData.email}',
+          );
+          context.go(DashboardScreen.path);
         } else if (state is LoginByGoogleFailedState) {
           showCustomSnackBar(state.message, isSuccess: false);
         }

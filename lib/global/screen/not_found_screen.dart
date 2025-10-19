@@ -6,6 +6,7 @@ import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/widget/button/custom_button.dart';
 import 'package:anilist/widget/image/svg_ui.dart';
 import 'package:anilist/widget/text/text_widget.dart';
+import 'package:go_router/go_router.dart';
 
 class NotFoundScreen extends StatelessWidget {
   const NotFoundScreen({super.key});
@@ -52,11 +53,10 @@ class NotFoundScreen extends StatelessWidget {
                   text: LocaleKeys.back,
                   color: AppColor.secondary,
                   onTap: () {
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context);
+                    if (context.canPop()) {
+                      context.pop(context);
                     } else {
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, DashboardScreen.path, (route) => false);
+                      context.go(DashboardScreen.path);
                     }
                   },
                 ),

@@ -5,6 +5,7 @@ import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/widget/text/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class SpeechToTextButton extends StatefulWidget {
@@ -41,14 +42,16 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
         builder: (context) {
           return AlertDialog(
             backgroundColor: AppColor.secondary,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: TextWidget(
-              LocaleKeys.listening,
-              fontSize: 16,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
             ),
-            contentPadding:
-                EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 10),
+            title: TextWidget(LocaleKeys.listening, fontSize: 16),
+            contentPadding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 20,
+              bottom: 10,
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -65,24 +68,19 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
             actions: [
               TextButton(
                 onPressed: _stopListening,
-                child: TextWidget(
-                  LocaleKeys.stop,
-                  color: AppColor.error,
-                ),
+                child: TextWidget(LocaleKeys.stop, color: AppColor.error),
               ),
             ],
           );
         },
-      ).then(
-        (value) {
-          setState(() {
-            _isDialogOpen = false;
-          });
-          if (_isListening) {
-            _speech.stop();
-          }
-        },
-      );
+      ).then((value) {
+        setState(() {
+          _isDialogOpen = false;
+        });
+        if (_isListening) {
+          _speech.stop();
+        }
+      });
 
       _speech.listen(
         onResult: (result) {
@@ -111,7 +109,7 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
     _speech.stop();
     _silenceTimer?.cancel();
     if (_isDialogOpen) {
-      Navigator.pop(context);
+      context.pop(context);
     }
     if (_textResult.value != null) {
       widget.onResult(_textResult.value!);
@@ -121,11 +119,8 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        onPressed: _isListening ? null : _startListening,
-        icon: Icon(
-          Icons.mic,
-          size: 28,
-          color: AppColor.whiteAccent,
-        ));
+      onPressed: _isListening ? null : _startListening,
+      icon: Icon(Icons.mic, size: 28, color: AppColor.whiteAccent),
+    );
   }
 }

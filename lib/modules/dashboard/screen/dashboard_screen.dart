@@ -20,7 +20,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
-
+  static const String name = 'dashboard';
   static const String path = '/dashboard';
 
   @override
@@ -54,10 +54,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: (context.read<AppBloc>().state.isDarkMode
-              ? systemUiOverlayStyleLight
-              : systemUiOverlayStyleDark)
-          .copyWith(statusBarColor: AppColor.secondary),
+      value:
+          (context.read<AppBloc>().state.isDarkMode
+                  ? systemUiOverlayStyleLight
+                  : systemUiOverlayStyleDark)
+              .copyWith(statusBarColor: AppColor.secondary),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: AppColor.secondary,
@@ -144,29 +145,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
           height: 64,
           width: 64,
           padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-          ),
-          child: LayoutBuilder(builder: (context, constraint) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  icon,
-                  color: isSelected ? AppColor.primary : Colors.white,
-                  size: constraint.minHeight * 0.38,
-                ),
-                const SizedBox(height: 4),
-                if (isSelected)
-                  TextWidget(
-                    label,
-                    fontSize: constraint.maxHeight * 0.19,
+          decoration: BoxDecoration(shape: BoxShape.circle),
+          child: LayoutBuilder(
+            builder: (context, constraint) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    icon,
                     color: isSelected ? AppColor.primary : Colors.white,
+                    size: constraint.minHeight * 0.38,
                   ),
-              ],
-            );
-          }),
+                  const SizedBox(height: 4),
+                  if (isSelected)
+                    TextWidget(
+                      label,
+                      fontSize: constraint.maxHeight * 0.19,
+                      color: isSelected ? AppColor.primary : Colors.white,
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -184,9 +185,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           color: context.read<AppBloc>().state.isDarkMode
               ? Colors.black
               : Colors.white,
-          border: Border(
-            right: BorderSide(color: AppColor.primary),
-          ),
+          border: Border(right: BorderSide(color: AppColor.primary)),
         ),
         child: SafeArea(
           right: false,
@@ -249,8 +248,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 color: isSelected
                     ? AppColor.primary
                     : context.read<AppBloc>().state.isDarkMode
-                        ? Colors.white
-                        : Colors.black,
+                    ? Colors.white
+                    : Colors.black,
               ),
               divideW16,
               TextWidget(
@@ -258,8 +257,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 color: isSelected
                     ? AppColor.primary
                     : context.read<AppBloc>().state.isDarkMode
-                        ? Colors.white
-                        : Colors.black,
+                    ? Colors.white
+                    : Colors.black,
                 weight: FontWeight.w500,
               ),
             ],

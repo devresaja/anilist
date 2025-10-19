@@ -3,12 +3,10 @@ import 'package:anilist/modules/my_list/screen/shared_my_list_screen.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
-enum DeepLinkType {
-  mylist,
-  anime,
-}
+enum DeepLinkType { mylist, anime }
 
 extension DeepLinkTypeExtension on DeepLinkType {
   String get value {
@@ -34,14 +32,11 @@ class DeepLinkService {
 
   static void init(BuildContext context) {
     try {
-      _appLinks.uriLinkStream.listen(
-        (Uri? link) {
-          if (context.mounted) {
-            _onDeepLinkReceived(context, link);
-          }
-        },
-        onError: (e) => showCustomSnackBar(e, isSuccess: false),
-      );
+      _appLinks.uriLinkStream.listen((Uri? link) {
+        if (context.mounted) {
+          _onDeepLinkReceived(context, link);
+        }
+      }, onError: (e) => showCustomSnackBar(e, isSuccess: false));
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -67,24 +62,28 @@ class DeepLinkService {
       scheme: 'https',
       host: 'anilist-433306.firebaseapp.com',
       path: '/anilist',
-      queryParameters: {
-        'type': type.name,
-        'id': id,
-      },
+      queryParameters: {'type': type.name, 'id': id},
     );
 
     await Share.share(uri.toString());
   }
 
   static void _handleDeepLink(
-      BuildContext context, DeepLinkType type, String id) {
+    BuildContext context,
+    DeepLinkType type,
+    String id,
+  ) {
     switch (type) {
       case DeepLinkType.mylist:
-        Navigator.pushNamed(context, SharedMyListScreen.path,
-            arguments: SharedMyListArgument(id));
+        context.pushNamed(
+          SharedMyListScreen.name,
+          pathParameters: SharedMyListArgument(id: id).toPathParams(),
+        );
       case DeepLinkType.anime:
-        Navigator.pushNamed(context, DetailAnimeScreen.path,
-            arguments: DetailAnimeArgument(animeId: int.parse(id)));
+        context.pushNamed(
+          DetailAnimeScreen.name,
+          pathParameters: DetailAnimeArgument(animeId: id).toPathParams(),
+        );
     }
   }
 }

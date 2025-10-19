@@ -15,6 +15,7 @@ import 'package:anilist/widget/text/text_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 class MyListScreen extends StatefulWidget {
@@ -127,8 +128,9 @@ class _MyListScreenState extends State<MyListScreen> {
                 }
                 // Delete
                 else if (state is DeleteMyListLoadedState) {
-                  _animes
-                      .removeWhere((element) => element.malId == state.malId);
+                  _animes.removeWhere(
+                    (element) => element.malId == state.malId,
+                  );
                   _totalItems--;
                   if (_animes.isEmpty) {
                     _updateViewMode(ViewMode.empty);
@@ -160,19 +162,21 @@ class _MyListScreenState extends State<MyListScreen> {
       horizontalGridSpacing: 8,
       rowMainAxisAlignment: MainAxisAlignment.center,
       gridItems: _animes
-          .map((anime) => AspectRatio(
-                aspectRatio: 6 / 9,
-                child: AnimeCard(
-                  key: ValueKey(anime.malId),
-                  animeId: anime.malId,
-                  imageUrl: anime.images?.webp?.imageUrl,
-                  score: anime.score,
-                  title: anime.title,
-                  type: anime.type,
-                  episode: anime.episodes,
-                  isDynamicSize: true,
-                ),
-              ))
+          .map(
+            (anime) => AspectRatio(
+              aspectRatio: 6 / 9,
+              child: AnimeCard(
+                key: ValueKey(anime.malId),
+                animeId: anime.malId,
+                imageUrl: anime.images?.webp?.imageUrl,
+                score: anime.score,
+                title: anime.title,
+                type: anime.type,
+                episode: anime.episodes,
+                isDynamicSize: true,
+              ),
+            ),
+          )
           .toList(),
       builder: (context, items) {
         return ListView(
@@ -183,13 +187,11 @@ class _MyListScreenState extends State<MyListScreen> {
               child: TextWidget('Total Anime $_totalItems'),
             ),
             ...items,
-            if (_viewMode == ViewMode.loadMore) ...[
-              divide10,
-              loading(),
-            ],
+            if (_viewMode == ViewMode.loadMore) ...[divide10, loading()],
             if (!context.isWideScreen)
               SizedBox(
-                height: MediaQuery.paddingOf(context).bottom +
+                height:
+                    MediaQuery.paddingOf(context).bottom +
                     kBottomNavigationBarHeight,
               )
             else
@@ -207,19 +209,22 @@ class _MyListScreenState extends State<MyListScreen> {
         listener: (context, state) {
           if (state is ShowRewardedAdConfirmationState) {
             showConfirmationDialog(
-                context: context,
-                title: LocaleKeys.watch_ads_to_continue,
-                okText: LocaleKeys.watch,
-                onTapOk: () {
-                  Navigator.pop(context);
-                  _showRewardedAd(isCheckAttempt: false);
-                });
+              context: context,
+              title: LocaleKeys.watch_ads_to_continue,
+              okText: LocaleKeys.watch,
+              onTapOk: () {
+                context.pop(context);
+                _showRewardedAd(isCheckAttempt: false);
+              },
+            );
           } else if (state is ShowRewardedAdLoadedState) {
             _pendingCloudAction?.call();
             _pendingCloudAction = null;
           } else if (state is ShowRewardedAdSkippedState) {
-            showCustomSnackBar(LocaleKeys.please_watch_the_ad_to_continue,
-                isSuccess: false);
+            showCustomSnackBar(
+              LocaleKeys.please_watch_the_ad_to_continue,
+              isSuccess: false,
+            );
           } else if (state is ShowRewardedAdFailedState) {
             showCustomSnackBar(state.message, isSuccess: false);
           }
@@ -254,10 +259,7 @@ class _MyListScreenState extends State<MyListScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextWidget(
-                    LocaleKeys.mylist,
-                    fontSize: 16,
-                  ),
+                  TextWidget(LocaleKeys.mylist, fontSize: 16),
                   if (!kIsWeb)
                     Row(
                       children: [
@@ -277,7 +279,7 @@ class _MyListScreenState extends State<MyListScreen> {
                           isDisabled: _isLoadingCloud,
                         ),
                       ],
-                    )
+                    ),
                 ],
               ),
             );
@@ -299,10 +301,7 @@ class _MyListScreenState extends State<MyListScreen> {
               if (!_isLogin()) return;
               onTap();
             },
-      icon: Icon(
-        icon,
-        color: AppColor.whiteAccent,
-      ),
+      icon: Icon(icon, color: AppColor.whiteAccent),
     );
   }
 
@@ -312,7 +311,7 @@ class _MyListScreenState extends State<MyListScreen> {
       title: LocaleKeys.download_from_cloud_save,
       infoText: LocaleKeys.download_warning,
       onTapOk: () {
-        Navigator.pop(context);
+        context.pop(context);
 
         _pendingCloudAction = () {
           _myListBloc.add(DownloadMyListEvent());
@@ -330,7 +329,7 @@ class _MyListScreenState extends State<MyListScreen> {
       description: LocaleKeys.upload_expiry_notice,
       infoText: LocaleKeys.upload_overwrite_warning,
       onTapOk: () {
-        Navigator.pop(context);
+        context.pop(context);
 
         _pendingCloudAction = () {
           _myListBloc.add(UploadMyListEvent());
@@ -349,10 +348,12 @@ class _MyListScreenState extends State<MyListScreen> {
   }
 
   void _showRewardedAd({required bool isCheckAttempt}) {
-    _adsBloc.add(ShowRewardedAdEvent(
-      adsType: AdsType.mylist,
-      isCheckAttempt: isCheckAttempt,
-    ));
+    _adsBloc.add(
+      ShowRewardedAdEvent(
+        adsType: AdsType.mylist,
+        isCheckAttempt: isCheckAttempt,
+      ),
+    );
   }
 
   bool _isLogin() {

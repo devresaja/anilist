@@ -15,25 +15,30 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/widget/text/text_widget.dart';
+import 'package:go_router/go_router.dart';
 import 'package:last_pod_player/last_pod_player.dart';
 import 'package:anilist/widget/video/youtube_embeded_player_dummy.dart'
     if (dart.library.html) 'package:anilist/widget/video/youtube_embeded_player.dart';
 
 class DetailAnimeArgument {
-  final int animeId;
+  final String animeId;
 
-  DetailAnimeArgument({
-    required this.animeId,
-  });
+  DetailAnimeArgument({required this.animeId});
+
+  Map<String, String> toPathParams() {
+    return {'id': animeId.toString()};
+  }
+
+  factory DetailAnimeArgument.fromPathParams(Map<String, String> params) {
+    return DetailAnimeArgument(animeId: params['id'] ?? '');
+  }
 }
 
 class DetailAnimeScreen extends StatefulWidget {
   final DetailAnimeArgument argument;
-  const DetailAnimeScreen({
-    super.key,
-    required this.argument,
-  });
+  const DetailAnimeScreen({super.key, required this.argument});
 
+  static const String name = 'animeDetail';
   static const String path = '/anime/detail';
 
   @override
@@ -82,41 +87,36 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: systemUiOverlayStyleLight.copyWith(
-        statusBarColor: Colors.black,
-      ),
+      value: systemUiOverlayStyleLight.copyWith(statusBarColor: Colors.black),
       child: Scaffold(
-          backgroundColor: AppColor.secondary,
-          body: MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (context) => _detailAnimeBloc,
-              ),
-              BlocProvider(
-                create: (context) => _adsBloc,
-              ),
-            ],
-            child: BlocConsumer<DetailAnimeBloc, DetailAnimeState>(
-              bloc: _detailAnimeBloc,
-              listener: (context, state) {
-                if (state is GetAnimeByIdLoadingState) {
-                  _viewMode = ViewMode.loading;
-                } else if (state is GetAnimeByIdLoadedState) {
-                  _data = state.data.data;
-                  _initPlayer();
-                  _viewMode = ViewMode.loaded;
-                } else if (state is GetAnimeByIdFailedState) {
-                  _viewMode = ViewMode.failed;
-                }
-              },
-              builder: (context, state) {
-                return ViewHandlerWidget(
-                  viewMode: _viewMode,
-                  child: _data == null ? loading() : _buildView(),
-                );
-              },
-            ),
-          )),
+        backgroundColor: AppColor.secondary,
+        body: MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (context) => _detailAnimeBloc),
+            BlocProvider(create: (context) => _adsBloc),
+          ],
+          child: BlocConsumer<DetailAnimeBloc, DetailAnimeState>(
+            bloc: _detailAnimeBloc,
+            listener: (context, state) {
+              if (state is GetAnimeByIdLoadingState) {
+                _viewMode = ViewMode.loading;
+              } else if (state is GetAnimeByIdLoadedState) {
+                _data = state.data.data;
+                _initPlayer();
+                _viewMode = ViewMode.loaded;
+              } else if (state is GetAnimeByIdFailedState) {
+                _viewMode = ViewMode.failed;
+              }
+            },
+            builder: (context, state) {
+              return ViewHandlerWidget(
+                viewMode: _viewMode,
+                child: _data == null ? loading() : _buildView(),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 
@@ -125,7 +125,9 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
       padding: EdgeInsets.zero,
       children: [
         Container(
-            color: Colors.black, height: MediaQuery.paddingOf(context).top),
+          color: Colors.black,
+          height: MediaQuery.paddingOf(context).top,
+        ),
 
         //player
         _buildPlayer(),
@@ -149,7 +151,7 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
               //genre
               if (_data!.genres?.isNotEmpty ?? false) ...[
                 _buildGenre(),
-                divide16
+                divide16,
               ],
 
               // menu
@@ -157,10 +159,7 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
 
               divide10,
               //synopsis
-              TextWidget(
-                _data!.synopsis ?? '-',
-                color: AppColor.accent,
-              )
+              TextWidget(_data!.synopsis ?? '-', color: AppColor.accent),
             ],
           ),
         ),
@@ -207,10 +206,7 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          if (!kIsWeb) ...[
-            MyListButton(anime: _data!),
-            divideW10,
-          ],
+          if (!kIsWeb) ...[MyListButton(anime: _data!), divideW10],
 
           // share
           Material(
@@ -219,8 +215,9 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
             child: InkWell(
               onTap: () {
                 DeepLinkService.generateDeeplink(
-                    type: DeepLinkType.anime,
-                    id: widget.argument.animeId.toString());
+                  type: DeepLinkType.anime,
+                  id: widget.argument.animeId.toString(),
+                );
               },
               borderRadius: BorderRadius.circular(300),
               child: Ink(
@@ -250,7 +247,7 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -261,25 +258,33 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: _data!.genres!
-            .map((genre) => Padding(
-                  padding: EdgeInsets.only(
-                      right: MediaQuery.sizeOf(context).width * 0.02),
-                  child: Container(
-                    padding: const EdgeInsets.only(
-                        right: 4, left: 4, top: 1, bottom: 1),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColor.primary),
-                      borderRadius: BorderRadius.circular(10),
-                      color: AppColor.secondary,
-                    ),
-                    child: Center(
-                        child: TextWidget(
+            .map(
+              (genre) => Padding(
+                padding: EdgeInsets.only(
+                  right: MediaQuery.sizeOf(context).width * 0.02,
+                ),
+                child: Container(
+                  padding: const EdgeInsets.only(
+                    right: 4,
+                    left: 4,
+                    top: 1,
+                    bottom: 1,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColor.primary),
+                    borderRadius: BorderRadius.circular(10),
+                    color: AppColor.secondary,
+                  ),
+                  child: Center(
+                    child: TextWidget(
                       genre.name ?? '-',
                       fontSize: 13,
                       color: AppColor.black,
-                    )),
+                    ),
                   ),
-                ))
+                ),
+              ),
+            )
             .toList(),
       ),
     );
@@ -291,19 +296,26 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
       listener: (context, state) {
         if (state is ShowRewardedAdConfirmationState) {
           showConfirmationDialog(
-              context: context,
-              title: LocaleKeys.watch_ads_to_continue,
-              okText: LocaleKeys.watch,
-              onTapOk: () {
-                Navigator.pop(context);
-                _adsBloc.add(ShowRewardedAdEvent(
-                    adsType: AdsType.trailer, isCheckAttempt: false));
-              });
+            context: context,
+            title: LocaleKeys.watch_ads_to_continue,
+            okText: LocaleKeys.watch,
+            onTapOk: () {
+              context.pop(context);
+              _adsBloc.add(
+                ShowRewardedAdEvent(
+                  adsType: AdsType.trailer,
+                  isCheckAttempt: false,
+                ),
+              );
+            },
+          );
         } else if (state is ShowRewardedAdLoadedState) {
           _podPlayerController?.play();
         } else if (state is ShowRewardedAdSkippedState) {
-          showCustomSnackBar(LocaleKeys.please_watch_the_ad_to_continue,
-              isSuccess: false);
+          showCustomSnackBar(
+            LocaleKeys.please_watch_the_ad_to_continue,
+            isSuccess: false,
+          );
         } else if (state is ShowRewardedAdFailedState) {
           showCustomSnackBar(state.message, isSuccess: false);
         }
@@ -313,14 +325,17 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
           onTap: state is ShowRewardedAdLoadingState
               ? null
               : () {
-                  _adsBloc.add(ShowRewardedAdEvent(
-                      adsType: AdsType.trailer, isCheckAttempt: true));
+                  _adsBloc.add(
+                    ShowRewardedAdEvent(
+                      adsType: AdsType.trailer,
+                      isCheckAttempt: true,
+                    ),
+                  );
                 },
           child: Visibility(
-              visible: state is! ShowRewardedAdLoadedState,
-              child: Container(
-                color: Colors.transparent,
-              )),
+            visible: state is! ShowRewardedAdLoadedState,
+            child: Container(color: Colors.transparent),
+          ),
         );
       },
     );

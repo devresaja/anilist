@@ -15,13 +15,23 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 class SearchArgument {
   final String search;
-  SearchArgument({required this.search});
+
+  const SearchArgument({required this.search});
+
+  Map<String, String> toQueryParams() {
+    return {'search': search};
+  }
+
+  factory SearchArgument.fromQueryParams(Map<String, String> params) {
+    return SearchArgument(search: params['search'] ?? '');
+  }
 }
 
 class SearchScreen extends StatefulWidget {
   final SearchArgument argument;
   const SearchScreen({super.key, required this.argument});
 
+  static const String name = 'search';
   static const String path = '/search';
 
   @override
@@ -134,7 +144,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
             ),
-            AdMobBannerWidget()
+            AdMobBannerWidget(),
             // UnityBannerAdWidget(placementId: 'Banner_Android')
           ],
         ),
@@ -155,7 +165,7 @@ class _SearchScreenState extends State<SearchScreen> {
           collapsedHeight: 68,
           flexibleSpace: _buildHeader(),
         ),
-        SliverToBoxAdapter(child: _buildList())
+        SliverToBoxAdapter(child: _buildList()),
       ],
     );
   }
@@ -169,18 +179,20 @@ class _SearchScreenState extends State<SearchScreen> {
       horizontalGridSpacing: 8,
       rowMainAxisAlignment: MainAxisAlignment.center,
       gridItems: _animes
-          .map((anime) => AspectRatio(
-                aspectRatio: 6 / 9,
-                child: AnimeCard(
-                  animeId: anime.malId,
-                  imageUrl: anime.images?.webp?.imageUrl,
-                  score: anime.score,
-                  title: anime.title,
-                  type: anime.type,
-                  episode: anime.episodes,
-                  isDynamicSize: true,
-                ),
-              ))
+          .map(
+            (anime) => AspectRatio(
+              aspectRatio: 6 / 9,
+              child: AnimeCard(
+                animeId: anime.malId,
+                imageUrl: anime.images?.webp?.imageUrl,
+                score: anime.score,
+                title: anime.title,
+                type: anime.type,
+                episode: anime.episodes,
+                isDynamicSize: true,
+              ),
+            ),
+          )
           .toList(),
       builder: (context, items) {
         return ListView(

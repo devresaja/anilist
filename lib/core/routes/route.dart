@@ -1,47 +1,63 @@
-import 'dart:developer';
+import 'package:anilist/core/routes/navigator_key.dart';
 import 'package:anilist/global/screen/not_found_screen.dart';
+import 'package:anilist/global/model/user_data.dart';
 import 'package:anilist/modules/detail_anime/screen/detail_anime_screen.dart';
 import 'package:anilist/modules/my_list/screen/shared_my_list_screen.dart';
 import 'package:anilist/modules/search/screen/search_screen.dart';
-import 'package:flutter/material.dart';
+
 import 'package:anilist/modules/dashboard/screen/dashboard_screen.dart';
 import 'package:anilist/modules/auth/screen/login_screen.dart';
+import 'package:go_router/go_router.dart';
 
-class RouteConfig {
-  static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
-    var argument = settings.arguments;
-    log('current route name: ${settings.name}');
+GoRouter routeConfig({UserData? userData}) => GoRouter(
+  debugLogDiagnostics: true,
+  navigatorKey: navigatorKey,
+  initialLocation: userData != null ? DashboardScreen.path : LoginScreen.path,
+  errorBuilder: (context, state) => const NotFoundScreen(),
+  routes: [
+    GoRoute(
+      name: DashboardScreen.name,
+      path: DashboardScreen.path,
+      builder: (context, state) => const DashboardScreen(),
+    ),
 
-    switch (settings.name) {
-      case DashboardScreen.path:
-        return _routeTo(const DashboardScreen(), settings);
+    GoRoute(
+      name: LoginScreen.name,
+      path: LoginScreen.path,
+      builder: (context, state) => const LoginScreen(),
+    ),
 
-      case LoginScreen.path:
-        return _routeTo(const LoginScreen(), settings);
+    GoRoute(
+      name: SearchScreen.name,
+      path: SearchScreen.path,
+      builder: (context, state) {
+        final argument = SearchArgument.fromQueryParams(
+          state.uri.queryParameters,
+        );
+        return SearchScreen(argument: argument);
+      },
+    ),
 
-      case SearchScreen.path:
-        return _routeTo(
-            SearchScreen(argument: argument as SearchArgument), settings);
+    GoRoute(
+      name: DetailAnimeScreen.name,
+      path: '${DetailAnimeScreen.path}/:id',
+      builder: (context, state) {
+        final argument = DetailAnimeArgument.fromPathParams(
+          state.pathParameters,
+        );
+        return DetailAnimeScreen(argument: argument);
+      },
+    ),
 
-      case DetailAnimeScreen.path:
-        return _routeTo(
-            DetailAnimeScreen(argument: argument as DetailAnimeArgument),
-            settings);
-
-      case SharedMyListScreen.path:
-        return _routeTo(
-            SharedMyListScreen(argument: argument as SharedMyListArgument),
-            settings);
-
-      default:
-        return _routeTo(const NotFoundScreen(), settings);
-    }
-  }
-
-  static MaterialPageRoute _routeTo(Widget screen, RouteSettings settings) {
-    return MaterialPageRoute(
-      settings: settings,
-      builder: (context) => screen,
-    );
-  }
-}
+    GoRoute(
+      name: SharedMyListScreen.name,
+      path: '${SharedMyListScreen.path}/:id',
+      builder: (context, state) {
+        final argument = SharedMyListArgument.fromPathParams(
+          state.pathParameters,
+        );
+        return SharedMyListScreen(argument: argument);
+      },
+    ),
+  ],
+);

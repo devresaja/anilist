@@ -12,6 +12,7 @@ import 'package:anilist/widget/card/small_rounded_card.dart';
 import 'package:anilist/widget/image/cached_image.dart';
 import 'package:anilist/widget/page/view_handler_widget.dart';
 import 'package:anilist/widget/text/text_widget.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeRandom extends StatefulWidget {
   const HomeRandom({super.key});
@@ -70,22 +71,17 @@ class _HomeRandomState extends State<HomeRandom> {
             Align(
               alignment: Alignment.bottomCenter,
               child: CustomPaint(
-                  painter: BorderPainter(isLoading: true),
-                  child: ClipPath(
-                    clipper: HorizontalCutClipper(),
-                    child: Blink(
-                      height: 100,
-                      width: double.infinity,
-                      radius: 0,
-                    ),
-                  )),
+                painter: BorderPainter(isLoading: true),
+                child: ClipPath(
+                  clipper: HorizontalCutClipper(),
+                  child: Blink(height: 100, width: double.infinity, radius: 0),
+                ),
+              ),
             ),
             Positioned(
-                right: 12,
-                child: AnimeCardLoading(
-                  width: 70,
-                  height: 110,
-                ))
+              right: 12,
+              child: AnimeCardLoading(width: 70, height: 110),
+            ),
           ],
         ),
       ),
@@ -120,15 +116,21 @@ class _HomeRandomState extends State<HomeRandom> {
                           child: ImageFiltered(
                             imageFilter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
                             child: Opacity(
-                                opacity: 0.3,
-                                child: CachedImage(
-                                    width: double.infinity,
-                                    imageUrl: _data!.images?.webp?.imageUrl)),
+                              opacity: 0.3,
+                              child: CachedImage(
+                                width: double.infinity,
+                                imageUrl: _data!.images?.webp?.imageUrl,
+                              ),
+                            ),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
-                              left: 10, right: 10, bottom: 10, top: 4),
+                            left: 10,
+                            right: 10,
+                            bottom: 10,
+                            top: 4,
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -147,10 +149,12 @@ class _HomeRandomState extends State<HomeRandom> {
                                     const Spacer(),
                                     SmallRoundedCard(
                                       onTap: () {
-                                        Navigator.pushNamed(
-                                            context, DetailAnimeScreen.path,
-                                            arguments: DetailAnimeArgument(
-                                                animeId: _data!.malId));
+                                        context.pushNamed(
+                                          DetailAnimeScreen.name,
+                                          pathParameters: DetailAnimeArgument(
+                                            animeId: _data!.malId.toString(),
+                                          ).toPathParams(),
+                                        );
                                       },
                                       text: LocaleKeys.see_detail,
                                       textColor: AppColor.white,
@@ -159,7 +163,7 @@ class _HomeRandomState extends State<HomeRandom> {
                                   ],
                                 ),
                               ),
-                              SizedBox(width: 90)
+                              SizedBox(width: 90),
                             ],
                           ),
                         ),
@@ -183,7 +187,7 @@ class _HomeRandomState extends State<HomeRandom> {
               type: _data!.type,
               episode: _data!.episodes,
             ),
-          )
+          ),
         ],
       ),
     );
@@ -213,9 +217,7 @@ class HorizontalCutClipper extends CustomClipper<Path> {
 
 class BorderPainter extends CustomPainter {
   final bool isLoading;
-  BorderPainter({
-    required this.isLoading,
-  });
+  BorderPainter({required this.isLoading});
 
   @override
   void paint(Canvas canvas, Size size) {

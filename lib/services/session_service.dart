@@ -9,6 +9,7 @@ import 'package:anilist/utils/view_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class SessionService {
   static final SessionService instance = SessionService._internal();
@@ -22,14 +23,14 @@ class SessionService {
   void init(BuildContext context) {
     _internetListener = InternetConnectionService.instance.connectionStatus
         .listen((isConnected) {
-      if (isConnected) {
-        if (context.mounted) {
-          _startSession(context);
-        }
-      } else {
-        _sessionTimer?.cancel();
-      }
-    });
+          if (isConnected) {
+            if (context.mounted) {
+              _startSession(context);
+            }
+          } else {
+            _sessionTimer?.cancel();
+          }
+        });
   }
 
   void _startSession(BuildContext context) {
@@ -74,8 +75,7 @@ class SessionService {
         await MyListLocalApi().clear();
         await LocalStorageService.removeValue();
         if (context.mounted) {
-          Navigator.pushNamedAndRemoveUntil(
-              context, LoginScreen.path, (route) => false);
+          context.go(LoginScreen.path);
         }
       },
     );
