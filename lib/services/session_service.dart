@@ -75,7 +75,7 @@ class SessionService {
         await MyListLocalApi().clear();
         await LocalStorageService.removeValue();
         if (context.mounted) {
-          context.go(LoginScreen.path);
+          context.goNamed(LoginScreen.name);
         }
       },
     );

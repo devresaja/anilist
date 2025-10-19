@@ -12,7 +12,7 @@ import 'package:go_router/go_router.dart';
 GoRouter routeConfig({UserData? userData}) => GoRouter(
   debugLogDiagnostics: true,
   navigatorKey: navigatorKey,
-  initialLocation: userData != null ? DashboardScreen.path : LoginScreen.path,
+  initialLocation: DashboardScreen.path,
   errorBuilder: (context, state) => const NotFoundScreen(),
   routes: [
     GoRoute(

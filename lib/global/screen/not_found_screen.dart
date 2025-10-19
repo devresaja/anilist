@@ -56,7 +56,7 @@ class NotFoundScreen extends StatelessWidget {
                     if (context.canPop()) {
                       context.pop(context);
                     } else {
-                      context.go(DashboardScreen.path);
+                      context.goNamed(DashboardScreen.name);
                     }
                   },
                 ),

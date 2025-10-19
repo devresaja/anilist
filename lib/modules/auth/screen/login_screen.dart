@@ -196,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(300)),
       ),
       onPressed: () {
-        context.go(DashboardScreen.path);
+        context.goNamed(DashboardScreen.name);
       },
       child: TextWidget(LocaleKeys.continue_as_guest),
     );
@@ -214,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
           showCustomSnackBar(
             '${LocaleKeys.welcome.tr()} ${state.userData.email}',
           );
-          context.go(DashboardScreen.path);
+          context.goNamed(DashboardScreen.name);
         } else if (state is LoginByGoogleFailedState) {
           showCustomSnackBar(state.message, isSuccess: false);
         }

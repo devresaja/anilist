@@ -186,7 +186,7 @@ class _AccountScreenState extends State<AccountScreen> {
             listener: (context, state) {
               if (state is LogoutLoadedState) {
                 context.read<AppBloc>().add(RemoveUserDataEvent());
-                context.go(LoginScreen.path);
+                context.goNamed(LoginScreen.name);
               } else if (state is LogoutFailedState) {
                 showCustomSnackBar(state.message, isSuccess: false);
               }
@@ -213,7 +213,7 @@ class _AccountScreenState extends State<AccountScreen> {
           title: LocaleKeys.login,
           titleColor: AppColor.primary,
           onTap: () {
-            context.go(LoginScreen.path);
+            context.goNamed(LoginScreen.name);
           },
           trailing: Icon(Icons.login, color: AppColor.primary),
         ),

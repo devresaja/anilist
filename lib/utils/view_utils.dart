@@ -70,7 +70,7 @@ void showAccessDeniedDialog(BuildContext context) {
     title: LocaleKeys.access_denied,
     description: LocaleKeys.login_required_message,
     okText: LocaleKeys.login,
-    onTapOk: () => context.go(LoginScreen.path),
+    onTapOk: () => context.goNamed(LoginScreen.name),
   );
 }
 

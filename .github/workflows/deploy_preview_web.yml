@@ -37,7 +37,7 @@ jobs:
         run: cp web/index_dev.html web/index.html
 
       - name: Build Flutter Web
-        run: flutter build web --dart-define=FLAVOR=dev
+        run: flutter build web -t lib/main_web.dart --dart-define=FLAVOR=dev
 
       - name: Install Vercel CLI
         run: npm install -g vercel
