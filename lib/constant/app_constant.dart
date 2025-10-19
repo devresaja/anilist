@@ -8,5 +8,5 @@ class AppConstant {
   static const String privacyPolicy = '$webUrl${PrivacyPolicyScreen.path}';
   static const String accountDeletionGuide =
       '$webUrl${AccountDeletionGuideScreen.path}';
-  static const String supportEmail = 'lowpriorityservice@gmail.com';
+  static const String supportEmail = 'support@xrescode.my.id';
 }
