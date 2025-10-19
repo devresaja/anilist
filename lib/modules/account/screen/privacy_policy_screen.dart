@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class PrivacyPolicyScreen extends StatefulWidget {
   const PrivacyPolicyScreen({super.key});
@@ -206,14 +205,11 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () async {
-                            final uri = Uri(
-                              scheme: 'mailto',
-                              path: AppConstant.supportEmail,
-                              queryParameters: {
-                                'subject': 'Privacy Policy Support',
-                              },
+                            final uri = buildMailtoUri(
+                              AppConstant.supportEmail,
+                              subject: 'Privacy Policy Support',
                             );
-                            await launchUrl(uri);
+                            customLaunchUrl(uri.toString());
                           },
                       ),
                     ],

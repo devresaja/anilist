@@ -4,7 +4,6 @@ import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/text/text_widget.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AccountDeletionGuideScreen extends StatefulWidget {
   const AccountDeletionGuideScreen({super.key});
@@ -138,7 +137,7 @@ class _AccountDeletionGuideScreenState
                               scheme: 'mailto',
                               path: AppConstant.supportEmail,
                             );
-                            await launchUrl(uri);
+                            customLaunchUrl(uri.toString());
                           },
                       ),
                       const TextSpan(text: ' with the following template:'),
