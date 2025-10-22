@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/ads/bloc/ads_bloc.dart';
@@ -16,9 +18,7 @@ import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/widget/text/text_widget.dart';
 import 'package:go_router/go_router.dart';
-import 'package:last_pod_player/last_pod_player.dart';
-import 'package:anilist/widget/video/youtube_embeded_player_dummy.dart'
-    if (dart.library.html) 'package:anilist/widget/video/youtube_embeded_player.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class DetailAnimeArgument {
   final String animeId;
@@ -46,7 +46,7 @@ class DetailAnimeScreen extends StatefulWidget {
 }
 
 class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
-  PodPlayerController? _podPlayerController;
+  YoutubePlayerController? _controller;
   final _detailAnimeBloc = DetailAnimeBloc();
   final _adsBloc = AdsBloc();
 
@@ -63,24 +63,32 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
     _detailAnimeBloc.add(GetAnimeByIdEvent(widget.argument.animeId));
   }
 
+  String? _extractYouTubeIdFromEmbedUrl(String url) {
+    final reg = RegExp(r'/embed/([a-zA-Z0-9_-]{8,})');
+    final m = reg.firstMatch(url);
+    return m?.group(1);
+  }
+
   _initPlayer() {
-    if (_data?.trailer?.url != null) {
-      _podPlayerController = PodPlayerController(
-        podPlayerConfig: const PodPlayerConfig(
-          videoQualityPriority: [360, 480, 720, 1080],
-          autoPlay: false,
-          isLooping: false,
-        ),
-        playVideoFrom: PlayVideoFrom.youtube(_data!.trailer!.url!),
-      )..initialise();
+    if (_data?.trailer?.embedUrl != null) {
+      final videoId = _extractYouTubeIdFromEmbedUrl(_data!.trailer!.embedUrl!);
+      if (videoId != null) {
+        _controller = YoutubePlayerController(
+          params: const YoutubePlayerParams(
+            mute: false,
+            showControls: true,
+            showFullscreenButton: true,
+          ),
+        );
+        _controller!.loadVideoById(videoId: videoId);
+        _controller!.pauseVideo();
+      }
     }
   }
 
   @override
   void dispose() {
-    if (_podPlayerController != null) {
-      _podPlayerController!.dispose();
-    }
+    _controller?.close();
     super.dispose();
   }
 
@@ -168,23 +176,13 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
   }
 
   Widget _buildPlayer() {
-    if (kIsWeb && _data!.trailer!.youtubeId != null) {
-      return YoutubeEmbededPlayer(
-        videoId: _data!.trailer!.youtubeId!,
-        aspectRatio: 5 / 2,
-      );
-    }
-
-    if (_podPlayerController != null) {
+    if (_data?.trailer?.embedUrl != null && _controller != null) {
       return SizedBox(
         width: MediaQuery.sizeOf(context).width,
         child: Stack(
           children: [
-            PodVideoPlayer(
-              controller: _podPlayerController!,
-              frameAspectRatio: 16 / 9,
-            ),
-            _buildAds(),
+            YoutubePlayer(controller: _controller!, aspectRatio: 16 / 9),
+            AspectRatio(aspectRatio: 16 / 9, child: _buildAds()),
           ],
         ),
       );
@@ -294,6 +292,7 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
     return BlocConsumer<AdsBloc, AdsState>(
       bloc: _adsBloc,
       listener: (context, state) {
+        log(state.toString());
         if (state is ShowRewardedAdConfirmationState) {
           showConfirmationDialog(
             context: context,
@@ -310,7 +309,7 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
             },
           );
         } else if (state is ShowRewardedAdLoadedState) {
-          _podPlayerController?.play();
+          _controller?.playVideo();
         } else if (state is ShowRewardedAdSkippedState) {
           showCustomSnackBar(
             LocaleKeys.please_watch_the_ad_to_continue,
