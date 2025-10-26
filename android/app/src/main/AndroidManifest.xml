@@ -43,14 +43,13 @@
             </intent-filter>
 
             <!-- deep link -->
+            <meta-data android:name="flutter_deeplinking_enabled" android:value="false" />
             <intent-filter android:autoVerify="true">
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
-            <data
-                android:scheme="https"
-                android:host="anilist-433306.firebaseapp.com"
-                android:pathPrefix="/anilist" />
+            <data android:scheme="https" android:host="anilist.xrescode.my.id" android:pathPrefix="/mylist/shared" />
+            <data android:scheme="https" android:host="anilist.xrescode.my.id" android:pathPrefix="/anime/detail" />
             </intent-filter>
 
         </activity>

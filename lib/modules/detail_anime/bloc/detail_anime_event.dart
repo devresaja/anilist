@@ -8,7 +8,7 @@ sealed class DetailAnimeEvent extends Equatable {
 }
 
 final class GetAnimeByIdEvent extends DetailAnimeEvent {
-  final int animeId;
+  final String animeId;
 
   const GetAnimeByIdEvent(this.animeId);
 }

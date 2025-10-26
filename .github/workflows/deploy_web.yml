@@ -1,0 +1,49 @@
+name: Deploy Web
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  build-and-deploy-prod:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Decode .env
+        run: echo "${{ secrets.ENV }}" | base64 --decode > .env
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+          flutter-version-file: pubspec.yaml
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate Env
+        run: |
+          dart run build_runner clean
+          dart run build_runner build --define=envied_generator:envied=path=.env
+
+      - name: Copy index_prod.html as index.html
+        run: cp web/index_prod.html web/index.html
+
+      - name: Build Flutter Web
+        run: flutter build web -t lib/main_web.dart --dart-define=FLAVOR=prod
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Deploy to Vercel 
+        run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --cwd build/web --yes

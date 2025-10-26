@@ -1,6 +1,7 @@
 import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/text/text_widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
@@ -13,6 +14,7 @@ class CustomButton extends StatelessWidget {
   final Color? borderColor;
   final Color? textColor;
   final double? fontSize;
+  final double? width;
 
   const CustomButton({
     super.key,
@@ -25,16 +27,17 @@ class CustomButton extends StatelessWidget {
     this.borderColor,
     this.textColor,
     this.fontSize,
+    this.width,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
+      width: width,
       child: ElevatedButton(
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          padding: EdgeInsets.symmetric(vertical: kIsWeb ? 16 : 10),
           backgroundColor: color ?? Colors.transparent,
           side: BorderSide(color: borderColor ?? AppColor.primary),
           shape: RoundedRectangleBorder(

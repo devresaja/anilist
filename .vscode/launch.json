@@ -70,6 +70,38 @@
                 "prod",
                 "--dart-define=FLAVOR=prod"
             ]
+        },
+        {
+            "name": "Web Dev",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_web.dart",
+            "preLaunchTask": "set-index-dev",
+            "args": [
+                "-d",
+                "chrome",
+                "--web-hostname",
+                "localhost",
+                "--web-port",
+                "5000",
+                "--dart-define=FLAVOR=dev"
+            ]
+        },
+        {
+            "name": "Web Prod",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_web.dart",
+            "preLaunchTask": "set-index-prod",
+            "args": [
+                "-d",
+                "chrome",
+                "--web-hostname",
+                "localhost",
+                "--web-port",
+                "5000",
+                "--dart-define=FLAVOR=prod"
+            ]
         }
     ]
 }

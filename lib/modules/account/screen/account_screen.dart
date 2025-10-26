@@ -1,13 +1,17 @@
+import 'package:anilist/extension/view_extension.dart';
+import 'package:anilist/modules/account/screen/account_deletion_guide_screen.dart';
+import 'package:anilist/modules/account/screen/privacy_policy_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/app_constant.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/core/config/app_info.dart';
 import 'package:anilist/core/locale/locale_keys.g.dart';
-import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/account/components/setting_card.dart';
 import 'package:anilist/modules/auth/bloc/auth_bloc.dart';
@@ -18,12 +22,9 @@ import 'package:anilist/widget/text/text_widget.dart';
 
 class AccountScreen extends StatefulWidget {
   final Function() onValueChanged;
-  const AccountScreen({
-    super.key,
-    required this.onValueChanged,
-  });
+  const AccountScreen({super.key, required this.onValueChanged});
 
-  static const String path = 'account';
+  static const String path = '/account';
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();
@@ -42,22 +43,26 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: SingleChildScrollView(
+      left: false,
+      right: false,
+      bottom: false,
+      child: ListView(
         padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ..._applicationSection(context),
-            divide24,
-            ..._otherInfoSection(context),
-            divide24,
-            ..._accountSection(context),
+        children: [
+          ..._applicationSection(context),
+          divide24,
+          ..._otherInfoSection(context),
+          divide24,
+          ..._accountSection(context),
+          if (!context.isWideScreen)
             SizedBox(
-                height: kBottomNavigationBarHeight +
-                    MediaQuery.paddingOf(context).bottom +
-                    20)
-          ],
-        ),
+              height:
+                  kBottomNavigationBarHeight +
+                  MediaQuery.paddingOf(context).bottom,
+            )
+          else
+            divide16,
+        ],
       ),
     );
   }
@@ -78,41 +83,44 @@ class _AccountScreenState extends State<AccountScreen> {
           },
         ),
       ),
-      divide8,
-      SettingCard(
-        title: LocaleKeys.notification,
-        description: LocaleKeys.enable_notification,
-        trailing: BlocConsumer<AppBloc, AppState>(
-          buildWhen: (previous, current) => previous != current,
-          listener: (context, state) {
-            if (state.appStateErrorType == AppStateErrorType.notification) {
-              showConfirmationDialog(
-                context: context,
-                title: LocaleKeys.allow_notification_permission,
-                okText: LocaleKeys.settings,
-                onTapOk: () async {
-                  await openAppSettings();
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                  }
+      if (!kIsWeb) ...[
+        divide8,
+        SettingCard(
+          title: LocaleKeys.notification,
+          description: LocaleKeys.enable_notification,
+          trailing: BlocConsumer<AppBloc, AppState>(
+            buildWhen: (previous, current) => previous != current,
+            listener: (context, state) {
+              if (state.appStateErrorType == AppStateErrorType.notification) {
+                showConfirmationDialog(
+                  context: context,
+                  title: LocaleKeys.allow_notification_permission,
+                  okText: LocaleKeys.settings,
+                  onTapOk: () async {
+                    await openAppSettings();
+                    if (context.mounted) {
+                      context.pop();
+                    }
+                  },
+                );
+              }
+            },
+            builder: (context, state) {
+              return CustomSwitchButton(
+                value: state.isNotificationEnable,
+                isLoading:
+                    state.appStateLoadingType ==
+                    AppStateLoadingType.notification,
+                onChanged: (value) {
+                  context.read<AppBloc>().add(
+                    UpdateNotificationSettingEvent(isEnable: value),
+                  );
                 },
               );
-            }
-          },
-          builder: (context, state) {
-            return CustomSwitchButton(
-              value: state.isNotificationEnable,
-              isLoading:
-                  state.appStateLoadingType == AppStateLoadingType.notification,
-              onChanged: (value) {
-                context
-                    .read<AppBloc>()
-                    .add(UpdateNotificationSettingEvent(isEnable: value));
-              },
-            );
-          },
+            },
+          ),
         ),
-      ),
+      ],
       divide8,
       SettingCard(
         title: LocaleKeys.dark_mode,
@@ -124,9 +132,9 @@ class _AccountScreenState extends State<AccountScreen> {
               value: state.isDarkMode,
               initialValue: state.isDarkMode,
               onChanged: (value) {
-                context
-                    .read<AppBloc>()
-                    .add(UpdateThemeEvent(isDarkMode: value));
+                context.read<AppBloc>().add(
+                  UpdateThemeEvent(isDarkMode: value),
+                );
                 widget.onValueChanged();
               },
             );
@@ -143,7 +151,11 @@ class _AccountScreenState extends State<AccountScreen> {
       SettingCard(
         title: LocaleKeys.privacy_policy,
         onTap: () {
-          customLaunchUrl(AppConstant.privacyPolicy);
+          if (kIsWeb) {
+            context.pushNamed(PrivacyPolicyScreen.name);
+          } else {
+            customLaunchUrl(AppConstant.privacyPolicy);
+          }
         },
       ),
       divide8,
@@ -169,7 +181,11 @@ class _AccountScreenState extends State<AccountScreen> {
           description: LocaleKeys.delete_account_description,
           titleColor: AppColor.error,
           onTap: () {
-            customLaunchUrl(AppConstant.deleteAccountGuide);
+            if (kIsWeb) {
+              context.pushNamed(AccountDeletionGuideScreen.name);
+            } else {
+              customLaunchUrl(AppConstant.accountDeletionGuide);
+            }
           },
           trailing: Icon(Icons.delete, color: AppColor.error),
         ),
@@ -180,7 +196,7 @@ class _AccountScreenState extends State<AccountScreen> {
             listener: (context, state) {
               if (state is LogoutLoadedState) {
                 context.read<AppBloc>().add(RemoveUserDataEvent());
-                pushAndRemoveUntil(context, screen: LoginScreen());
+                context.goNamed(LoginScreen.name);
               } else if (state is LogoutFailedState) {
                 showCustomSnackBar(state.message, isSuccess: false);
               }
@@ -190,12 +206,13 @@ class _AccountScreenState extends State<AccountScreen> {
               titleColor: AppColor.error,
               onTap: () async {
                 showConfirmationDialog(
-                    context: context,
-                    title: LocaleKeys.logout_confirmation,
-                    onTapOk: () {
-                      _authBloc.add(LogoutEvent());
-                      Navigator.pop(context);
-                    });
+                  context: context,
+                  title: LocaleKeys.logout_confirmation,
+                  onTapOk: () {
+                    _authBloc.add(LogoutEvent());
+                    context.pop(context);
+                  },
+                );
               },
               trailing: Icon(Icons.logout, color: AppColor.error),
             ),
@@ -206,7 +223,7 @@ class _AccountScreenState extends State<AccountScreen> {
           title: LocaleKeys.login,
           titleColor: AppColor.primary,
           onTap: () {
-            pushAndRemoveUntil(context, screen: LoginScreen());
+            context.goNamed(LoginScreen.name);
           },
           trailing: Icon(Icons.login, color: AppColor.primary),
         ),
@@ -215,9 +232,6 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   TextWidget _sectionHeader(String text) {
-    return TextWidget(
-      text,
-      fontSize: 16,
-    );
+    return TextWidget(text, fontSize: 16);
   }
 }

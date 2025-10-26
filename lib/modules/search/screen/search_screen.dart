@@ -13,9 +13,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
-class SearchScreen extends StatefulWidget {
+class SearchArgument {
   final String search;
-  const SearchScreen({super.key, required this.search});
+
+  const SearchArgument({required this.search});
+
+  Map<String, String> toQueryParams() {
+    return {'search': search};
+  }
+
+  factory SearchArgument.fromQueryParams(Map<String, String> params) {
+    return SearchArgument(search: params['search'] ?? '');
+  }
+}
+
+class SearchScreen extends StatefulWidget {
+  final SearchArgument argument;
+  const SearchScreen({super.key, required this.argument});
+
+  static const String name = 'search';
+  static const String path = '/search';
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -53,7 +70,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    _searchController.text = widget.search;
+    _searchController.text = widget.argument.search;
 
     _getBloc();
 
@@ -91,7 +108,6 @@ class _SearchScreenState extends State<SearchScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
             Expanded(
               child: BlocProvider(
                 create: (context) => _searchBloc,
@@ -128,7 +144,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
             ),
-            AdMobBannerWidget()
+            AdMobBannerWidget(),
             // UnityBannerAdWidget(placementId: 'Banner_Android')
           ],
         ),
@@ -136,71 +152,93 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildView() {
-    return Column(
-      children: [
-        Expanded(
-          child: ResponsiveGridListBuilder(
-            verticalGridMargin: 16,
-            minItemWidth: 160,
-            minItemsPerRow: 2,
-            horizontalGridMargin: 16,
-            verticalGridSpacing: 16,
-            horizontalGridSpacing: 8,
-            rowMainAxisAlignment: MainAxisAlignment.center,
-            gridItems: _animes
-                .map((anime) => AnimeCard(
-                      width: 160,
-                      height: 200,
-                      animeId: anime.malId,
-                      imageUrl: anime.images?.jpg?.imageUrl,
-                      score: anime.score,
-                      title: anime.title,
-                      type: anime.type,
-                      episode: anime.episodes,
-                    ))
-                .toList(),
-            builder: (context, items) {
-              return ListView(
-                controller: _scrollController,
-                children: [
-                  ...items,
-                  if (_viewMode == ViewMode.loadMore) loading()
-                ],
-              );
-            },
-          ),
+  CustomScrollView _buildView() {
+    return CustomScrollView(
+      controller: _scrollController,
+      slivers: [
+        SliverAppBar(
+          floating: true,
+          pinned: false,
+          leading: Container(),
+          backgroundColor: AppColor.secondary,
+          expandedHeight: 80,
+          collapsedHeight: 68,
+          flexibleSpace: _buildHeader(),
         ),
+        SliverToBoxAdapter(child: _buildList()),
       ],
     );
   }
 
-  Row _buildHeader() {
-    return Row(
-      children: [
-        divideW16,
-        Flexible(
-          child: CustomSearchBar(
-            height: 46,
-            margin: EdgeInsets.only(top: 10, bottom: 10),
-            withPaddingHorizontal: false,
-            hintText: LocaleKeys.search_title,
-            controller: _searchController,
-            onSubmitted: (value) {
-              _refreshBloc();
-            },
+  Widget _buildList() {
+    return ResponsiveGridListBuilder(
+      minItemWidth: 160,
+      minItemsPerRow: 2,
+      horizontalGridMargin: 16,
+      verticalGridSpacing: 16,
+      horizontalGridSpacing: 8,
+      rowMainAxisAlignment: MainAxisAlignment.center,
+      gridItems: _animes
+          .map(
+            (anime) => AspectRatio(
+              aspectRatio: 6 / 9,
+              child: AnimeCard(
+                animeId: anime.malId,
+                imageUrl: anime.images?.webp?.imageUrl,
+                score: anime.score,
+                title: anime.title,
+                type: anime.type,
+                episode: anime.episodes,
+                isDynamicSize: true,
+              ),
+            ),
+          )
+          .toList(),
+      builder: (context, items) {
+        return ListView(
+          primary: false,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            ...items,
+            if (_viewMode == ViewMode.loadMore) loading(),
+            divide16,
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        children: [
+          divideW16,
+          Flexible(
+            child: CustomSearchBar(
+              height: 46,
+              withPaddingHorizontal: false,
+              hintText: LocaleKeys.search_title,
+              controller: _searchController,
+              onSubmitted: (value) {
+                _refreshBloc();
+              },
+            ),
           ),
-        ),
-        divideW6,
-        Padding(
-            padding: const EdgeInsets.only(top: 8),
+          divideW6,
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
             child: SpeechToTextButton(
               onResult: (value) {
                 _searchController.text = value;
                 _refreshBloc();
               },
-            ))
-      ],
+            ),
+          ),
+          divideW16,
+        ],
+      ),
     );
   }
 }

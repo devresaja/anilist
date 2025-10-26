@@ -6,10 +6,18 @@ part 'env_prod.g.dart';
 @Envied(path: '.env', allowOptionalFields: false, obfuscate: Env.obfuscate)
 abstract class EnvProd {
   // Private environment
-  @EnviedField(varName: 'firebaseApiKey')
-  static String firebaseApiKey = _EnvProd.firebaseApiKey;
-  @EnviedField(varName: 'firebaseAppId')
-  static String firebaseAppId = _EnvProd.firebaseAppId;
+  @EnviedField(varName: 'firebaseAndroidApiKey')
+  static String firebaseAndroidApiKey = _EnvProd.firebaseAndroidApiKey;
+  @EnviedField(varName: 'firebaseAndroidAppId')
+  static String firebaseAndroidAppId = _EnvProd.firebaseAndroidAppId;
+  @EnviedField(varName: 'firebaseWebApiKey')
+  static String firebaseWebApiKey = _EnvProd.firebaseWebApiKey;
+  @EnviedField(varName: 'firebaseWebAppId')
+  static String firebaseWebAppId = _EnvProd.firebaseWebAppId;
+  @EnviedField(varName: 'firebaseAuthDomain')
+  static String firebaseAuthDomain = _EnvProd.firebaseAuthDomain;
+  @EnviedField(varName: 'firebaseMeasurementId')
+  static String firebaseMeasurementId = _EnvProd.firebaseMeasurementId;
   @EnviedField(varName: 'firebaseMessagingSenderId')
   static String firebaseMessagingSenderId = _EnvProd.firebaseMessagingSenderId;
   @EnviedField(varName: 'firebaseProjectId')

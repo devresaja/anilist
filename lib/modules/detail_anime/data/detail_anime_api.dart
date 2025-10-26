@@ -9,7 +9,7 @@ class DetailAnimeApi {
   static String url = Env.url;
   static const String anime = '/anime';
 
-  Future<Either<String, Response>> getAnimeById(int animeId) async {
+  Future<Either<String, Response>> getAnimeById(String animeId) async {
     final response = _apiService.get('$url$anime/$animeId');
     return response;
   }

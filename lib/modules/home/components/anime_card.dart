@@ -1,13 +1,11 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-
 import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
-import 'package:anilist/core/routes/route.dart';
 import 'package:anilist/modules/detail_anime/screen/detail_anime_screen.dart';
 import 'package:anilist/widget/blink.dart';
 import 'package:anilist/widget/image/cached_image.dart';
 import 'package:anilist/widget/text/text_widget.dart';
+import 'package:go_router/go_router.dart';
 
 class AnimeCard extends StatelessWidget {
   final int animeId;
@@ -19,6 +17,7 @@ class AnimeCard extends StatelessWidget {
   final double? width;
   final double? height;
   final bool imageOnly;
+  final bool isDynamicSize;
 
   const AnimeCard({
     super.key,
@@ -31,6 +30,7 @@ class AnimeCard extends StatelessWidget {
     this.width,
     this.height,
     this.imageOnly = false,
+    this.isDynamicSize = false,
   });
 
   @override
@@ -38,27 +38,27 @@ class AnimeCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Container(
-        width: width ?? 140,
-        height: height ?? 190,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        width: isDynamicSize ? null : width ?? 140,
+        height: isDynamicSize ? null : height ?? 190,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
         child: imageOnly
             ? CachedImage(
                 imageUrl: imageUrl,
-                width: width ?? 140,
-                height: height ?? 190,
+                width: isDynamicSize ? null : width ?? 140,
+                height: isDynamicSize ? null : height ?? 190,
                 isRounded: true,
               )
             : Stack(
                 children: [
                   Stack(
+                    fit: StackFit.expand,
                     children: [
                       CachedImage(
                         imageUrl: imageUrl,
-                        width: width ?? 140,
-                        height: height ?? 190,
+                        width: isDynamicSize ? null : width ?? 140,
+                        height: isDynamicSize ? null : height ?? 190,
                         isRounded: true,
+                        fit: BoxFit.fill,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 3, right: 3),
@@ -66,11 +66,14 @@ class AnimeCard extends StatelessWidget {
                           alignment: Alignment.topRight,
                           child: Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 4, vertical: 2),
+                              horizontal: 4,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(300),
-                                border: Border.all(color: AppColor.primary)),
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(300),
+                              border: Border.all(color: AppColor.primary),
+                            ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -99,19 +102,21 @@ class AnimeCard extends StatelessWidget {
                     ],
                   ),
                   Positioned.fill(
-                      child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () {
-                        pushTo(context,
-                            screen: DetailAnimeScreen(
-                                argument:
-                                    DetailAnimeArgument(animeId: animeId)),
-                            routeName: DetailAnimeScreen.path);
-                      },
-                      borderRadius: BorderRadius.circular(12),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          context.pushNamed(
+                            DetailAnimeScreen.name,
+                            pathParameters: DetailAnimeArgument(
+                              animeId: animeId.toString(),
+                            ).toPathParams(),
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                  ))
+                  ),
                 ],
               ),
       ),
@@ -123,14 +128,15 @@ class AnimeCard extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       child: Container(
         decoration: BoxDecoration(
-          borderRadius:
-              const BorderRadius.vertical(bottom: Radius.circular(11)),
+          borderRadius: const BorderRadius.vertical(
+            bottom: Radius.circular(11),
+          ),
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
             colors: [
               Colors.black.withOpacity(0.9),
-              Colors.black.withOpacity(0.0)
+              Colors.black.withOpacity(0.0),
             ],
           ),
         ),
@@ -169,12 +175,7 @@ class AnimeCard extends StatelessWidget {
 }
 
 class AnimeCardLoading extends StatelessWidget {
-  const AnimeCardLoading({
-    super.key,
-    this.height,
-    this.width,
-    this.radius,
-  });
+  const AnimeCardLoading({super.key, this.height, this.width, this.radius});
 
   final double? height;
   final double? width;

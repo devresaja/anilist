@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:anilist/global/model/user_data.dart';
 import 'package:anilist/modules/ads/data/admob_api.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
@@ -77,7 +78,9 @@ class LocalStorageService {
     final String? data = prefs.getString(userData);
 
     if (data != null) {
-      await FirebaseCrashlytics.instance.setCustomKey('user_data', data);
+      if (!kIsWeb) {
+        await FirebaseCrashlytics.instance.setCustomKey('user_data', data);
+      }
 
       final Map<String, dynamic> value = jsonDecode(data);
 
