@@ -57,7 +57,7 @@ jobs:
       - uses: shorebirdtech/shorebird-release@v0
         id: shorebird-release
         with:
-          args: --artifact=apk --flutter-version=3.24.3 -- --flavor prod --dart-define=FLAVOR=prod --split-debug-info=symbols --obfuscate 
+          args: --artifact=apk --flutter-version=3.35.3 -- --flavor prod --dart-define=FLAVOR=prod --split-debug-info=symbols --obfuscate 
           platform: android
 
       - name: Download Shorebird symbols
