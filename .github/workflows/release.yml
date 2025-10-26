@@ -54,10 +54,11 @@ jobs:
           ENGINE_VERSION=$(shorebird doctor | grep 'Engine' | awk '{print $4}')
           echo "ENGINE_VERSION=$ENGINE_VERSION" >> $GITHUB_ENV
 
-      - uses: shorebirdtech/shorebird-release@v0
+      - uses: shorebirdtech/shorebird-release@v1
         id: shorebird-release
         with:
-          args: --artifact=apk --flutter-version=3.35.3 -- --flavor prod --dart-define=FLAVOR=prod --split-debug-info=symbols --obfuscate 
+          args: --artifact=apk -- --flavor prod --dart-define=FLAVOR=prod --split-debug-info=symbols --obfuscate
+          flutter-version: 3.35.3
           platform: android
 
       - name: Download Shorebird symbols
