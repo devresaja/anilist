@@ -30,7 +30,7 @@ jobs:
         with:
           channel: stable
           cache: true
-          flutter-version-file: 3.35.3
+          flutter-version: 3.35.3
       - run: |
           flutter clean
           flutter pub get
