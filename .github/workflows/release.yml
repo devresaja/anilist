@@ -30,7 +30,7 @@ jobs:
         with:
           channel: stable
           cache: true
-          flutter-version-file: pubspec.yaml
+          flutter-version-file: 3.35.3
       - run: |
           flutter clean
           flutter pub get
@@ -57,7 +57,7 @@ jobs:
       - uses: shorebirdtech/shorebird-release@v1
         id: shorebird-release
         with:
-          args: --artifact=apk -- --flavor prod --dart-define=FLAVOR=prod --split-debug-info=symbols --obfuscate
+          args: --artifact=apk --flavor prod -- --dart-define=FLAVOR=prod --split-debug-info=symbols --obfuscate
           flutter-version: 3.35.3
           platform: android
 
