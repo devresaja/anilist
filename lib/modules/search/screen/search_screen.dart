@@ -6,6 +6,7 @@ import 'package:anilist/global/widget/speech_to_text_button.dart';
 import 'package:anilist/modules/ads/widget/admob_banner_widget.dart';
 import 'package:anilist/modules/home/components/anime_card.dart';
 import 'package:anilist/modules/search/bloc/search_bloc.dart';
+import 'package:anilist/services/analytic_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/page/view_handler_widget.dart';
 import 'package:anilist/widget/text/custom_search_bar.dart';
@@ -222,6 +223,8 @@ class _SearchScreenState extends State<SearchScreen> {
               hintText: LocaleKeys.search_title,
               controller: _searchController,
               onSubmitted: (value) {
+                AnalyticsService.instance.logSearch(search: value);
+
                 _refreshBloc();
               },
             ),
@@ -231,6 +234,8 @@ class _SearchScreenState extends State<SearchScreen> {
             padding: const EdgeInsets.only(top: 4),
             child: SpeechToTextButton(
               onResult: (value) {
+                AnalyticsService.instance.logSearch(search: value);
+
                 _searchController.text = value;
                 _refreshBloc();
               },

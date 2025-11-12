@@ -1,8 +1,11 @@
 import 'package:anilist/core/env/env.dart';
+import 'package:anilist/services/analytic_service.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:async';
 
 enum AdUnit { mylist, trailer, banner }
+
+enum AdFormat { rewarded, banner }
 
 class AdMobService {
   static final AdMobService _instance = AdMobService._internal();
@@ -41,6 +44,14 @@ class AdMobService {
               if (onFailed != null) onFailed(error.message);
               ad.dispose();
             },
+            onAdImpression: (ad) {
+              AnalyticsService.instance.logAdImpression(
+                adUnitName: adUnit.name,
+                adFormat: AdFormat.rewarded.name,
+                adSource:
+                    ad.responseInfo?.loadedAdapterResponseInfo?.adSourceName,
+              );
+            },
           );
 
           await ad.show(
@@ -71,6 +82,13 @@ class AdMobService {
         onAdFailedToLoad: (ad, error) {
           ad.dispose();
           if (onFailed != null) onFailed();
+        },
+        onAdImpression: (ad) {
+          AnalyticsService.instance.logAdImpression(
+            adUnitName: AdUnit.banner.name,
+            adFormat: AdFormat.banner.name,
+            adSource: ad.responseInfo?.loadedAdapterResponseInfo?.adSourceName,
+          );
         },
       ),
     );

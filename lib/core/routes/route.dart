@@ -1,3 +1,4 @@
+import 'package:anilist/core/routes/analytic_route_observer.dart';
 import 'package:anilist/core/routes/navigator_key.dart';
 import 'package:anilist/global/screen/not_found_screen.dart';
 import 'package:anilist/global/model/user_data.dart';
@@ -16,6 +17,7 @@ GoRouter routeConfig({UserData? userData}) => GoRouter(
   navigatorKey: navigatorKey,
   initialLocation: DashboardScreen.path,
   errorBuilder: (context, state) => const NotFoundScreen(),
+  observers: [AnalyticsRouteObserver()],
   routes: [
     GoRoute(
       name: DashboardScreen.name,

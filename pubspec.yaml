@@ -45,6 +45,7 @@ dependencies:
   envied: ^0.5.4+1
   equatable: ^2.0.5
   extended_nested_scroll_view: ^6.2.1
+  firebase_analytics: ^11.6.0
   firebase_auth: ^5.1.4
   firebase_core: ^3.3.0
   firebase_crashlytics: ^4.2.0
