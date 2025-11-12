@@ -2,10 +2,7 @@ import 'package:anilist/core/env/env.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:async';
 
-enum AdsType {
-  mylist,
-  trailer,
-}
+enum AdUnit { mylist, trailer, banner }
 
 class AdMobService {
   static final AdMobService _instance = AdMobService._internal();
@@ -25,13 +22,13 @@ class AdMobService {
   }
 
   static Future<void> showRewardedAd({
-    required AdsType adsType,
+    required AdUnit adUnit,
     required Function(RewardItem) onComplete,
     Function(String)? onFailed,
     Function()? onSkipped,
   }) async {
     await RewardedAd.load(
-      adUnitId: _getAdUnitId(adsType),
+      adUnitId: _getAdUnitId(adUnit),
       request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) async {
@@ -64,7 +61,7 @@ class AdMobService {
     Function()? onFailed,
   }) async {
     return BannerAd(
-      adUnitId: _bannerAdUnitId,
+      adUnitId: _getAdUnitId(AdUnit.banner),
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
@@ -79,12 +76,14 @@ class AdMobService {
     );
   }
 
-  static String _getAdUnitId(AdsType adsType) {
-    switch (adsType) {
-      case AdsType.trailer:
+  static String _getAdUnitId(AdUnit adUnit) {
+    switch (adUnit) {
+      case AdUnit.trailer:
         return _trailerAdUnitId;
-      case AdsType.mylist:
+      case AdUnit.mylist:
         return _mylistAdUnitId;
+      case AdUnit.banner:
+        return _bannerAdUnitId;
     }
   }
 

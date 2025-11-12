@@ -302,7 +302,7 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
               context.pop(context);
               _adsBloc.add(
                 ShowRewardedAdEvent(
-                  adsType: AdsType.trailer,
+                  adUnit: AdUnit.trailer,
                   isCheckAttempt: false,
                 ),
               );
@@ -326,7 +326,7 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
               : () {
                   _adsBloc.add(
                     ShowRewardedAdEvent(
-                      adsType: AdsType.trailer,
+                      adUnit: AdUnit.trailer,
                       isCheckAttempt: true,
                     ),
                   );
