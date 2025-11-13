@@ -21,6 +21,11 @@ jobs:
         run: |
           echo "${{ secrets.ENV_DEV }}" | base64 --decode > .env.dev
 
+      - name: Decode google-services.json
+        run: |
+          mkdir -p android/app/src/dev
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_DEV }}" | base64 --decode > android/app/src/dev/google-services.json
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:

@@ -17,6 +17,7 @@ Anilist is built with Flutter using the Bloc pattern and integrates various Fire
   - App Links
 
 - [Firebase](https://firebase.google.com/)
+  - Analytics
   - Authentication
   - Firestore
   - Crashlytics
@@ -68,6 +69,11 @@ Anilist is built with Flutter using the Bloc pattern and integrates various Fire
     ```
     com.anilist.android.dev
     ```  
+    3.1. Place the `google-services.json` file inside each flavor directory:
+    - dev → [android/app/src/dev/](android/app/src/dev/)
+    - prod → [android/app/src/prod/](android/app/src/prod/)  
+
+      ℹ️ Do not place the `google-services.json` at `android/app/` folder.
 
 4. #### Set up env
     4.1. In the root project directory, create .env and or .env.dev files depending on your firebase project.
