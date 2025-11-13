@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:anilist/core/locale/locale_keys.g.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/ads/bloc/ads_bloc.dart';
@@ -18,7 +16,7 @@ import 'package:anilist/core/theme/app_color.dart';
 import 'package:anilist/constant/divider.dart';
 import 'package:anilist/widget/text/text_widget.dart';
 import 'package:go_router/go_router.dart';
-import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class DetailAnimeArgument {
   final String animeId;
@@ -74,21 +72,20 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
       final videoId = _extractYouTubeIdFromEmbedUrl(_data!.trailer!.embedUrl!);
       if (videoId != null) {
         _controller = YoutubePlayerController(
-          params: const YoutubePlayerParams(
+          initialVideoId: videoId,
+          flags: const YoutubePlayerFlags(
+            autoPlay: false,
             mute: false,
-            showControls: true,
-            showFullscreenButton: true,
+            forceHD: true,
           ),
         );
-        _controller!.loadVideoById(videoId: videoId);
-        _controller!.pauseVideo();
       }
     }
   }
 
   @override
   void dispose() {
-    _controller?.close();
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -181,7 +178,15 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
         width: MediaQuery.sizeOf(context).width,
         child: Stack(
           children: [
-            YoutubePlayer(controller: _controller!, aspectRatio: 16 / 9),
+            YoutubePlayer(
+              controller: _controller!,
+              aspectRatio: 16 / 9,
+              progressColors: ProgressBarColors(
+                backgroundColor: Colors.grey,
+                playedColor: Colors.red,
+                handleColor: Colors.red,
+              ),
+            ),
             AspectRatio(aspectRatio: 16 / 9, child: _buildAds()),
           ],
         ),
@@ -292,7 +297,6 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
     return BlocConsumer<AdsBloc, AdsState>(
       bloc: _adsBloc,
       listener: (context, state) {
-        log(state.toString());
         if (state is ShowRewardedAdConfirmationState) {
           showConfirmationDialog(
             context: context,
@@ -309,7 +313,7 @@ class _DetailAnimeScreenState extends State<DetailAnimeScreen> {
             },
           );
         } else if (state is ShowRewardedAdLoadedState) {
-          _controller?.playVideo();
+          _controller?.play();
         } else if (state is ShowRewardedAdSkippedState) {
           showCustomSnackBar(
             LocaleKeys.please_watch_the_ad_to_continue,
