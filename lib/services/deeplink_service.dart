@@ -1,6 +1,7 @@
 import 'package:anilist/constant/app_constant.dart';
 import 'package:anilist/modules/detail_anime/screen/detail_anime_screen.dart';
 import 'package:anilist/modules/my_list/screen/shared_my_list_screen.dart';
+import 'package:anilist/services/analytic_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,14 @@ class DeepLinkService {
         uri = '${AppConstant.webUrl}${DetailAnimeScreen.path}/$id';
     }
 
-    await Share.share(uri.toString());
+    final result = await Share.share(uri);
+
+    if (result.status == ShareResultStatus.success) {
+      AnalyticsService.instance.logShare(
+        contentType: type.name,
+        id: id,
+        method: result.raw,
+      );
+    }
   }
 }

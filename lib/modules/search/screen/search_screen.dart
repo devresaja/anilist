@@ -6,6 +6,7 @@ import 'package:anilist/global/widget/speech_to_text_button.dart';
 import 'package:anilist/modules/ads/widget/admob_banner_widget.dart';
 import 'package:anilist/modules/home/components/anime_card.dart';
 import 'package:anilist/modules/search/bloc/search_bloc.dart';
+import 'package:anilist/services/analytic_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/page/view_handler_widget.dart';
 import 'package:anilist/widget/text/custom_search_bar.dart';
@@ -109,39 +110,20 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           children: [
             Expanded(
-              child: BlocProvider(
-                create: (context) => _searchBloc,
-                child: BlocConsumer<SearchBloc, SearchState>(
-                  listener: (context, state) {
-                    if (state is SearchAnimeLoadingState) {
-                      if (_animes.isEmpty) {
-                        _updateViewMode(ViewMode.loading);
-                      } else {
-                        _updateViewMode(ViewMode.loadMore);
-                      }
-                    } else if (state is SearchAnimeLoadedState) {
-                      _animes.addAll(state.data.data!);
-                      _updateViewMode(ViewMode.loaded);
-                    } else if (state is SearchAnimeEmptyState) {
-                      if (_animes.isEmpty) {
-                        _updateViewMode(ViewMode.empty);
-                      }
-                    } else if (state is SearchAnimeMaximumState) {
-                      _updateViewMode(ViewMode.loadMax);
-                    } else if (state is SearchAnimeFailedState) {
-                      if (_animes.isEmpty) {
-                        _updateViewMode(ViewMode.failed);
-                      }
-                    }
-                  },
-                  builder: (context, state) {
-                    return ViewHandlerWidget(
-                      viewMode: _viewMode,
-                      onTapError: _getBloc,
-                      child: _buildView(),
-                    );
-                  },
-                ),
+              child: CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  SliverAppBar(
+                    floating: true,
+                    pinned: false,
+                    leading: Container(),
+                    backgroundColor: AppColor.secondary,
+                    expandedHeight: 80,
+                    collapsedHeight: 68,
+                    flexibleSpace: _buildHeader(),
+                  ),
+                  SliverToBoxAdapter(child: _buildView()),
+                ],
               ),
             ),
             AdMobBannerWidget(),
@@ -152,21 +134,50 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  CustomScrollView _buildView() {
-    return CustomScrollView(
-      controller: _scrollController,
-      slivers: [
-        SliverAppBar(
-          floating: true,
-          pinned: false,
-          leading: Container(),
-          backgroundColor: AppColor.secondary,
-          expandedHeight: 80,
-          collapsedHeight: 68,
-          flexibleSpace: _buildHeader(),
-        ),
-        SliverToBoxAdapter(child: _buildList()),
-      ],
+  Widget _buildView() {
+    return BlocProvider(
+      create: (context) => _searchBloc,
+      child: BlocConsumer<SearchBloc, SearchState>(
+        listener: (context, state) {
+          if (state is SearchAnimeLoadingState) {
+            if (_animes.isEmpty) {
+              _updateViewMode(ViewMode.loading);
+            } else {
+              _updateViewMode(ViewMode.loadMore);
+            }
+          } else if (state is SearchAnimeLoadedState) {
+            _animes.addAll(state.data.data!);
+            _updateViewMode(ViewMode.loaded);
+          } else if (state is SearchAnimeEmptyState) {
+            if (_animes.isEmpty) {
+              _updateViewMode(ViewMode.empty);
+            }
+          } else if (state is SearchAnimeMaximumState) {
+            _updateViewMode(ViewMode.loadMax);
+          } else if (state is SearchAnimeFailedState) {
+            if (_animes.isEmpty) {
+              _updateViewMode(ViewMode.failed);
+            }
+          }
+        },
+        builder: (context, state) {
+          return ViewHandlerWidget(
+            viewMode: _viewMode,
+            onTapError: _getBloc,
+            customEmpty: _viewHeightWrapper(child: ViewHandlerWidget.empty()),
+            customLoading: _viewHeightWrapper(child: loading()),
+            customFailed: _viewHeightWrapper(child: ViewHandlerWidget.error()),
+            child: _buildList(),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _viewHeightWrapper({required Widget child}) {
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height * 0.8,
+      child: child,
     );
   }
 
@@ -222,6 +233,8 @@ class _SearchScreenState extends State<SearchScreen> {
               hintText: LocaleKeys.search_title,
               controller: _searchController,
               onSubmitted: (value) {
+                AnalyticsService.instance.logSearch(search: value);
+
                 _refreshBloc();
               },
             ),
@@ -231,6 +244,8 @@ class _SearchScreenState extends State<SearchScreen> {
             padding: const EdgeInsets.only(top: 4),
             child: SpeechToTextButton(
               onResult: (value) {
+                AnalyticsService.instance.logSearch(search: value);
+
                 _searchController.text = value;
                 _refreshBloc();
               },

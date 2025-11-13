@@ -1,11 +1,11 @@
 import 'package:anilist/core/env/env.dart';
+import 'package:anilist/services/analytic_service.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:async';
 
-enum AdsType {
-  mylist,
-  trailer,
-}
+enum AdUnit { mylist, trailer, banner }
+
+enum AdFormat { rewarded, banner }
 
 class AdMobService {
   static final AdMobService _instance = AdMobService._internal();
@@ -25,13 +25,13 @@ class AdMobService {
   }
 
   static Future<void> showRewardedAd({
-    required AdsType adsType,
+    required AdUnit adUnit,
     required Function(RewardItem) onComplete,
     Function(String)? onFailed,
     Function()? onSkipped,
   }) async {
     await RewardedAd.load(
-      adUnitId: _getAdUnitId(adsType),
+      adUnitId: _getAdUnitId(adUnit),
       request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) async {
@@ -43,6 +43,14 @@ class AdMobService {
             onAdFailedToShowFullScreenContent: (ad, error) {
               if (onFailed != null) onFailed(error.message);
               ad.dispose();
+            },
+            onAdImpression: (ad) {
+              AnalyticsService.instance.logAdImpression(
+                adUnitName: adUnit.name,
+                adFormat: AdFormat.rewarded.name,
+                adSource:
+                    ad.responseInfo?.loadedAdapterResponseInfo?.adSourceName,
+              );
             },
           );
 
@@ -64,7 +72,7 @@ class AdMobService {
     Function()? onFailed,
   }) async {
     return BannerAd(
-      adUnitId: _bannerAdUnitId,
+      adUnitId: _getAdUnitId(AdUnit.banner),
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
@@ -75,16 +83,25 @@ class AdMobService {
           ad.dispose();
           if (onFailed != null) onFailed();
         },
+        onAdImpression: (ad) {
+          AnalyticsService.instance.logAdImpression(
+            adUnitName: AdUnit.banner.name,
+            adFormat: AdFormat.banner.name,
+            adSource: ad.responseInfo?.loadedAdapterResponseInfo?.adSourceName,
+          );
+        },
       ),
     );
   }
 
-  static String _getAdUnitId(AdsType adsType) {
-    switch (adsType) {
-      case AdsType.trailer:
+  static String _getAdUnitId(AdUnit adUnit) {
+    switch (adUnit) {
+      case AdUnit.trailer:
         return _trailerAdUnitId;
-      case AdsType.mylist:
+      case AdUnit.mylist:
         return _mylistAdUnitId;
+      case AdUnit.banner:
+        return _bannerAdUnitId;
     }
   }
 

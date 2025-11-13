@@ -8,6 +8,7 @@ import 'package:anilist/modules/home/components/anime_list.dart';
 import 'package:anilist/modules/home/components/home_header.dart';
 import 'package:anilist/modules/home/components/home_random.dart';
 import 'package:anilist/modules/search/screen/search_screen.dart';
+import 'package:anilist/services/analytic_service.dart';
 import 'package:anilist/utils/view_utils.dart';
 import 'package:anilist/widget/image/cached_image.dart';
 import 'package:anilist/widget/wrapper/invisible_expanded_header.dart';
@@ -111,6 +112,7 @@ class HomeScreen extends StatelessWidget {
                   child: SpeechToTextButton(
                     onResult: (search) {
                       if (ModalRoute.of(context)?.isCurrent ?? false) {
+                        AnalyticsService.instance.logSearch(search: search);
                         _pushToSearchScreen(context: context, search: search);
                       }
                     },

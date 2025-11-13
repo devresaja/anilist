@@ -350,7 +350,7 @@ class _MyListScreenState extends State<MyListScreen> {
   void _showRewardedAd({required bool isCheckAttempt}) {
     _adsBloc.add(
       ShowRewardedAdEvent(
-        adsType: AdsType.mylist,
+        adUnit: AdUnit.mylist,
         isCheckAttempt: isCheckAttempt,
       ),
     );

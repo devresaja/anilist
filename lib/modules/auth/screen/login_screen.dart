@@ -7,6 +7,7 @@ import 'package:anilist/extension/view_extension.dart';
 import 'package:anilist/global/bloc/app_bloc/app_bloc.dart';
 import 'package:anilist/modules/auth/bloc/auth_bloc.dart';
 import 'package:anilist/modules/dashboard/screen/dashboard_screen.dart';
+import 'package:anilist/services/analytic_service.dart';
 import 'package:anilist/services/deeplink_service.dart';
 import 'package:anilist/services/remote_config_service.dart';
 import 'package:anilist/utils/view_utils.dart';
@@ -20,6 +21,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+enum LoginType { google, guest }
 
 class LoginScreen extends StatefulWidget {
   static const String name = 'login';
@@ -196,6 +199,8 @@ class _LoginScreenState extends State<LoginScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(300)),
       ),
       onPressed: () {
+        AnalyticsService.instance.logLogin(loginMethod: LoginType.guest.name);
+
         context.goNamed(DashboardScreen.name);
       },
       child: TextWidget(LocaleKeys.continue_as_guest),
@@ -209,6 +214,10 @@ class _LoginScreenState extends State<LoginScreen> {
         if (state is LoginByGoogleLoadedState) {
           context.read<AppBloc>().add(
             SetUserDataEvent(userData: state.userData),
+          );
+
+          AnalyticsService.instance.logLogin(
+            loginMethod: LoginType.google.name,
           );
 
           showCustomSnackBar(

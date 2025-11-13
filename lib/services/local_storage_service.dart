@@ -12,42 +12,46 @@ class LocalStorageService {
   static const String remainingTrailerAttempt = 'remainingTrailerAttempt';
   static const String remainingMylistAttempt = 'remainingMylistAttempt';
 
-  static Future<int> getRemainingAdsAttempt({
-    required AdsType adsType,
-  }) async {
+  static Future<int> getRemainingAdsAttempt({required AdUnit adUnit}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     late String key;
-    switch (adsType) {
-      case AdsType.trailer:
+    switch (adUnit) {
+      case AdUnit.trailer:
         key = remainingTrailerAttempt;
-      case AdsType.mylist:
+      case AdUnit.mylist:
         key = remainingMylistAttempt;
+      default:
+        key = '';
     }
 
     late int initialValue;
-    switch (adsType) {
-      case AdsType.trailer:
+    switch (adUnit) {
+      case AdUnit.trailer:
         initialValue = 5;
-      case AdsType.mylist:
+      case AdUnit.mylist:
         initialValue = 2;
+      default:
+        initialValue = 0;
     }
 
     return prefs.getInt(key) ?? initialValue;
   }
 
   static Future<bool> setRemainingAdsAttempt({
-    required AdsType adsType,
+    required AdUnit adUnit,
     required int value,
   }) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     late String key;
-    switch (adsType) {
-      case AdsType.trailer:
+    switch (adUnit) {
+      case AdUnit.trailer:
         key = remainingTrailerAttempt;
-      case AdsType.mylist:
+      case AdUnit.mylist:
         key = remainingMylistAttempt;
+      default:
+        key = '';
     }
 
     return prefs.setInt(key, value);

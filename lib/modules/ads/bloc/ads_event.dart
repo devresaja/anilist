@@ -3,11 +3,8 @@ part of 'ads_bloc.dart';
 sealed class AdsEvent {}
 
 final class ShowRewardedAdEvent extends AdsEvent {
-  final AdsType adsType;
+  final AdUnit adUnit;
   final bool isCheckAttempt;
 
-  ShowRewardedAdEvent({
-    required this.adsType,
-    required this.isCheckAttempt,
-  });
+  ShowRewardedAdEvent({required this.adUnit, required this.isCheckAttempt});
 }
